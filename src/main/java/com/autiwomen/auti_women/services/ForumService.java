@@ -1,6 +1,7 @@
 package com.autiwomen.auti_women.services;
 
 import com.autiwomen.auti_women.dtos.ForumDto;
+import com.autiwomen.auti_women.dtos.ForumInputDto;
 import com.autiwomen.auti_women.exceptions.RecordNotFoundException;
 import com.autiwomen.auti_women.models.Forum;
 import com.autiwomen.auti_women.repositories.ForumRepository;
@@ -32,8 +33,8 @@ public class ForumService {
         return forumDtoList;
     }
 
-    public ForumDto createForum(ForumDto forumDto) {
-        Forum forum = toForum(forumDto);
+    public ForumDto createForum(ForumInputDto forumInputDto) {
+        Forum forum = toForum(forumInputDto);
         forumRepository.save(forum);
         return fromForum(forum);
     }
@@ -82,18 +83,17 @@ public class ForumService {
         return forumDto;
     }
 
-    public Forum toForum(ForumDto forumDto) {
+    public Forum toForum(ForumInputDto forumInputDto) {
         var forum = new Forum();
-        forum.setId(forumDto.id);
-        forum.setName(forumDto.name);
-        forum.setAge(forumDto.age);
-        forum.setTitle(forumDto.title);
-        forum.setText(forumDto.text);
-        forum.setDate(forumDto.date);
-        forum.setLastReaction(forumDto.lastReaction);
-        forum.setLikes(forumDto.likes);
-        forum.setComments(forumDto.comments);
-        forum.setViews(forumDto.views);
+        forum.setName(forumInputDto.name);
+        forum.setAge(forumInputDto.age);
+        forum.setTitle(forumInputDto.title);
+        forum.setText(forumInputDto.text);
+        forum.setDate(forumInputDto.date);
+        forum.setLastReaction(forumInputDto.lastReaction);
+        forum.setLikes(forumInputDto.likes);
+        forum.setComments(forumInputDto.comments);
+        forum.setViews(forumInputDto.views);
 
         return forum;
     }
