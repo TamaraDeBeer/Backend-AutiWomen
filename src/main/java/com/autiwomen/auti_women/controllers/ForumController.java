@@ -17,6 +17,7 @@ import java.util.List;
 public class ForumController {
 
     private final ForumService forumService;
+
     public ForumController(ForumService forumService) {
         this.forumService = forumService;
     }

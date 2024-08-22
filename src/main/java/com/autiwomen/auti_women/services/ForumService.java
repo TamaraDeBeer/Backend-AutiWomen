@@ -6,6 +6,8 @@ import com.autiwomen.auti_women.exceptions.RecordNotFoundException;
 import com.autiwomen.auti_women.models.Forum;
 import com.autiwomen.auti_women.repositories.ForumRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
@@ -29,7 +31,6 @@ public class ForumService {
             ForumDto forumDto = fromForum(forum);
             forumDtoList.add(forumDto);
         }
-
         return forumDtoList;
     }
 
@@ -53,12 +54,13 @@ public class ForumService {
         forumRepository.deleteById(id);
     }
 
-    public ForumDto updateForum(Long id, ForumDto updateForum) {
+    public ForumDto updateForum(@PathVariable Long id, @RequestBody ForumDto updateForum) {
         Optional<Forum> forum = forumRepository.findById(id);
         if (forum.isEmpty()) {
             throw new RecordNotFoundException("Er is geen forum gevonden met id: " + id);
         } else {
             Forum forum1 = forum.get();
+            forum1.setName(updateForum.getName());
             forum1.setTitle(updateForum.getTitle());
             forum1.setText(updateForum.getText());
             Forum forum2 = forumRepository.save(forum1);

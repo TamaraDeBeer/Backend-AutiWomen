@@ -2,17 +2,19 @@ package com.autiwomen.auti_women.dtos;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 
 public class ForumInputDto {
     @NotEmpty
     public String name;
 
     @NotEmpty
-    @Max(value = 40)
+    @Size(min = 1, max = 50)
     public String title;
 
     @NotEmpty
-    @Max (value = 2000)
+    @Size(min = 1, max = 4000)
+//  VARCHAR default is 250 max dus nog aan te passen met code: ALTER TABLE forum ALTER COLUMN text TYPE VARCHAR(10000)
     public String text;
 
     public String age;
