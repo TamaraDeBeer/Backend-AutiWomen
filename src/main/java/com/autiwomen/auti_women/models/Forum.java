@@ -3,7 +3,7 @@ package com.autiwomen.auti_women.models;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "forum")
+@Table(name = "forums")
 public class Forum {
     @Id
     @GeneratedValue
@@ -17,9 +17,10 @@ public class Forum {
     private Integer likes;
     private Integer comments;
     private Integer views;
+    private String topic;
 
 
-    public Forum(Long id, String name, String age, String title, String text, String date, String lastReaction, Integer likes, Integer comments, Integer views) {
+    public Forum(Long id, String name, String age, String title, String text, String date, String lastReaction, Integer likes, Integer comments, Integer views, String topic) {
         this.id = id;
         this.name = name;
         this.age = age;
@@ -30,6 +31,7 @@ public class Forum {
         this.likes = likes;
         this.comments = comments;
         this.views = views;
+        this.topic = topic;
     }
 
     public Forum() {
@@ -113,5 +115,13 @@ public class Forum {
 
     public void setViews(Integer views) {
         this.views = views;
+    }
+
+    public String getTopic() {
+        return topic;
+    }
+
+    public void setTopic(String topic) {
+        this.topic = topic;
     }
 }

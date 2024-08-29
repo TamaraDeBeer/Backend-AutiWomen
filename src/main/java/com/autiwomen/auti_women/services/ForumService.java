@@ -36,6 +36,10 @@ public class ForumService {
 
     public ForumDto createForum(ForumInputDto forumInputDto) {
         Forum forum = toForum(forumInputDto);
+        forum.setViews(0);
+        forum.setLikes(0);
+        forum.setComments(0);
+
         forumRepository.save(forum);
         return fromForum(forum);
     }
@@ -44,14 +48,25 @@ public class ForumService {
         Optional<Forum> forumId = forumRepository.findById(id);
         if (forumId.isPresent()) {
             Forum forum = forumId.get();
+            forum.setViews(forum.getViews() + 1);
             return fromForum(forum);
         } else {
             throw new RecordNotFoundException("Er is geen forum gevonden met id: " + id);
         }
     }
 
-    public void deleteForum(@RequestParam Long id) {
-        forumRepository.deleteById(id);
+    public ForumDto likeForum (@PathVariable Long id) {
+        Optional<Forum> forum = forumRepository.findById(id);
+        if (forum.isEmpty()) {
+            throw new RecordNotFoundException("Er is geen forum gevonden met id: " + id);
+        } else {
+            Forum forum1 = forum.get();
+            forum1.setLikes(forum1.getLikes() + 1);
+
+            Forum forum2 = forumRepository.save(forum1);
+
+            return fromForum(forum2);
+        }
     }
 
     public ForumDto updateForum(@PathVariable Long id, @RequestBody ForumDto updateForum) {
@@ -63,10 +78,15 @@ public class ForumService {
             forum1.setName(updateForum.getName());
             forum1.setTitle(updateForum.getTitle());
             forum1.setText(updateForum.getText());
+            forum1.setTopic(updateForum.getTopic());
             Forum forum2 = forumRepository.save(forum1);
 
             return fromForum(forum2);
         }
+    }
+
+    public void deleteForum(@RequestParam Long id) {
+        forumRepository.deleteById(id);
     }
 
     public ForumDto fromForum(Forum forum) {
@@ -81,6 +101,7 @@ public class ForumService {
         forumDto.likes = forum.getLikes();
         forumDto.comments = forum.getComments();
         forumDto.views = forum.getViews();
+        forumDto.topic = forum.getTopic();
 
         return forumDto;
     }
@@ -88,14 +109,14 @@ public class ForumService {
     public Forum toForum(ForumInputDto forumInputDto) {
         var forum = new Forum();
         forum.setName(forumInputDto.name);
-        forum.setAge(forumInputDto.age);
         forum.setTitle(forumInputDto.title);
         forum.setText(forumInputDto.text);
         forum.setDate(forumInputDto.date);
-        forum.setLastReaction(forumInputDto.lastReaction);
+//        forum.setLastReaction(forumInputDto.lastReaction);
         forum.setLikes(forumInputDto.likes);
         forum.setComments(forumInputDto.comments);
         forum.setViews(forumInputDto.views);
+        forum.setTopic(forumInputDto.topic);
 
         return forum;
     }

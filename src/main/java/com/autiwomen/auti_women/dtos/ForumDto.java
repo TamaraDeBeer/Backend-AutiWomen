@@ -14,8 +14,9 @@ public class ForumDto {
     public Integer likes;
     public Integer comments;
     public Integer views;
+    public String topic;
 
-    public ForumDto (Long id, String name, String age, String title, String text, String date, String lastReaction, Integer likes, Integer comments, Integer views) {
+    public ForumDto (Long id, String name, String age, String title, String text, String date, String lastReaction, Integer likes, Integer comments, Integer views, String topic) {
         this.id = id;
         this.name = name;
         this.age = age;
@@ -26,6 +27,7 @@ public class ForumDto {
         this.likes = likes;
         this.comments = comments;
         this.views = views;
+        this.topic = topic;
     }
 
     public ForumDto() {
@@ -109,5 +111,13 @@ public class ForumDto {
 
     public void setViews(Integer views) {
         this.views = views;
+    }
+
+    public String getTopic() {
+        return topic;
+    }
+
+    public void setTopic(String topic) {
+        this.topic = topic;
     }
 }

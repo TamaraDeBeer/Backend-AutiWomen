@@ -17,17 +17,24 @@ public class ForumInputDto {
 //  VARCHAR default is 250 max dus nog aan te passen met code: ALTER TABLE forum ALTER COLUMN text TYPE VARCHAR(10000)
     public String text;
 
-    public String age;
+//    public String age;
     public String date;
-    public String lastReaction;
+//    public String lastReaction;
     public Integer likes;
     public Integer comments;
     public Integer views;
+    public String topic;
 
-
-
-
-//Ik weer niet of topic hierbij moet of een aparte class moet hebben
+    public ForumInputDto (String name, String title, String text, String topic, String date, Integer likes, Integer comments, Integer views) {
+        this.name = name;
+        this.title = title;
+        this.text = text;
+        this.topic = topic;
+        this.date = date;
+        this.likes = likes;
+        this.comments = comments;
+        this.views = views;
+    }
 
 
     public String getName() {
@@ -54,28 +61,12 @@ public class ForumInputDto {
         this.text = text;
     }
 
-    public String getAge() {
-        return age;
-    }
-
-    public void setAge(String age) {
-        this.age = age;
-    }
-
     public String getDate() {
         return date;
     }
 
     public void setDate(String date) {
         this.date = date;
-    }
-
-    public String getLastReaction() {
-        return lastReaction;
-    }
-
-    public void setLastReaction(String lastReaction) {
-        this.lastReaction = lastReaction;
     }
 
     public Integer getLikes() {
@@ -100,5 +91,13 @@ public class ForumInputDto {
 
     public void setViews(Integer views) {
         this.views = views;
+    }
+
+    public String getTopic() {
+        return topic;
+    }
+
+    public void setTopic(String topic) {
+        this.topic = topic;
     }
 }
