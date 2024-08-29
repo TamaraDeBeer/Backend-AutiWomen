@@ -1,7 +1,7 @@
 package com.autiwomen.auti_women.services;
 
-import com.autiwomen.auti_women.dtos.ForumDto;
-import com.autiwomen.auti_women.dtos.ForumInputDto;
+import com.autiwomen.auti_women.dtos.forums.ForumDto;
+import com.autiwomen.auti_women.dtos.forums.ForumInputDto;
 import com.autiwomen.auti_women.exceptions.RecordNotFoundException;
 import com.autiwomen.auti_women.models.Forum;
 import com.autiwomen.auti_women.repositories.ForumRepository;
