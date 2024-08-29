@@ -2,14 +2,11 @@ package com.autiwomen.auti_women.services;
 
 import com.autiwomen.auti_women.dtos.comments.CommentDto;
 import com.autiwomen.auti_women.dtos.comments.CommentInputDto;
-import com.autiwomen.auti_women.dtos.forums.ForumDto;
 import com.autiwomen.auti_women.exceptions.RecordNotFoundException;
 import com.autiwomen.auti_women.models.Comment;
 import com.autiwomen.auti_women.repositories.CommentRepository;
 import com.autiwomen.auti_women.repositories.ForumRepository;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class CommentService {
