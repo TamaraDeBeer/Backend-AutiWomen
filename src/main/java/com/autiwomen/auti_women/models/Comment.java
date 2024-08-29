@@ -14,6 +14,10 @@ public class Comment {
     private String text;
     private String date;
 
+    @ManyToOne (fetch = FetchType.EAGER)
+    @JoinColumn(name = "forum_id")
+    private Forum forum;
+
     public Comment(Long id, String name, String text, String date) {
         this.id = id;
         this.name = name;
@@ -21,14 +25,7 @@ public class Comment {
         this.date = date;
     }
 
-    public Comment(Long id, String name, String text, String date, Forum forum) {
-        this.id = id;
-        this.name = name;
-        this.text = text;
-        this.date = date;
-    }
-
-public Comment() {
+    public Comment() {
     }
 
     public Long getId() {
@@ -63,4 +60,11 @@ public Comment() {
         this.date = date;
     }
 
+    public Forum getForum() {
+        return forum;
+    }
+
+    public void setForum(Forum forum) {
+        this.forum = forum;
+    }
 }

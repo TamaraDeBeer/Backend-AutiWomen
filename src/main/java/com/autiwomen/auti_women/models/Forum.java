@@ -1,6 +1,9 @@
 package com.autiwomen.auti_women.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+
+import java.util.List;
 
 @Entity
 @Table(name = "forums")
@@ -19,6 +22,9 @@ public class Forum {
     private Integer views;
     private String topic;
 
+    @OneToMany(mappedBy = "forum")
+    @JsonIgnore
+    private List<Comment> commentsList;
 
     public Forum(Long id, String name, String age, String title, String text, String date, String lastReaction, Integer likes, Integer comments, Integer views, String topic) {
         this.id = id;
