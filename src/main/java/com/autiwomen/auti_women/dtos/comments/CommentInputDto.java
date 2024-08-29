@@ -13,13 +13,12 @@ public class CommentInputDto {
     @Size(min = 1, max = 1000)
     public String text;
     public String date;
-    private ForumDto forumDto;
 
-    public CommentInputDto(String name, String text, String date, ForumDto forumDto) {
+    public CommentInputDto(String name, String text, String date) {
         this.name = name;
         this.text = text;
         this.date = date;
-        this.forumDto = forumDto;
+
     }
 
     public CommentInputDto() {
@@ -49,11 +48,4 @@ public class CommentInputDto {
         this.date = date;
     }
 
-    public ForumDto getForumDto() {
-        return forumDto;
-    }
-
-    public void setForumDto(ForumDto forumDto) {
-        this.forumDto = forumDto;
-    }
 }

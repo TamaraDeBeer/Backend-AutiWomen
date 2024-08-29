@@ -10,14 +10,12 @@ public class CommentDto {
     public String name;
     public String text;
     public String date;
-    public ForumDto forumDto;
 
-    public CommentDto(Long id, String name, String text, String date, ForumDto forumDto) {
+    public CommentDto(Long id, String name, String text, String date) {
         this.id = id;
         this.name = name;
         this.text = text;
         this.date = date;
-        this.forumDto = forumDto;
     }
 
     public CommentDto() {
@@ -55,11 +53,4 @@ public class CommentDto {
         this.date = date;
     }
 
-    public ForumDto getForumDto() {
-        return forumDto;
-    }
-
-    public void setForumDto(ForumDto forumDto) {
-        this.forumDto = forumDto;
-    }
 }

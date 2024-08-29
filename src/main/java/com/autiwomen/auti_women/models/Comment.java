@@ -14,10 +14,6 @@ public class Comment {
     private String text;
     private String date;
 
-    @ManyToOne
-    @JoinColumn(name = "post_id", nullable = false)
-    private Forum forum;
-
     public Comment(Long id, String name, String text, String date) {
         this.id = id;
         this.name = name;
@@ -30,7 +26,6 @@ public class Comment {
         this.name = name;
         this.text = text;
         this.date = date;
-        this.forum = forum;
     }
 
 public Comment() {
@@ -68,11 +63,4 @@ public Comment() {
         this.date = date;
     }
 
-    public Forum getForum() {
-        return forum;
-    }
-
-    public void setForum(Forum forum) {
-        this.forum = forum;
-    }
 }

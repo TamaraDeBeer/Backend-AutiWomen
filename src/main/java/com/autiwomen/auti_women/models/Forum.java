@@ -19,8 +19,6 @@ public class Forum {
     private Integer views;
     private String topic;
 
-    @OneToMany
-
 
     public Forum(Long id, String name, String age, String title, String text, String date, String lastReaction, Integer likes, Integer comments, Integer views, String topic) {
         this.id = id;

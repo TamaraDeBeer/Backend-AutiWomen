@@ -22,8 +22,8 @@ public class CommentController {
     }
 
     @PostMapping("/comments")
-    public ResponseEntity<CommentDto> createComment(@Valid @RequestBody CommentInputDto commentInputDto, Long id) {
-        CommentDto commentDto = commentService.createComment(commentInputDto, id);
+    public ResponseEntity<CommentDto> createComment(@Valid @RequestBody CommentInputDto commentInputDto) {
+        CommentDto commentDto = commentService.createComment(commentInputDto);
         URI uri = URI.create(ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/" + commentDto.getId()).toUriString());
