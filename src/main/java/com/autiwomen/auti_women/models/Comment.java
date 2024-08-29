@@ -15,7 +15,7 @@ public class Comment {
     private String date;
 
     @ManyToOne
-    @JoinColumn(name = "comment_on_forum")
+    @JoinColumn(name = "post_id", nullable = false)
     private Forum forum;
 
     public Comment(Long id, String name, String text, String date) {
