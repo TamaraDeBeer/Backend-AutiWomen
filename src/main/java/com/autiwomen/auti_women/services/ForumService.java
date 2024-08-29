@@ -55,7 +55,7 @@ public class ForumService {
         }
     }
 
-    public ForumDto likeForum (@PathVariable Long id) {
+    public ForumDto likeForum(@PathVariable Long id) {
         Optional<Forum> forum = forumRepository.findById(id);
         if (forum.isEmpty()) {
             throw new RecordNotFoundException("Er is geen forum gevonden met id: " + id);
