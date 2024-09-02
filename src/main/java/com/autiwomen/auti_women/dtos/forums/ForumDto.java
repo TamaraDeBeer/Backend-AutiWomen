@@ -1,4 +1,4 @@
-package com.autiwomen.auti_women.dtos;
+package com.autiwomen.auti_women.dtos.forums;
 
 import jakarta.validation.Valid;
 

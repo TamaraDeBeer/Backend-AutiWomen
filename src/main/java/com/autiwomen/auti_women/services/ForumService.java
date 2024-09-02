@@ -1,7 +1,7 @@
 package com.autiwomen.auti_women.services;
 
-import com.autiwomen.auti_women.dtos.ForumDto;
-import com.autiwomen.auti_women.dtos.ForumInputDto;
+import com.autiwomen.auti_women.dtos.forums.ForumDto;
+import com.autiwomen.auti_women.dtos.forums.ForumInputDto;
 import com.autiwomen.auti_women.exceptions.RecordNotFoundException;
 import com.autiwomen.auti_women.models.Forum;
 import com.autiwomen.auti_women.repositories.ForumRepository;
@@ -55,7 +55,7 @@ public class ForumService {
         }
     }
 
-    public ForumDto likeForum (@PathVariable Long id) {
+    public ForumDto likeForum(@PathVariable Long id) {
         Optional<Forum> forum = forumRepository.findById(id);
         if (forum.isEmpty()) {
             throw new RecordNotFoundException("Er is geen forum gevonden met id: " + id);
