@@ -15,6 +15,10 @@ public class User {
     private String password;
     @Column(nullable = false)
     private boolean enabled = true;
+    @Column
+    private String apikey;
+    @Column
+    private String email;
     @OneToMany(
             targetEntity = Authority.class,
             mappedBy = "username",
@@ -22,6 +26,19 @@ public class User {
             orphanRemoval = true,
             fetch = FetchType.EAGER)
     private Set<Authority> authorities = new HashSet<>();
+
+
+    public User(String apikey, String username, String password, boolean enabled, String email, Set<Authority> authorities) {
+        this.apikey = apikey;
+        this.username = username;
+        this.password = password;
+        this.enabled = enabled;
+        this.email = email;
+        this.authorities = authorities;
+    }
+
+    public User() {
+    }
 
     public Set<Authority> getAuthorities() {
         return authorities;
@@ -53,5 +70,21 @@ public class User {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getApikey() {
+        return apikey;
+    }
+
+    public void setApikey(String apikey) {
+        this.apikey = apikey;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }
