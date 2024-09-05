@@ -48,6 +48,14 @@ public class User {
         this.authorities = authorities;
     }
 
+    public void addAuthority(Authority authority) {
+        this.authorities.add(authority);
+    }
+
+    public void removeAuthority(Authority authority) {
+        this.authorities.remove(authority);
+    }
+
     public boolean isEnabled() {
         return enabled;
     }
