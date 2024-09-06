@@ -41,7 +41,6 @@ public class ForumController {
         return ResponseEntity.ok().body(forumDto);
     }
 
-
     @PostMapping(value = "/forums")
     public ResponseEntity<ForumDto> createForum(@Valid @RequestBody ForumInputDto forumInputDto) {
         ForumDto forumDto = forumService.createForum(forumInputDto);

@@ -10,6 +10,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -30,6 +31,10 @@ public class AuthenticationController {
         this.jwtUtl = jwtUtl;
     }
 
+    private String hashPassword(String password) {
+        return new BCryptPasswordEncoder().encode(password);
+    }
+
     @GetMapping(value = "/authenticated")
     public ResponseEntity<Object> authenticated(Authentication authentication, Principal principal) {
         return ResponseEntity.ok().body(principal);
@@ -39,7 +44,7 @@ public class AuthenticationController {
     public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
 
         String username = authenticationRequest.getUsername();
-        String password = authenticationRequest.getPassword();
+        String password = hashPassword(authenticationRequest.getPassword());
 
         try {
             authenticationManager.authenticate(
