@@ -19,6 +19,7 @@ public class User {
     private String apikey;
     @Column
     private String email;
+
     @OneToMany(
             targetEntity = Authority.class,
             mappedBy = "username",

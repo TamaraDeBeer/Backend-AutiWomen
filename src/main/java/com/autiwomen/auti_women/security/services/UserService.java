@@ -4,11 +4,13 @@ import com.autiwomen.auti_women.exceptions.RecordNotFoundException;
 import com.autiwomen.auti_women.security.UserRepository;
 import com.autiwomen.auti_women.security.dtos.user.UserDto;
 import com.autiwomen.auti_women.security.dtos.user.UserInputDto;
+import com.autiwomen.auti_women.security.dtos.user.UserOutputDto;
 import com.autiwomen.auti_women.security.models.Authority;
 import com.autiwomen.auti_women.security.models.User;
 import com.autiwomen.auti_women.utils.RandomStringGenerator;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,39 +22,51 @@ public class UserService {
 
     private final UserRepository userRepository;
 
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
-
-    public List<UserDto> getUsers() {
-        List<UserDto> collection = new ArrayList<>();
+    public List<UserOutputDto> getUsers() {
+        List<UserOutputDto> collection = new ArrayList<>();
         List<User> list = userRepository.findAll();
         for (User user : list) {
-            collection.add(fromUser(user));
+            collection.add(toUserOutputDto(user));
         }
         return collection;
     }
 
-    public UserDto getOneUser(String username) {
-        UserDto dto = new UserDto();
+    public UserOutputDto getOneUser(String username) {
+        UserOutputDto dto = new UserOutputDto();
         Optional<User> user = userRepository.findById(username);
-        if (user.isPresent()){
-            dto = fromUser(user.get());
-        }else {
+        if (user.isPresent()) {
+            dto = toUserOutputDto(user.get());
+        } else {
             throw new UsernameNotFoundException(username);
         }
         return dto;
     }
 
-    public boolean userExists(String username) {
-        return userRepository.existsById(username);
+    //    Deze methode is enkel voor de CustomUserDetailsService omdat we daar een wachtwoord nodig hebben en de UserOutputDto geen wachtwoord bevat
+    public UserDto getUserEntity(String username) {
+        Optional<User> user = userRepository.findById(username);
+        if (user.isPresent()) {
+            return fromUser(user.get());
+        } else {
+            throw new UsernameNotFoundException(username);
+        }
     }
+
+//    public boolean userExists(String username) {
+//        return userRepository.existsById(username);
+//    }
 
     public String createUser(UserInputDto userInputDto) {
         String randomString = RandomStringGenerator.generateAlphaNumeric(20);
         userInputDto.setApikey(randomString);
         User newUser = userRepository.save(toUser(userInputDto));
+        newUser.setPassword(passwordEncoder.encode(userInputDto.getPassword()));
         return newUser.getUsername();
     }
 
@@ -61,11 +75,13 @@ public class UserService {
         userRepository.deleteById(username);
     }
 
-    public void updateUser(String username, UserDto newUser) {
-        if (!userRepository.existsById(username)) throw new RecordNotFoundException();
+    public UserDto updateUser(String username, UserDto updateUser) {
+        if (!userRepository.existsById(username)) throw new RecordNotFoundException("Er is geen user gevonden met username: " + username);
         User user = userRepository.findById(username).get();
-        user.setPassword(newUser.getPassword());
+        user.setPassword(passwordEncoder.encode(updateUser.getPassword()));
         userRepository.save(user);
+
+        return fromUser(user);
     }
 
     public Set<Authority> getAuthorities(String username) {
@@ -91,7 +107,7 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public static UserDto fromUser(User user){
+    public static UserDto fromUser(User user) {
 
         var dto = new UserDto();
 
@@ -113,6 +129,10 @@ public class UserService {
         user.setApikey(userInputDto.getApikey());
         user.setEmail(userInputDto.getEmail());
         return user;
+    }
+
+    public static UserOutputDto toUserOutputDto(User user) {
+        return new UserOutputDto(user.getUsername(), user.getEmail());
     }
 
 }

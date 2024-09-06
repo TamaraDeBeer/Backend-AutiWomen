@@ -11,11 +11,13 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserService userService;
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public CustomUserDetailsService(UserService userService) {
         this.userService = userService;
@@ -23,10 +25,10 @@ public class CustomUserDetailsService implements UserDetailsService {
 
 //    @Override
     public UserDetails loadUserByUsername(String username) {
-        UserDto userDto = userService.getOneUser(username);
+        UserDto userDto = userService.getUserEntity(username);
 
 
-        String password = userDto.getPassword();
+        String password = passwordEncoder.encode(userDto.getPassword());
 
         Set<Authority> authorities = userDto.getAuthorities();
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
