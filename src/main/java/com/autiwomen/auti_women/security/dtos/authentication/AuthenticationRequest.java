@@ -1,5 +1,7 @@
 package com.autiwomen.auti_women.security.dtos.authentication;
 
+
+//Vorm van InputDto
 public class AuthenticationRequest {
 
     private String username;

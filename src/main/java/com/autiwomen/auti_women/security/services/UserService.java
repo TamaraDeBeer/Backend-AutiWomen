@@ -3,6 +3,7 @@ package com.autiwomen.auti_women.security.services;
 import com.autiwomen.auti_women.exceptions.RecordNotFoundException;
 import com.autiwomen.auti_women.security.UserRepository;
 import com.autiwomen.auti_women.security.dtos.user.UserDto;
+import com.autiwomen.auti_women.security.dtos.user.UserInputDto;
 import com.autiwomen.auti_women.security.models.Authority;
 import com.autiwomen.auti_women.security.models.User;
 import com.autiwomen.auti_women.utils.RandomStringGenerator;
@@ -33,7 +34,7 @@ public class UserService {
         return collection;
     }
 
-    public UserDto getUser(String username) {
+    public UserDto getOneUser(String username) {
         UserDto dto = new UserDto();
         Optional<User> user = userRepository.findById(username);
         if (user.isPresent()){
@@ -48,12 +49,13 @@ public class UserService {
         return userRepository.existsById(username);
     }
 
-    public String createUser(UserDto userDto) {
+    public String createUser(UserInputDto userInputDto) {
         String randomString = RandomStringGenerator.generateAlphaNumeric(20);
-        userDto.setApikey(randomString);
-        User newUser = userRepository.save(toUser(userDto));
+        userInputDto.setApikey(randomString);
+        User newUser = userRepository.save(toUser(userInputDto));
         return newUser.getUsername();
     }
+
 
     public void deleteUser(String username) {
         userRepository.deleteById(username);
@@ -103,16 +105,13 @@ public class UserService {
         return dto;
     }
 
-    public User toUser(UserDto userDto) {
-
+    public User toUser(UserInputDto userInputDto) {
         var user = new User();
-
-        user.setUsername(userDto.getUsername());
-        user.setPassword(userDto.getPassword());
-        user.setEnabled(userDto.getEnabled());
-        user.setApikey(userDto.getApikey());
-        user.setEmail(userDto.getEmail());
-
+        user.setUsername(userInputDto.getUsername());
+        user.setPassword(userInputDto.getPassword());
+        user.setEnabled(userInputDto.getEnabled());
+        user.setApikey(userInputDto.getApikey());
+        user.setEmail(userInputDto.getEmail());
         return user;
     }
 

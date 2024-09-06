@@ -1,5 +1,7 @@
 package com.autiwomen.auti_women.security.filter;
 
+import com.autiwomen.auti_women.security.services.CustomUserDetailsService;
+import com.autiwomen.auti_women.utils.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,7 +15,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 @Component
-public class JwTRequestFilter {
+public class JwtRequestFilter {
 
     private final CustomUserDetailsService userDetailsService;
 
@@ -24,7 +26,7 @@ public class JwTRequestFilter {
         this.jwtUtil = jwtUtil;
     }
 
-    @Override
+//    @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         final String authorizationHeader = request.getHeader("Authorization");
