@@ -75,36 +75,55 @@ public class UserService {
         userRepository.deleteById(username);
     }
 
-    public UserDto updateUser(String username, UserDto updateUser) {
-        if (!userRepository.existsById(username)) throw new RecordNotFoundException("Er is geen user gevonden met username: " + username);
-        User user = userRepository.findById(username).get();
-        user.setPassword(passwordEncoder.encode(updateUser.getPassword()));
-        userRepository.save(user);
-
-        return fromUser(user);
+    public UserDto updatePasswordUser(String username, UserDto updateUser) {
+        Optional<User> userOptional = userRepository.findById(username);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            user.setPassword(passwordEncoder.encode(updateUser.getPassword()));
+            userRepository.save(user);
+            return fromUser(user);
+        } else {
+            throw new RecordNotFoundException("Er is geen user gevonden met username: " + username);
+        }
     }
 
-    public Set<Authority> getAuthorities(String username) {
-        if (!userRepository.existsById(username)) throw new UsernameNotFoundException(username);
-        User user = userRepository.findById(username).get();
-        UserDto userDto = fromUser(user);
-        return userDto.getAuthorities();
+    public Set<Authority> getAuthoritiyByUsername(String username) {
+        Optional<User> userOptional = userRepository.findById(username);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            UserDto userDto = fromUser(user);
+            return userDto.getAuthorities();
+        } else {
+            throw new UsernameNotFoundException(username);
+        }
     }
 
-    public void addAuthority(String username, String authority) {
-
-        if (!userRepository.existsById(username)) throw new UsernameNotFoundException(username);
-        User user = userRepository.findById(username).get();
-        user.addAuthority(new Authority(username, authority));
-        userRepository.save(user);
+    public UserDto addAuthority(String username, String authority) {
+        Optional<User> userOptional = userRepository.findById(username);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            user.addAuthority(new Authority(username, authority));
+            userRepository.save(user);
+            return fromUser(user);
+        } else {
+            throw new UsernameNotFoundException(username);
+        }
     }
 
     public void removeAuthority(String username, String authority) {
-        if (!userRepository.existsById(username)) throw new UsernameNotFoundException(username);
-        User user = userRepository.findById(username).get();
-        Authority authorityToRemove = user.getAuthorities().stream().filter((a) -> a.getAuthority().equalsIgnoreCase(authority)).findAny().get();
-        user.removeAuthority(authorityToRemove);
-        userRepository.save(user);
+        Optional<User> userOptional = userRepository.findById(username);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            Optional<Authority> authorityToRemove = user.getAuthorities().stream()
+                    .filter(a -> a.getAuthority().equalsIgnoreCase(authority))
+                    .findAny();
+            if (authorityToRemove.isPresent()) {
+                user.removeAuthority(authorityToRemove.get());
+                userRepository.save(user);
+            }
+        } else {
+            throw new UsernameNotFoundException(username);
+        }
     }
 
     public static UserDto fromUser(User user) {
