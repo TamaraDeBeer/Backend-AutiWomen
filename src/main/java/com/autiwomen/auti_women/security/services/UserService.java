@@ -38,7 +38,7 @@ public class UserService {
     }
 
     public UserOutputDto getOneUser(String username) {
-        UserOutputDto dto = new UserOutputDto();
+        UserOutputDto dto;
         Optional<User> user = userRepository.findById(username);
         if (user.isPresent()) {
             dto = toUserOutputDto(user.get());
@@ -71,10 +71,6 @@ public class UserService {
     }
 
 
-    public void deleteUser(String username) {
-        userRepository.deleteById(username);
-    }
-
     public UserDto updatePasswordUser(String username, UserDto updateUser) {
         Optional<User> userOptional = userRepository.findById(username);
         if (userOptional.isPresent()) {
@@ -87,7 +83,11 @@ public class UserService {
         }
     }
 
-    public Set<Authority> getAuthoritiyByUsername(String username) {
+    public void deleteUser(String username) {
+        userRepository.deleteById(username);
+    }
+
+    public Set<Authority> getUserAuthorities(String username) {
         Optional<User> userOptional = userRepository.findById(username);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
@@ -98,7 +98,7 @@ public class UserService {
         }
     }
 
-    public UserDto addAuthority(String username, String authority) {
+    public UserDto addUserAuthority(String username, String authority) {
         Optional<User> userOptional = userRepository.findById(username);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
@@ -110,7 +110,7 @@ public class UserService {
         }
     }
 
-    public void removeAuthority(String username, String authority) {
+    public void removeUserAuthority(String username, String authority) {
         Optional<User> userOptional = userRepository.findById(username);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
