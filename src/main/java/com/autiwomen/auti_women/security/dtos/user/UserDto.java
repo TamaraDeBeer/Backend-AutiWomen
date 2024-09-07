@@ -4,6 +4,7 @@ import com.autiwomen.auti_women.security.models.Authority;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.validation.Valid;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 @Valid
@@ -14,16 +15,26 @@ public class UserDto {
     public boolean enabled;
     public String apikey;
     public String email;
+    public String name;
+    public String gender;
+    public LocalDate dob;
+    public String autismDiagnoses;
+    public Integer autismDiagnosesYear;
 
     @JsonSerialize
     public Set<Authority> authorities;
 
-    public UserDto(String username, String password, boolean enabled, String apikey, String email, Set<Authority> authorities) {
+    public UserDto(String email, String username, String password, boolean enabled, String apikey, String name, String gender, LocalDate dob, String autismDiagnoses, Integer autismDiagnosesYear, Set<Authority> authorities) {
+        this.email = email;
         this.username = username;
         this.password = password;
         this.enabled = enabled;
         this.apikey = apikey;
-        this.email = email;
+        this.name = name;
+        this.gender = gender;
+        this.dob = dob;
+        this.autismDiagnoses = autismDiagnoses;
+        this.autismDiagnosesYear = autismDiagnosesYear;
         this.authorities = authorities;
     }
 
@@ -76,5 +87,49 @@ public class UserDto {
 
     public void setAuthorities(Set<Authority> authorities) {
         this.authorities = authorities;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public LocalDate getDob() {
+        return dob;
+    }
+
+    public void setDob(LocalDate dob) {
+        this.dob = dob;
+    }
+
+    public String getAutismDiagnoses() {
+        return autismDiagnoses;
+    }
+
+    public void setAutismDiagnoses(String autismDiagnoses) {
+        this.autismDiagnoses = autismDiagnoses;
+    }
+
+    public Integer getAutismDiagnosesYear() {
+        return autismDiagnosesYear;
+    }
+
+    public void setAutismDiagnosesYear(Integer autismDiagnosesYear) {
+        this.autismDiagnosesYear = autismDiagnosesYear;
     }
 }

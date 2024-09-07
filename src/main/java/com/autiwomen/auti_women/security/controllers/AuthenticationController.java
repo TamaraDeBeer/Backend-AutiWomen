@@ -3,7 +3,7 @@ package com.autiwomen.auti_women.security.controllers;
 import com.autiwomen.auti_women.security.dtos.authentication.AuthenticationRequest;
 import com.autiwomen.auti_women.security.dtos.authentication.AuthenticationResponse;
 import com.autiwomen.auti_women.security.services.CustomUserDetailsService;
-import com.autiwomen.auti_women.utils.JwtUtil;
+import com.autiwomen.auti_women.security.utils.JwtUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;

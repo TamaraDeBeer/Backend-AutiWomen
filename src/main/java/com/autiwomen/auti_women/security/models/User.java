@@ -2,6 +2,7 @@ package com.autiwomen.auti_women.security.models;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,10 +16,15 @@ public class User {
     private String password;
     @Column(nullable = false)
     private boolean enabled = true;
-    @Column
     private String apikey;
-    @Column
+    @Column(nullable = false, unique = true)
     private String email;
+
+    private String name;
+    private String gender;
+    private LocalDate dob;
+    private String autismDiagnoses;
+    private Integer autismDiagnosesYear;
 
     @OneToMany(
             targetEntity = Authority.class,
@@ -28,13 +34,17 @@ public class User {
             fetch = FetchType.EAGER)
     private Set<Authority> authorities = new HashSet<>();
 
-
-    public User(String apikey, String username, String password, boolean enabled, String email, Set<Authority> authorities) {
-        this.apikey = apikey;
+    public User(String username, String password, boolean enabled, String apikey, String email, String name, String gender, LocalDate dob, String autismDiagnoses, Integer autismDiagnosesYear, Set<Authority> authorities) {
         this.username = username;
         this.password = password;
         this.enabled = enabled;
+        this.apikey = apikey;
         this.email = email;
+        this.name = name;
+        this.gender = gender;
+        this.dob = dob;
+        this.autismDiagnoses = autismDiagnoses;
+        this.autismDiagnosesYear = autismDiagnosesYear;
         this.authorities = authorities;
     }
 
@@ -95,5 +105,45 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getAutismDiagnoses() {
+        return autismDiagnoses;
+    }
+
+    public void setAutismDiagnoses(String autismDiagnoses) {
+        this.autismDiagnoses = autismDiagnoses;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public LocalDate getDob() {
+        return dob;
+    }
+
+    public void setDob(LocalDate dob) {
+        this.dob = dob;
+    }
+
+    public Integer getAutismDiagnosesYear() {
+        return autismDiagnosesYear;
+    }
+
+    public void setAutismDiagnosesYear(Integer autismDiagnosesYear) {
+        this.autismDiagnosesYear = autismDiagnosesYear;
     }
 }

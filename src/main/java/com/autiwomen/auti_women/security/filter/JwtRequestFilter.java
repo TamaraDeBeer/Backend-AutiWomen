@@ -1,7 +1,7 @@
 package com.autiwomen.auti_women.security.filter;
 
 import com.autiwomen.auti_women.security.services.CustomUserDetailsService;
-import com.autiwomen.auti_women.utils.JwtUtil;
+import com.autiwomen.auti_women.security.utils.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

@@ -1,4 +1,4 @@
-package com.autiwomen.auti_women.utils;
+package com.autiwomen.auti_women.security.utils;
 
 import java.util.Random;
 

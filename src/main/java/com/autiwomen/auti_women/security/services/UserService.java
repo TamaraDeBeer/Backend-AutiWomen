@@ -7,7 +7,7 @@ import com.autiwomen.auti_women.security.dtos.user.UserInputDto;
 import com.autiwomen.auti_women.security.dtos.user.UserOutputDto;
 import com.autiwomen.auti_women.security.models.Authority;
 import com.autiwomen.auti_women.security.models.User;
-import com.autiwomen.auti_women.utils.RandomStringGenerator;
+import com.autiwomen.auti_women.security.utils.RandomStringGenerator;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -127,15 +127,18 @@ public class UserService {
     }
 
     public static UserDto fromUser(User user) {
-
         var dto = new UserDto();
-
         dto.username = user.getUsername();
         dto.password = user.getPassword();
         dto.enabled = user.isEnabled();
         dto.apikey = user.getApikey();
         dto.email = user.getEmail();
         dto.authorities = user.getAuthorities();
+        dto.name = user.getName();
+        dto.gender = user.getGender();
+        dto.dob = user.getDob();
+        dto.autismDiagnoses = user.getAutismDiagnoses();
+        dto.autismDiagnosesYear = user.getAutismDiagnosesYear();
 
         return dto;
     }
@@ -147,11 +150,25 @@ public class UserService {
         user.setEnabled(userInputDto.getEnabled());
         user.setApikey(userInputDto.getApikey());
         user.setEmail(userInputDto.getEmail());
+        user.setName(userInputDto.getName());
+        user.setGender(userInputDto.getGender());
+        user.setDob(userInputDto.getDob());
+        user.setAutismDiagnoses(userInputDto.getAutismDiagnoses());
+        user.setAutismDiagnosesYear(userInputDto.getAutismDiagnosesYear());
+
         return user;
     }
 
     public static UserOutputDto toUserOutputDto(User user) {
-        return new UserOutputDto(user.getUsername(), user.getEmail());
+        var dto = new UserOutputDto();
+        dto.setUsername(user.getUsername());
+        dto.setEmail(user.getEmail());
+        dto.setName(user.getName());
+        dto.setGender(user.getGender());
+        dto.setDob(user.getDob());
+        dto.setAutismDiagnoses(user.getAutismDiagnoses());
+        dto.setAutismDiagnosesYear(user.getAutismDiagnosesYear());
+        return dto;
     }
 
 }
