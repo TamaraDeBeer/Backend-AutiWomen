@@ -18,7 +18,6 @@ public class UserInputDto {
     @Email
     public String email;
 
-    @NotEmpty
     public String apikey;
 
     public boolean enabled;
@@ -29,14 +28,13 @@ public class UserInputDto {
     @NotEmpty
     public String gender;
 
-    @NotEmpty
+    @NotNull
     public LocalDate dob;
 
     @NotEmpty
     public String autismDiagnoses;
 
     @Digits(integer = 4, fraction = 0)
-    @NotEmpty
     @NotNull
 //    @Max(value = MAX_YEAR)
     public Integer autismDiagnosesYear;
@@ -52,42 +50,60 @@ public class UserInputDto {
         this.autismDiagnosesYear = autismDiagnosesYear;
     }
 
-    public UserInputDto() {
-    }
-
-    public @NotEmpty String getUsername() {
-        return username;
-    }
-
-    public void setUsername(@NotEmpty String username) {
-        this.username = username;
-    }
-
-    public @NotEmpty String getPassword() {
-        return password;
-    }
-
-    public void setPassword(@NotEmpty String password) {
+    public UserInputDto(String email, String password) {
+        this.email = email;
         this.password = password;
     }
 
-    public @NotEmpty String getEmail() {
+    public UserInputDto(String username, String password, String email, String apikey, boolean enabled, String name, String gender, LocalDate dob, String autismDiagnoses, Integer autismDiagnosesYear) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.apikey = apikey;
+        this.enabled = enabled;
+        this.name = name;
+        this.gender = gender;
+        this.dob = dob;
+        this.autismDiagnoses = autismDiagnoses;
+        this.autismDiagnosesYear = autismDiagnosesYear;
+    }
+
+    public UserInputDto() {
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getEmail() {
         return email;
     }
 
-    public void setEmail(@NotEmpty String email) {
+    public void setEmail(String email) {
         this.email = email;
     }
 
-    public @NotEmpty String getApikey() {
+    public String getApikey() {
         return apikey;
     }
 
-    public void setApikey(@NotEmpty String apikey) {
+    public void setApikey(String apikey) {
         this.apikey = apikey;
     }
 
-    public boolean getEnabled() {
+    public boolean isEnabled() {
         return enabled;
     }
 
@@ -95,47 +111,43 @@ public class UserInputDto {
         this.enabled = enabled;
     }
 
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public @NotEmpty String getName() {
+    public String getName() {
         return name;
     }
 
-    public void setName(@NotEmpty String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
-    public @NotEmpty String getGender() {
+    public String getGender() {
         return gender;
     }
 
-    public void setGender(@NotEmpty String gender) {
+    public void setGender(String gender) {
         this.gender = gender;
     }
 
-    public @NotEmpty LocalDate getDob() {
+    public LocalDate getDob() {
         return dob;
     }
 
-    public void setDob(@NotEmpty LocalDate dob) {
+    public void setDob(LocalDate dob) {
         this.dob = dob;
     }
 
-    public @NotEmpty String getAutismDiagnoses() {
+    public String getAutismDiagnoses() {
         return autismDiagnoses;
     }
 
-    public void setAutismDiagnoses(@NotEmpty String autismDiagnoses) {
+    public void setAutismDiagnoses(String autismDiagnoses) {
         this.autismDiagnoses = autismDiagnoses;
     }
 
-    public @Digits(integer = 4, fraction = 0) @NotEmpty @NotNull Integer getAutismDiagnosesYear() {
+    public Integer getAutismDiagnosesYear() {
         return autismDiagnosesYear;
     }
 
-    public void setAutismDiagnosesYear(@Digits(integer = 4, fraction = 0) @NotEmpty @NotNull Integer autismDiagnosesYear) {
+    public void setAutismDiagnosesYear(Integer autismDiagnosesYear) {
         this.autismDiagnosesYear = autismDiagnosesYear;
     }
 }

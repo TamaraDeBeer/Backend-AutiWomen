@@ -52,7 +52,8 @@ public class SpringSecurityConfiguration {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
 
-                        .requestMatchers(HttpMethod.GET, "/users").hasAuthority("ADMIN")
+//                        .requestMatchers(HttpMethod.GET, "/users").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/users").permitAll()
                         .requestMatchers(HttpMethod.GET, "/users/{username}").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/users").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.DELETE,"/{username}").hasAuthority("ADMIN")
@@ -76,6 +77,7 @@ public class SpringSecurityConfiguration {
 
                         .requestMatchers(HttpMethod.GET,"/forums").permitAll()
                         .requestMatchers(HttpMethod.POST, "/register").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/login").permitAll()
 
                         .anyRequest().denyAll()
                 )

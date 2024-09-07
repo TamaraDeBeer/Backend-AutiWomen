@@ -63,11 +63,25 @@ public class UserService {
 //    }
 
     public String createUser(UserInputDto userInputDto) {
+        if (userInputDto.getPassword() == null || userInputDto.getPassword().isEmpty()) {
+            throw new IllegalArgumentException("Password cannot be null or empty");
+        }
         String randomString = RandomStringGenerator.generateAlphaNumeric(20);
         userInputDto.setApikey(randomString);
         User newUser = userRepository.save(toUser(userInputDto));
         newUser.setPassword(passwordEncoder.encode(userInputDto.getPassword()));
+        userRepository.save(newUser);
         return newUser.getUsername();
+    }
+
+    public UserOutputDto loginUser(String email, String password) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        if (passwordEncoder.matches(password, user.getPassword())) {
+            return toUserOutputDto(user);
+        } else {
+            throw new IllegalArgumentException("Invalid password");
+        }
     }
 
 
@@ -147,7 +161,7 @@ public class UserService {
         var user = new User();
         user.setUsername(userInputDto.getUsername());
         user.setPassword(userInputDto.getPassword());
-        user.setEnabled(userInputDto.getEnabled());
+//        user.setEnabled(userInputDto.getEnabled());
         user.setApikey(userInputDto.getApikey());
         user.setEmail(userInputDto.getEmail());
         user.setName(userInputDto.getName());

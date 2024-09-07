@@ -24,20 +24,20 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping(value = "users")
+    @GetMapping(value = "/users")
     public ResponseEntity<List<UserOutputDto>> getUsers() {
         List<UserOutputDto> userOutputDtos = userService.getUsers();
         return ResponseEntity.ok().body(userOutputDtos);
     }
 
-    @GetMapping(value = "users/{username}")
+    @GetMapping(value = "/users/{username}")
     public ResponseEntity<UserOutputDto> getUser(@PathVariable("username") String username) {
         UserOutputDto optionalUser = userService.getOneUser(username);
         return ResponseEntity.ok().body(optionalUser);
 
     }
 
-    @PostMapping(value = "register")
+    @PostMapping(value = "/register")
     public ResponseEntity<UserOutputDto> createUser(@Valid @RequestBody UserInputDto userInputDto) {
         String newUsername = userService.createUser(userInputDto);
         userService.addUserAuthority(newUsername, "ROLE_USER");
@@ -50,6 +50,12 @@ public class UserController {
                 .buildAndExpand(newUsername).toUri();
 
         return ResponseEntity.created(location).body(outputDto);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<UserOutputDto> loginUser(@RequestBody UserInputDto userInputDto) {
+        UserOutputDto userOutputDto = userService.loginUser(userInputDto.getEmail(), userInputDto.getPassword());
+        return ResponseEntity.ok(userOutputDto);
     }
 
     @PutMapping(value = "/{username}")
