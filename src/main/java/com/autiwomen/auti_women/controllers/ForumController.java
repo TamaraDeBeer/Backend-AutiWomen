@@ -34,13 +34,11 @@ public class ForumController {
         return ResponseEntity.ok().body(forumDto);
     }
 
-
     @PutMapping(value = "/forums/{id}/like")
     public ResponseEntity<ForumDto> likeForum(@PathVariable Long id) {
         ForumDto forumDto = forumService.likeForum(id);
         return ResponseEntity.ok().body(forumDto);
     }
-
 
     @PostMapping(value = "/forums")
     public ResponseEntity<ForumDto> createForum(@Valid @RequestBody ForumInputDto forumInputDto) {

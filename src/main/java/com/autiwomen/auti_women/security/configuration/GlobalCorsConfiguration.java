@@ -1,4 +1,4 @@
-package com.autiwomen.auti_women.configuration;
+package com.autiwomen.auti_women.security.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
