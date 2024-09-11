@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.autiwomen</groupId>
-	<artifactId>auti-women</artifactId>
+	<artifactId>Backend-AutiWomen</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>auti-women</name>
 	<description>Eindproject Backend NOVI</description>
