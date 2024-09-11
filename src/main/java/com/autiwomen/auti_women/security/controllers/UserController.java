@@ -34,7 +34,6 @@ public class UserController {
     public ResponseEntity<UserOutputDto> getUser(@PathVariable("username") String username) {
         UserOutputDto optionalUser = userService.getOneUser(username);
         return ResponseEntity.ok().body(optionalUser);
-
     }
 
     @PostMapping(value = "/register")
