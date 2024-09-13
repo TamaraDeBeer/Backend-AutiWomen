@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -43,12 +44,25 @@ public class ForumService {
         return forumDtoList;
     }
 
+//    public ForumDto createForum(ForumInputDto forumInputDto, String username) {
+//        User user = userRepository.findById(username)
+//                .orElseThrow(() -> new RecordNotFoundException("User not found"));
+//
+//        Forum forum = toForum(forumInputDto);
+//        forum.setName(user.getUsername());
+//        forum.setAge(user.getDob().toString());
+//        forum.setViews(0);
+//        forum.setLikes(0);
+//        forum.setComments(0);
+//
+//        forumRepository.save(forum);
+//        return fromForum(forum);
+//    }
+
     public ForumDto createForum(ForumInputDto forumInputDto) {
         Forum forum = toForum(forumInputDto);
-        forum.setViews(0);
-        forum.setLikes(0);
-        forum.setComments(0);
-
+//        forum.setViews(0);
+//        forum.setComments(0);
         forumRepository.save(forum);
         return fromForum(forum);
     }
@@ -98,9 +112,22 @@ public class ForumService {
         forumRepository.deleteById(id);
     }
 
-    public Set<Forum> getForumByUsername(String username) {
+    public Set<Forum> getForumsByUsername(String username) {
         User user = userRepository.findById(username).orElseThrow(() -> new RecordNotFoundException("User not found"));
         return user.getForums();
+    }
+
+    public void assignForumsToUser(Long forumId, String username) {
+        Optional<Forum> optionalForum = forumRepository.findById(forumId);
+        Optional<User> optionalUser = userRepository.findById(username);
+        if (optionalForum.isEmpty() || optionalUser.isEmpty()) {
+            throw new RecordNotFoundException("Forum or User not found");
+        } else {
+            Forum forum = optionalForum.get();
+            User user = optionalUser.get();
+            forum.setUser(user);
+            forumRepository.save(forum);
+        }
     }
 
     public ForumDto fromForum(Forum forum) {
@@ -112,9 +139,6 @@ public class ForumService {
         forumDto.text = forum.getText();
         forumDto.date = forum.getDate();
         forumDto.lastReaction = forum.getLastReaction();
-        forumDto.likes = forum.getLikes();
-        forumDto.comments = forum.getComments();
-        forumDto.views = forum.getViews();
         forumDto.topic = forum.getTopic();
 
         return forumDto;
@@ -126,7 +150,7 @@ public class ForumService {
         forum.setTitle(forumInputDto.title);
         forum.setText(forumInputDto.text);
         forum.setDate(forumInputDto.date);
-//        forum.setLastReaction(forumInputDto.lastReaction);
+        forum.setLastReaction(forumInputDto.lastReaction);
         forum.setLikes(forumInputDto.likes);
         forum.setComments(forumInputDto.comments);
         forum.setViews(forumInputDto.views);

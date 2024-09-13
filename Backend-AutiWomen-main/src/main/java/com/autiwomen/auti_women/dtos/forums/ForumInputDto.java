@@ -1,10 +1,10 @@
 package com.autiwomen.auti_women.dtos.forums;
 
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
 public class ForumInputDto {
+
     @NotEmpty
     public String name;
 
@@ -17,25 +17,42 @@ public class ForumInputDto {
 //  VARCHAR default is 250 max dus nog aan te passen met code: ALTER TABLE forum ALTER COLUMN text TYPE VARCHAR(10000)
     public String text;
 
-//    public String age;
+    public String age;
     public String date;
-//    public String lastReaction;
+    public String lastReaction;
     public Integer likes;
     public Integer comments;
     public Integer views;
     public String topic;
 
-    public ForumInputDto (String name, String title, String text, String topic, String date, Integer likes, Integer comments, Integer views) {
+    public ForumInputDto(String name, String title, String text, String age, String date, String lastReaction, Integer likes, Integer comments, Integer views, String topic) {
         this.name = name;
         this.title = title;
         this.text = text;
-        this.topic = topic;
+        this.age = age;
         this.date = date;
+        this.lastReaction = lastReaction;
         this.likes = likes;
         this.comments = comments;
         this.views = views;
+        this.topic = topic;
     }
 
+    public ForumInputDto(String title, String text) {
+        this.title = title;
+        this.text = text;
+    }
+
+    public ForumInputDto() {
+    }
+
+    public String getLastReaction() {
+        return lastReaction;
+    }
+
+    public void setLastReaction(String lastReaction) {
+        this.lastReaction = lastReaction;
+    }
 
     public String getName() {
         return name;
@@ -45,20 +62,28 @@ public class ForumInputDto {
         this.name = name;
     }
 
-    public String getTitle() {
+    public @NotEmpty @Size(min = 1, max = 50) String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
+    public void setTitle(@NotEmpty @Size(min = 1, max = 50) String title) {
         this.title = title;
     }
 
-    public String getText() {
+    public @NotEmpty @Size(min = 1, max = 4000) String getText() {
         return text;
     }
 
-    public void setText(String text) {
+    public void setText(@NotEmpty @Size(min = 1, max = 4000) String text) {
         this.text = text;
+    }
+
+    public String getAge() {
+        return age;
+    }
+
+    public void setAge(String age) {
+        this.age = age;
     }
 
     public String getDate() {

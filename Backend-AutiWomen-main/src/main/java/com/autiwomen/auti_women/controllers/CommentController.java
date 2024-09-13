@@ -13,6 +13,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
+@RequestMapping("/forums")
 public class CommentController {
 
     private final CommentService commentService;
@@ -21,22 +22,8 @@ public class CommentController {
         this.commentService = commentService;
     }
 
-//    @PostMapping("/comments")
-//    public ResponseEntity<CommentDto> createComment(@Valid @RequestBody CommentInputDto commentInputDto) {
-//        CommentDto commentDto = commentService.createComment(commentInputDto);
-//        URI uri = URI.create(ServletUriComponentsBuilder
-//                .fromCurrentRequest()
-//                .path("/" + commentDto.getId()).toUriString());
-//        return ResponseEntity.created(uri).body(commentDto);
-//    }
-
-//    @PutMapping("/comments/{id}/forum/{forumId}")
-//    public void assignCommentToForum(@PathVariable("id") Long id, @PathVariable("forumId") Long forumId) {
-//        commentService.assignCommentToForum(id, forumId);
-//    }
-
-    @PostMapping("/comments")
-    public ResponseEntity<CommentDto> createComment(@Valid @RequestBody CommentInputDto commentInputDto, @PathVariable("forumId") Long forumId) {
+    @PostMapping("/{forumId}/comments")
+    public ResponseEntity<CommentDto> createComment(@PathVariable("forumId") Long forumId, @Valid @RequestBody CommentInputDto commentInputDto) {
         CommentDto commentDto = commentService.createComment(commentInputDto);
         commentService.assignCommentToForum(commentDto.getId(), forumId);
         URI uri = URI.create(ServletUriComponentsBuilder
@@ -45,10 +32,14 @@ public class CommentController {
         return ResponseEntity.created(uri).body(commentDto);
     }
 
-    @GetMapping("/comments/{forumId}")
+    @GetMapping("/{forumId}/comments")
     public ResponseEntity<List<Comment>> getCommentsByForumId(@PathVariable("forumId") Long forumId) {
         return ResponseEntity.ok(commentService.getCommentsByForumId(forumId));
     }
 
+    @GetMapping("/{forumId}/comments/count")
+    public ResponseEntity<Integer> getCommentCountByForumId(@PathVariable("forumId") Long forumId) {
+        return ResponseEntity.ok(commentService.getCommentCountByForumId(forumId));
+    }
 
 }

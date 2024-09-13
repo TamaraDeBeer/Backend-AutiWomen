@@ -13,11 +13,12 @@ public class CommentDto {
 
     public ForumDto forumDto;
 
-    public CommentDto(Long id, String name, String text, String date) {
+    public CommentDto(String date, Long id, String name, String text, ForumDto forumDto) {
+        this.date = date;
         this.id = id;
         this.name = name;
         this.text = text;
-        this.date = date;
+        this.forumDto = forumDto;
     }
 
     public CommentDto() {

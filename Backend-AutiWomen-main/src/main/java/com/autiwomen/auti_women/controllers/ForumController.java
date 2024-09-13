@@ -12,6 +12,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Set;
 
 @CrossOrigin
 @RestController
@@ -40,9 +41,10 @@ public class ForumController {
         return ResponseEntity.ok().body(forumDto);
     }
 
-    @PostMapping(value = "/forums")
-    public ResponseEntity<ForumDto> createForum(@Valid @RequestBody ForumInputDto forumInputDto) {
+    @PostMapping(value = "/forums/{username}")
+    public ResponseEntity<ForumDto> createForum(@PathVariable("username") String username,@Valid @RequestBody ForumInputDto forumInputDto) {
         ForumDto forumDto = forumService.createForum(forumInputDto);
+        forumService.assignForumsToUser(forumDto.getId(),username);
         URI uri = URI.create(ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/" + forumDto.getId()).toUriString());
@@ -63,6 +65,11 @@ public class ForumController {
     public ResponseEntity<Forum> deleteForum(@PathVariable("id") Long id) {
         forumService.deleteForum(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/users/{username}/forums")
+    public ResponseEntity<Set<Forum>> getForumByUsername(@PathVariable("username") String username) {
+        return ResponseEntity.ok(forumService.getForumsByUsername(username));
     }
 
 }
