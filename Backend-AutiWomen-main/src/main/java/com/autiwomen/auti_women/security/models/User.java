@@ -1,5 +1,6 @@
 package com.autiwomen.auti_women.security.models;
 
+import com.autiwomen.auti_women.models.Forum;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -34,18 +35,26 @@ public class User {
             fetch = FetchType.EAGER)
     private Set<Authority> authorities = new HashSet<>();
 
-    public User(String username, String password, boolean enabled, String apikey, String email, String name, String gender, LocalDate dob, String autismDiagnoses, Integer autismDiagnosesYear, Set<Authority> authorities) {
+    @OneToMany(
+            mappedBy = "user",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.EAGER)
+    private Set<Forum> forums = new HashSet<>();
+
+    public User(String name, String username, String password, boolean enabled, String apikey, String email, String gender, LocalDate dob, String autismDiagnoses, Integer autismDiagnosesYear, Set<Authority> authorities, Set<Forum> forums) {
+        this.name = name;
         this.username = username;
         this.password = password;
         this.enabled = enabled;
         this.apikey = apikey;
         this.email = email;
-        this.name = name;
         this.gender = gender;
         this.dob = dob;
         this.autismDiagnoses = autismDiagnoses;
         this.autismDiagnosesYear = autismDiagnosesYear;
         this.authorities = authorities;
+        this.forums = forums;
     }
 
     public User() {
@@ -145,5 +154,13 @@ public class User {
 
     public void setAutismDiagnosesYear(Integer autismDiagnosesYear) {
         this.autismDiagnosesYear = autismDiagnosesYear;
+    }
+
+    public Set<Forum> getForums() {
+        return forums;
+    }
+
+    public void setForums(Set<Forum> forums) {
+        this.forums = forums;
     }
 }

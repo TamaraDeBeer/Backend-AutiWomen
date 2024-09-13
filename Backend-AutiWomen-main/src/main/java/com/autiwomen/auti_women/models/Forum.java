@@ -1,5 +1,6 @@
 package com.autiwomen.auti_women.models;
 
+import com.autiwomen.auti_women.security.models.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
@@ -26,18 +27,24 @@ public class Forum {
     @JsonIgnore
     private List<Comment> commentsList;
 
-    public Forum(Long id, String name, String age, String title, String text, String date, String lastReaction, Integer likes, Integer comments, Integer views, String topic) {
+    @ManyToOne (fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    public Forum(String text, Long id, String name, String age, String title, String date, String lastReaction, Integer likes, Integer comments, Integer views, String topic, List<Comment> commentsList, User user) {
+        this.text = text;
         this.id = id;
         this.name = name;
         this.age = age;
         this.title = title;
-        this.text = text;
         this.date = date;
         this.lastReaction = lastReaction;
         this.likes = likes;
         this.comments = comments;
         this.views = views;
         this.topic = topic;
+        this.commentsList = commentsList;
+        this.user = user;
     }
 
     public Forum() {
@@ -129,5 +136,21 @@ public class Forum {
 
     public void setTopic(String topic) {
         this.topic = topic;
+    }
+
+    public List<Comment> getCommentsList() {
+        return commentsList;
+    }
+
+    public void setCommentsList(List<Comment> commentsList) {
+        this.commentsList = commentsList;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }
