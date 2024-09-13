@@ -44,28 +44,26 @@ public class ForumService {
         return forumDtoList;
     }
 
-//    public ForumDto createForum(ForumInputDto forumInputDto, String username) {
-//        User user = userRepository.findById(username)
-//                .orElseThrow(() -> new RecordNotFoundException("User not found"));
-//
-//        Forum forum = toForum(forumInputDto);
-//        forum.setName(user.getUsername());
-//        forum.setAge(user.getDob().toString());
-//        forum.setViews(0);
-//        forum.setLikes(0);
-//        forum.setComments(0);
-//
-//        forumRepository.save(forum);
-//        return fromForum(forum);
-//    }
+    public ForumDto createForum(ForumInputDto forumInputDto, String username) {
+        User user = userRepository.findById(username)
+                .orElseThrow(() -> new RecordNotFoundException("User not found"));
 
-    public ForumDto createForum(ForumInputDto forumInputDto) {
         Forum forum = toForum(forumInputDto);
-//        forum.setViews(0);
-//        forum.setComments(0);
+        forum.setName(user.getUsername());
+        forum.setAge(user.getDob().toString());
+        forum.setViews(0);
+        forum.setLikes(0);
+        forum.setComments(0);
+
         forumRepository.save(forum);
         return fromForum(forum);
     }
+
+//    public ForumDto createForum(ForumInputDto forumInputDto) {
+//        Forum forum = toForum(forumInputDto);
+//        forumRepository.save(forum);
+//        return fromForum(forum);
+//    }
 
     public ForumDto getForumById(Long id) {
         Optional<Forum> forumId = forumRepository.findById(id);

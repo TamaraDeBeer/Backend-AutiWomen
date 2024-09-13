@@ -43,7 +43,7 @@ public class ForumController {
 
     @PostMapping(value = "/forums/{username}")
     public ResponseEntity<ForumDto> createForum(@PathVariable("username") String username,@Valid @RequestBody ForumInputDto forumInputDto) {
-        ForumDto forumDto = forumService.createForum(forumInputDto);
+        ForumDto forumDto = forumService.createForum(forumInputDto, username);
         forumService.assignForumsToUser(forumDto.getId(),username);
         URI uri = URI.create(ServletUriComponentsBuilder
                 .fromCurrentRequest()

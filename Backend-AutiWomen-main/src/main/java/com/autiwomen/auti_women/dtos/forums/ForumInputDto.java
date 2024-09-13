@@ -5,7 +5,6 @@ import jakarta.validation.constraints.Size;
 
 public class ForumInputDto {
 
-    @NotEmpty
     public String name;
 
     @NotEmpty
