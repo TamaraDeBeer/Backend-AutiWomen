@@ -1,5 +1,6 @@
 package com.autiwomen.auti_women.security.models;
 
+import com.autiwomen.auti_women.models.Comment;
 import com.autiwomen.auti_women.models.Forum;
 import jakarta.persistence.*;
 
@@ -43,7 +44,14 @@ public class User {
             fetch = FetchType.EAGER)
     private Set<Forum> forums = new HashSet<>();
 
-    public User(String name, String username, String password, boolean enabled, String apikey, String email, String gender, LocalDate dob, String autismDiagnoses, Integer autismDiagnosesYear, Set<Authority> authorities, Set<Forum> forums) {
+    @OneToMany(
+            mappedBy = "user",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.EAGER)
+    private Set<Comment> Comments = new HashSet<>();
+
+    public User(String name, String username, String password, boolean enabled, String apikey, String email, String gender, LocalDate dob, String autismDiagnoses, Integer autismDiagnosesYear, Set<Authority> authorities, Set<Forum> forums, Set<Comment> comments) {
         this.name = name;
         this.username = username;
         this.password = password;
@@ -56,6 +64,7 @@ public class User {
         this.autismDiagnosesYear = autismDiagnosesYear;
         this.authorities = authorities;
         this.forums = forums;
+        Comments = comments;
     }
 
     public User() {
@@ -163,5 +172,13 @@ public class User {
 
     public void setForums(Set<Forum> forums) {
         this.forums = forums;
+    }
+
+    public Set<Comment> getComments() {
+        return Comments;
+    }
+
+    public void setComments(Set<Comment> comments) {
+        Comments = comments;
     }
 }

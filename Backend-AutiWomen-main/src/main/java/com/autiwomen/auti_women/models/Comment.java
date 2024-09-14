@@ -1,6 +1,7 @@
 package com.autiwomen.auti_women.models;
 
 
+import com.autiwomen.auti_women.security.models.User;
 import jakarta.persistence.*;
 
 @Entity
@@ -18,12 +19,17 @@ public class Comment {
     @JoinColumn(name = "forum_id")
     private Forum forum;
 
-    public Comment(Long id, String name, String text, String date, Forum forum) {
+    @ManyToOne (fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    public Comment(Long id, String name, String text, String date, Forum forum , User user) {
         this.id = id;
         this.name = name;
         this.text = text;
         this.date = date;
         this.forum = forum;
+        this.user = user;
     }
 
     public Comment() {
@@ -67,5 +73,13 @@ public class Comment {
 
     public void setForum(Forum forum) {
         this.forum = forum;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }
