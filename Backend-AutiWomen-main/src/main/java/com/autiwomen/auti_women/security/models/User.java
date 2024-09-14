@@ -2,6 +2,7 @@ package com.autiwomen.auti_women.security.models;
 
 import com.autiwomen.auti_women.models.Comment;
 import com.autiwomen.auti_women.models.Forum;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -34,21 +35,22 @@ public class User {
             mappedBy = "username",
             cascade = CascadeType.ALL,
             orphanRemoval = true,
-            fetch = FetchType.EAGER)
+            fetch = FetchType.LAZY)
     private Set<Authority> authorities = new HashSet<>();
 
     @OneToMany(
             mappedBy = "user",
             cascade = CascadeType.ALL,
             orphanRemoval = true,
-            fetch = FetchType.EAGER)
+            fetch = FetchType.LAZY)
     private Set<Forum> forums = new HashSet<>();
 
     @OneToMany(
             mappedBy = "user",
             cascade = CascadeType.ALL,
             orphanRemoval = true,
-            fetch = FetchType.EAGER)
+            fetch = FetchType.LAZY)
+    @JsonIgnore
     private Set<Comment> Comments = new HashSet<>();
 
     public User(String name, String username, String password, boolean enabled, String apikey, String email, String gender, LocalDate dob, String autismDiagnoses, Integer autismDiagnosesYear, Set<Authority> authorities, Set<Forum> forums, Set<Comment> comments) {

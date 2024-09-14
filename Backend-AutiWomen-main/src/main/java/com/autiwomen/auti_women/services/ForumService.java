@@ -7,13 +7,11 @@ import com.autiwomen.auti_women.models.Forum;
 import com.autiwomen.auti_women.repositories.ForumRepository;
 import com.autiwomen.auti_women.security.UserRepository;
 import com.autiwomen.auti_women.security.models.User;
-import com.autiwomen.auti_women.security.services.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -24,12 +22,10 @@ public class ForumService {
 
     private final ForumRepository forumRepository;
     private final UserRepository userRepository;
-    private final UserService userService;
 
-    public ForumService(ForumRepository forumRepository, UserRepository userRepository, UserService userService) {
+    public ForumService(ForumRepository forumRepository, UserRepository userRepository) {
         this.forumRepository = forumRepository;
         this.userRepository = userRepository;
-        this.userService = userService;
     }
 
 

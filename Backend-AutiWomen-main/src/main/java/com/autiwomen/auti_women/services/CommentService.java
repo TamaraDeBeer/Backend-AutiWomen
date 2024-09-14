@@ -9,7 +9,6 @@ import com.autiwomen.auti_women.repositories.CommentRepository;
 import com.autiwomen.auti_women.repositories.ForumRepository;
 import com.autiwomen.auti_women.security.UserRepository;
 import com.autiwomen.auti_women.security.models.User;
-import com.autiwomen.auti_women.security.services.UserService;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -23,14 +22,12 @@ public class CommentService {
     private final ForumRepository forumRepository;
     private final ForumService forumService;
     private final UserRepository userRepository;
-    private final UserService userService;
 
-    public CommentService(CommentRepository commentRepository, ForumRepository forumRepository, ForumService forumService, UserRepository userRepository, UserService userService) {
+    public CommentService(CommentRepository commentRepository, ForumRepository forumRepository, ForumService forumService, UserRepository userRepository) {
         this.commentRepository = commentRepository;
         this.forumRepository = forumRepository;
         this.forumService = forumService;
         this.userRepository = userRepository;
-        this.userService = userService;
     }
 
     public CommentDto createComment(CommentInputDto commentInputDto, String username) {
@@ -76,11 +73,14 @@ public class CommentService {
         return forum.getCommentsList();
     }
 
-    public Set<Comment> getCommentsbyUsername(String username) {
-        User user = userRepository.findById(username).orElseThrow(() -> new RecordNotFoundException("User not found"));
+    public Set<Comment> getCommentsByUsername(String username) {
+        Optional<User> optionalUser = userRepository.findById(username);
+        if (optionalUser.isEmpty()) {
+            throw new RecordNotFoundException("User not found");
+        }
+        User user = optionalUser.get();
         return user.getComments();
     }
-
 
     public int getCommentCountByForumId(Long forumId) {
         Forum forum = forumRepository.findById(forumId).orElseThrow(() -> new RecordNotFoundException("Forum not found"));

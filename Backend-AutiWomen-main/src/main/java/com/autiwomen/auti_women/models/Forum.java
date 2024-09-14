@@ -23,11 +23,11 @@ public class Forum {
     private Integer views;
     private String topic;
 
-    @OneToMany(mappedBy = "forum")
+    @OneToMany(mappedBy = "forum", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Comment> commentsList;
 
-    @ManyToOne (fetch = FetchType.EAGER)
+    @ManyToOne (fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
