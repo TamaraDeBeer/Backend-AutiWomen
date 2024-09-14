@@ -10,9 +10,11 @@ import com.autiwomen.auti_women.repositories.ForumRepository;
 import com.autiwomen.auti_women.security.UserRepository;
 import com.autiwomen.auti_women.security.models.User;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.time.LocalDateTime;
 
 
 @Service
@@ -37,6 +39,7 @@ public class CommentService {
         Comment comment = toComment(commentInputDto);
         comment.setName(user.getUsername());
         comment.setAge(user.getDob().toString());
+        comment.setDate(String.valueOf(LocalDateTime.now()));
         commentRepository.save(comment);
         return fromComment(comment);
     }
@@ -88,6 +91,9 @@ public class CommentService {
         int commentCount = comments.size();
         return commentCount;
     }
+
+//    delete comment
+//    update comment
 
     public CommentDto fromComment(Comment comment) {
         var commentDto = new CommentDto();

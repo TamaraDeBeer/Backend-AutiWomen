@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.time.LocalDateTime;
 
 @Service
 public class ForumService {
@@ -47,6 +48,7 @@ public class ForumService {
         Forum forum = toForum(forumInputDto);
         forum.setName(user.getUsername());
         forum.setAge(user.getDob().toString());
+        forum.setDate(String.valueOf(LocalDateTime.now()));
         forum.setViews(0);
         forum.setLikes(0);
         forum.setComments(0);

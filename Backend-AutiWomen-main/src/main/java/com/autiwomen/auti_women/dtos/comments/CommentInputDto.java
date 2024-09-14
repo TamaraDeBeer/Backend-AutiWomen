@@ -11,6 +11,7 @@ public class CommentInputDto {
     @NotEmpty
     @Size(min = 1, max = 1000)
     public String text;
+
     public String date;
 
     public String age;
