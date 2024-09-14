@@ -59,12 +59,6 @@ public class ForumService {
         return fromForum(forum);
     }
 
-//    public ForumDto createForum(ForumInputDto forumInputDto) {
-//        Forum forum = toForum(forumInputDto);
-//        forumRepository.save(forum);
-//        return fromForum(forum);
-//    }
-
     public ForumDto getForumById(Long id) {
         Optional<Forum> forumId = forumRepository.findById(id);
         if (forumId.isPresent()) {

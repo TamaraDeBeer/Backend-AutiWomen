@@ -14,6 +14,7 @@ public class Comment {
     private String name;
     private String text;
     private String date;
+    private String age;
 
     @ManyToOne (fetch = FetchType.EAGER)
     @JoinColumn(name = "forum_id")
@@ -23,11 +24,11 @@ public class Comment {
     @JoinColumn(name = "user_id")
     private User user;
 
-    public Comment(Long id, String name, String text, String date, Forum forum , User user) {
-        this.id = id;
+    public Comment(String name, String text, String date, String age, Forum forum, User user) {
         this.name = name;
         this.text = text;
         this.date = date;
+        this.age = age;
         this.forum = forum;
         this.user = user;
     }
@@ -81,5 +82,13 @@ public class Comment {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public String getAge() {
+        return age;
+    }
+
+    public void setAge(String age) {
+        this.age = age;
     }
 }

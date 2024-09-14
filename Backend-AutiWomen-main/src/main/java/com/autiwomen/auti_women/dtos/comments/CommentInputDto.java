@@ -6,7 +6,6 @@ import jakarta.validation.constraints.Size;
 
 public class CommentInputDto {
 
-    @NotEmpty
     public String name;
 
     @NotEmpty
@@ -14,11 +13,13 @@ public class CommentInputDto {
     public String text;
     public String date;
 
-    public CommentInputDto(String name, String text, String date) {
+    public String age;
+
+    public CommentInputDto(String name, String text, String date, String age) {
         this.name = name;
         this.text = text;
         this.date = date;
-
+        this.age = age;
     }
 
     public CommentInputDto() {
@@ -46,6 +47,14 @@ public class CommentInputDto {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public String getAge() {
+        return age;
+    }
+
+    public void setAge(String age) {
+        this.age = age;
     }
 
 }
