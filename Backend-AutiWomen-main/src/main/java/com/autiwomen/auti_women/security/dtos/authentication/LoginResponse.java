@@ -1,18 +1,15 @@
 package com.autiwomen.auti_women.security.dtos.authentication;
 
-//public class LoginResponse {
-//
-//    private String accessToken;
-//
-//    public LoginResponse(String accessToken) {
-//        this.accessToken = accessToken;
-//    }
-//
-//    public String getAccessToken() {
-//        return accessToken;
-//    }
-//
-//}
+public class LoginResponse {
 
-public record LoginResponse(String jwt) {
+    private String jwt;
+
+    public LoginResponse(String jwt) {
+        this.jwt = jwt;
+    }
+
+    public String getJwt() {
+        return jwt;
+    }
+
 }
