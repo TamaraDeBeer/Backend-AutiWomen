@@ -6,13 +6,17 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="Backend-AutiWomen" />
+        <module name="Backend-AutiWomen (1)" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="Backend-AutiWomen" target="17" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="Backend-AutiWomen" options="-parameters" />
+      <module name="Backend-AutiWomen (1)" options="-parameters" />
     </option>
   </component>
 </project>

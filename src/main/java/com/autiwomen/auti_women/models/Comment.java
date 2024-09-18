@@ -1,6 +1,8 @@
 package com.autiwomen.auti_women.models;
 
 
+import com.autiwomen.auti_women.security.models.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -13,16 +15,24 @@ public class Comment {
     private String name;
     private String text;
     private String date;
+    private String age;
 
-    @ManyToOne (fetch = FetchType.EAGER)
+    @ManyToOne (fetch = FetchType.LAZY)
     @JoinColumn(name = "forum_id")
     private Forum forum;
 
-    public Comment(Long id, String name, String text, String date) {
-        this.id = id;
+    @ManyToOne (fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    @JsonIgnore
+    private User user;
+
+    public Comment(String name, String text, String date, String age, Forum forum, User user) {
         this.name = name;
         this.text = text;
         this.date = date;
+        this.age = age;
+        this.forum = forum;
+        this.user = user;
     }
 
     public Comment() {
@@ -66,5 +76,21 @@ public class Comment {
 
     public void setForum(Forum forum) {
         this.forum = forum;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public String getAge() {
+        return age;
+    }
+
+    public void setAge(String age) {
+        this.age = age;
     }
 }
