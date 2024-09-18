@@ -74,17 +74,6 @@ public class UserService {
         return newUser.getUsername();
     }
 
-    public UserOutputDto loginUser(String email, String password) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        if (passwordEncoder.matches(password, user.getPassword())) {
-            return toUserOutputDto(user);
-        } else {
-            throw new IllegalArgumentException("Invalid password");
-        }
-    }
-
-
     public UserDto updatePasswordUser(String username, UserDto updateUser) {
         Optional<User> userOptional = userRepository.findById(username);
         if (userOptional.isPresent()) {

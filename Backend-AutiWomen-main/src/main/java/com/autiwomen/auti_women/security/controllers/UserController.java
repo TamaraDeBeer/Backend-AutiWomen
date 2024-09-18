@@ -51,11 +51,11 @@ public class UserController {
         return ResponseEntity.created(location).body(outputDto);
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<UserOutputDto> loginUser(@RequestBody UserInputDto userInputDto) {
-        UserOutputDto userOutputDto = userService.loginUser(userInputDto.getEmail(), userInputDto.getPassword());
-        return ResponseEntity.ok(userOutputDto);
-    }
+//    @PostMapping("/login")
+//    public ResponseEntity<UserOutputDto> loginUser(@RequestBody UserInputDto userInputDto) {
+//        UserOutputDto userOutputDto = userService.loginUser(userInputDto.getEmail(), userInputDto.getPassword());
+//        return ResponseEntity.ok(userOutputDto);
+//    }
 
     @PutMapping(value = "/{username}")
     public ResponseEntity<UserDto> updatePasswordUser(@PathVariable("username") String username, @RequestBody UserDto dto) {
