@@ -5,6 +5,8 @@ import com.autiwomen.auti_women.dtos.forums.ForumInputDto;
 import com.autiwomen.auti_women.exceptions.RecordNotFoundException;
 import com.autiwomen.auti_women.models.Forum;
 import com.autiwomen.auti_women.repositories.ForumRepository;
+import com.autiwomen.auti_women.security.UserRepository;
+import com.autiwomen.auti_women.security.models.User;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,15 +15,20 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.time.LocalDateTime;
 
 @Service
 public class ForumService {
 
     private final ForumRepository forumRepository;
+    private final UserRepository userRepository;
 
-    public ForumService(ForumRepository forumRepository) {
+    public ForumService(ForumRepository forumRepository, UserRepository userRepository) {
         this.forumRepository = forumRepository;
+        this.userRepository = userRepository;
     }
+
 
     public List<ForumDto> getAllForums() {
         List<Forum> forumList = forumRepository.findAll();
@@ -34,8 +41,14 @@ public class ForumService {
         return forumDtoList;
     }
 
-    public ForumDto createForum(ForumInputDto forumInputDto) {
+    public ForumDto createForum(ForumInputDto forumInputDto, String username) {
+        User user = userRepository.findById(username)
+                .orElseThrow(() -> new RecordNotFoundException("User not found"));
+
         Forum forum = toForum(forumInputDto);
+        forum.setName(user.getUsername());
+        forum.setAge(user.getDob().toString());
+        forum.setDate(String.valueOf(LocalDateTime.now()));
         forum.setViews(0);
         forum.setLikes(0);
         forum.setComments(0);
@@ -89,6 +102,24 @@ public class ForumService {
         forumRepository.deleteById(id);
     }
 
+    public Set<Forum> getForumsByUsername(String username) {
+        User user = userRepository.findById(username).orElseThrow(() -> new RecordNotFoundException("User not found"));
+        return user.getForums();
+    }
+
+    public void assignForumsToUser(Long forumId, String username) {
+        Optional<Forum> optionalForum = forumRepository.findById(forumId);
+        Optional<User> optionalUser = userRepository.findById(username);
+        if (optionalForum.isEmpty() || optionalUser.isEmpty()) {
+            throw new RecordNotFoundException("Forum or User not found");
+        } else {
+            Forum forum = optionalForum.get();
+            User user = optionalUser.get();
+            forum.setUser(user);
+            forumRepository.save(forum);
+        }
+    }
+
     public ForumDto fromForum(Forum forum) {
         var forumDto = new ForumDto();
         forumDto.id = forum.getId();
@@ -98,9 +129,6 @@ public class ForumService {
         forumDto.text = forum.getText();
         forumDto.date = forum.getDate();
         forumDto.lastReaction = forum.getLastReaction();
-        forumDto.likes = forum.getLikes();
-        forumDto.comments = forum.getComments();
-        forumDto.views = forum.getViews();
         forumDto.topic = forum.getTopic();
 
         return forumDto;
@@ -112,7 +140,7 @@ public class ForumService {
         forum.setTitle(forumInputDto.title);
         forum.setText(forumInputDto.text);
         forum.setDate(forumInputDto.date);
-//        forum.setLastReaction(forumInputDto.lastReaction);
+        forum.setLastReaction(forumInputDto.lastReaction);
         forum.setLikes(forumInputDto.likes);
         forum.setComments(forumInputDto.comments);
         forum.setViews(forumInputDto.views);

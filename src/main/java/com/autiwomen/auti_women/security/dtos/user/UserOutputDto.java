@@ -13,6 +13,7 @@ public class UserOutputDto {
     private Integer autismDiagnosesYear;
 
 //    moet authority ook hier als output dto? Heb ik deze in de Front nodig?
+    // en forums?
 
     public UserOutputDto() {
     }

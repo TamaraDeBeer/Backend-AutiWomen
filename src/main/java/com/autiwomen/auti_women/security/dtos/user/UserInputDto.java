@@ -35,8 +35,6 @@ public class UserInputDto {
     public String autismDiagnoses;
 
     @Digits(integer = 4, fraction = 0)
-    @NotNull
-//    @Max(value = MAX_YEAR)
     public Integer autismDiagnosesYear;
 
     public UserInputDto(String username, String password, String email, String name, String gender, LocalDate dob, String autismDiagnoses, Integer autismDiagnosesYear) {
