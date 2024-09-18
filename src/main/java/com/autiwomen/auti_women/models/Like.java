@@ -49,5 +49,5 @@ public class Like {
     public void setForum(Forum forum) {
         this.forum = forum;
     }
-//    pending
+
 }
