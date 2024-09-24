@@ -10,6 +10,9 @@ import com.autiwomen.auti_women.repositories.ForumRepository;
 import com.autiwomen.auti_women.security.UserRepository;
 import com.autiwomen.auti_women.security.models.User;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Optional;
@@ -58,7 +61,7 @@ public class CommentService {
         }
     }
 
-    public void assignCommentsToUser(Long commentId, String username) {
+    public void assignCommentToUser(Long commentId, String username) {
         Optional<Comment> optionalComment = commentRepository.findById(commentId);
         Optional<User> optionalUser = userRepository.findById(username);
         if (optionalComment.isEmpty() || optionalUser.isEmpty()) {
@@ -76,7 +79,7 @@ public class CommentService {
         return forum.getCommentsList();
     }
 
-    public Set<Comment> getCommentsByUsername(String username) {
+    public List<Comment> getCommentsByUsername(String username) {
         Optional<User> optionalUser = userRepository.findById(username);
         if (optionalUser.isEmpty()) {
             throw new RecordNotFoundException("User not found");
@@ -92,8 +95,28 @@ public class CommentService {
         return commentCount;
     }
 
-//    delete comment
-//    update comment
+    public void deleteComment(@RequestParam Long commentId) {
+        Optional<Comment> optionalComment = commentRepository.findById(commentId);
+        if (optionalComment.isEmpty()) {
+            throw new RecordNotFoundException("Comment not found");
+        }
+        Comment comment = optionalComment.get();
+        commentRepository.delete(comment);
+    }
+
+    public CommentDto updateComment (@PathVariable Long commentId, @RequestBody CommentDto updateComment) {
+        Optional<Comment> comment = commentRepository.findById(commentId);
+        if (comment.isEmpty()) {
+            throw new RecordNotFoundException("Comment not found");
+        } else {
+            Comment comment1 = comment.get();
+            comment1.setText(updateComment.getText());
+            comment1.setDate(String.valueOf(LocalDateTime.now()));
+            Comment comment2 = commentRepository.save(comment1);
+
+            return fromComment(comment2);
+        }
+    }
 
     public CommentDto fromComment(Comment comment) {
         var commentDto = new CommentDto();

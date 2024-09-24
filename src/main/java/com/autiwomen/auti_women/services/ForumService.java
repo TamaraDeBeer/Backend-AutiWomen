@@ -48,7 +48,7 @@ public class ForumService {
         return fromForum(forum);
     }
 
-    public void assignForumsToUser(Long forumId, String username) {
+    public void assignForumToUser(Long forumId, String username) {
         Optional<Forum> optionalForum = forumRepository.findById(forumId);
         Optional<User> optionalUser = userRepository.findById(username);
         if (optionalForum.isEmpty() || optionalUser.isEmpty()) {

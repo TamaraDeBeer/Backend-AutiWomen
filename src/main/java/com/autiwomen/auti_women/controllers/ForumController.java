@@ -38,7 +38,7 @@ public class ForumController {
     @PostMapping(value = "/forums/{username}")
     public ResponseEntity<ForumDto> createForum(@PathVariable("username") String username,@Valid @RequestBody ForumInputDto forumInputDto) {
         ForumDto forumDto = forumService.createForum(forumInputDto, username);
-        forumService.assignForumsToUser(forumDto.getId(),username);
+        forumService.assignForumToUser(forumDto.getId(),username);
         URI uri = URI.create(ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/" + forumDto.getId()).toUriString());
@@ -48,11 +48,7 @@ public class ForumController {
     @PutMapping(value = "/forums/{id}")
     public ResponseEntity<ForumDto> updateForum(@PathVariable Long id, @RequestBody ForumDto updateForumDto) {
         ForumDto forumDto = forumService.updateForum(id, updateForumDto);
-        if (forumDto.id == null) {
-            throw new RecordNotFoundException("Er is geen forum met dit id nummer: " + id);
-        } else {
-            return ResponseEntity.ok().body(forumDto);
-        }
+        return ResponseEntity.ok().body(forumDto);
     }
 
     @DeleteMapping(value = "/forums/{id}")

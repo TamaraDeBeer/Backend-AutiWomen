@@ -27,7 +27,7 @@ public class CommentController {
     public ResponseEntity<CommentDto> createComment(@PathVariable("forumId") Long forumId, @PathVariable("username") String username, @Valid @RequestBody CommentInputDto commentInputDto) {
         CommentDto commentDto = commentService.createComment(commentInputDto, username);
         commentService.assignCommentToForum(commentDto.getId(), forumId);
-        commentService.assignCommentsToUser(commentDto.getId(), username);
+        commentService.assignCommentToUser(commentDto.getId(), username);
         URI uri = URI.create(ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/" + commentDto.getId()).toUriString());
@@ -40,13 +40,25 @@ public class CommentController {
     }
 
     @GetMapping("/users/{username}/comments")
-    public ResponseEntity<Set<Comment>> getCommentsByUser(@PathVariable("username") String username) {
+    public ResponseEntity<List<Comment>> getCommentsByUser(@PathVariable("username") String username) {
         return ResponseEntity.ok(commentService.getCommentsByUsername(username));
     }
 
     @GetMapping("/{forumId}/comments/count")
     public ResponseEntity<Integer> getCommentCountByForumId(@PathVariable("forumId") Long forumId) {
         return ResponseEntity.ok(commentService.getCommentCountByForumId(forumId));
+    }
+
+    @PutMapping("/{forumId}/comments/{commentId}")
+    public ResponseEntity<CommentDto> updateComment(@PathVariable("forumId") Long forumId, @PathVariable("commentId") Long commentId, @RequestBody CommentDto updateCommentDto) {
+        CommentDto commentDto = commentService.updateComment(commentId, updateCommentDto);
+        return ResponseEntity.ok().body(commentDto);
+    }
+
+    @DeleteMapping("/{forumId}/comments/{commentId}")
+    public ResponseEntity<Comment> deleteComment(@PathVariable("forumId") Long forumId, @PathVariable("commentId") Long commentId) {
+        commentService.deleteComment(commentId);
+        return ResponseEntity.noContent().build();
     }
 
 }
