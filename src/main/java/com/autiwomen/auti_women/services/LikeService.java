@@ -1,7 +1,5 @@
 package com.autiwomen.auti_women.services;
 
-import com.autiwomen.auti_women.dtos.forums.ForumDto;
-import com.autiwomen.auti_women.dtos.likes.LikeDto;
 import com.autiwomen.auti_women.dtos.likes.LikeInputDto;
 import com.autiwomen.auti_women.exceptions.RecordNotFoundException;
 import com.autiwomen.auti_women.models.Forum;
@@ -9,9 +7,10 @@ import com.autiwomen.auti_women.models.Like;
 import com.autiwomen.auti_women.repositories.ForumRepository;
 import com.autiwomen.auti_women.repositories.LikeRepository;
 import com.autiwomen.auti_women.security.UserRepository;
-import com.autiwomen.auti_women.security.dtos.user.UserDto;
 import com.autiwomen.auti_women.security.models.User;
 import jakarta.transaction.Transactional;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -28,11 +27,12 @@ public class LikeService {
     }
 
     @Transactional
-    public void addLike(LikeInputDto likeInputDto) {
-        Forum forum = forumRepository.findById(likeInputDto.getForum_id()).orElseThrow(() -> new RecordNotFoundException("Forum not found"));
-        User user = userRepository.findById(likeInputDto.getUsername()).orElseThrow(() -> new RecordNotFoundException("User not found"));
+    public void addLike(Long forumId) {
+        String username = getCurrentUsername();
+        Forum forum = forumRepository.findById(forumId).orElseThrow(() -> new RecordNotFoundException("Forum not found"));
+        User user = userRepository.findById(username).orElseThrow(() -> new RecordNotFoundException("User not found"));
 
-        if (likeRepository.findByForumIdAndUsername(likeInputDto.getForum_id(), likeInputDto.getUsername()) != null) {
+        if (likeRepository.findByForumIdAndUsername(forumId, username) != null) {
             throw new IllegalStateException("User has already liked this forum");
         }
 
@@ -41,8 +41,9 @@ public class LikeService {
     }
 
     @Transactional
-    public void removeLike(LikeInputDto likeInputDto) {
-        Like like = likeRepository.findByForumIdAndUsername(likeInputDto.getForum_id(), likeInputDto.getUsername());
+    public void removeLike(Long forumId) {
+        String username = getCurrentUsername();
+        Like like = likeRepository.findByForumIdAndUsername(forumId, username);
         if (like == null) {
             throw new RecordNotFoundException("Like not found");
         }
@@ -51,5 +52,14 @@ public class LikeService {
 
     public Long getLikesByForumId(Long forumId) {
         return likeRepository.countByForumId(forumId);
+    }
+
+    private String getCurrentUsername() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof UserDetails) {
+            return ((UserDetails) principal).getUsername();
+        } else {
+            return principal.toString();
+        }
     }
 }

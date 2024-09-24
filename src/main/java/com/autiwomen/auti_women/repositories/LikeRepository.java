@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface LikeRepository extends JpaRepository<Like, Long> {
     //    void deleteByUserAndForum(User user, Forum forum);
+
     @Query("SELECT COUNT(l) FROM Like l WHERE l.forum.id = :forumId")
     Long countByForumId(@Param("forumId") Long forumId);
 
