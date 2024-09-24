@@ -3,12 +3,12 @@ package com.autiwomen.auti_women.dtos.likes;
 public class LikeInputDto {
 
     public Long id;
-    public Long user_id;
+    public String username;
     public Long forum_id;
 
-    public LikeInputDto(Long id, Long user_id, Long forum_id) {
+    public LikeInputDto(Long id, String username, Long forum_id) {
         this.id = id;
-        this.user_id = user_id;
+        this.username = username;
         this.forum_id = forum_id;
     }
 
@@ -23,12 +23,12 @@ public class LikeInputDto {
         this.id = id;
     }
 
-    public Long getUser_id() {
-        return user_id;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUser_id(Long user_id) {
-        this.user_id = user_id;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public Long getForum_id() {

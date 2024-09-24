@@ -12,10 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.time.LocalDateTime;
 
 @Service
@@ -46,8 +43,8 @@ public class ForumService {
                 .orElseThrow(() -> new RecordNotFoundException("User not found"));
 
         Forum forum = toForum(forumInputDto);
-        forum.setName(user.getUsername());
-        forum.setAge(user.getDob().toString());
+//        forum.setName(user.getUsername());
+//        forum.setAge(user.getDob().toString());
         forum.setDate(String.valueOf(LocalDateTime.now()));
         forum.setViews(0);
         forum.setLikes(0);
@@ -55,6 +52,19 @@ public class ForumService {
 
         forumRepository.save(forum);
         return fromForum(forum);
+    }
+
+    public void assignForumsToUser(Long forumId, String username) {
+        Optional<Forum> optionalForum = forumRepository.findById(forumId);
+        Optional<User> optionalUser = userRepository.findById(username);
+        if (optionalForum.isEmpty() || optionalUser.isEmpty()) {
+            throw new RecordNotFoundException("Forum or User not found");
+        } else {
+            Forum forum = optionalForum.get();
+            User user = optionalUser.get();
+            forum.setUser(user);
+            forumRepository.save(forum);
+        }
     }
 
     public ForumDto getForumById(Long id) {
@@ -104,20 +114,7 @@ public class ForumService {
 
     public Set<Forum> getForumsByUsername(String username) {
         User user = userRepository.findById(username).orElseThrow(() -> new RecordNotFoundException("User not found"));
-        return user.getForums();
-    }
-
-    public void assignForumsToUser(Long forumId, String username) {
-        Optional<Forum> optionalForum = forumRepository.findById(forumId);
-        Optional<User> optionalUser = userRepository.findById(username);
-        if (optionalForum.isEmpty() || optionalUser.isEmpty()) {
-            throw new RecordNotFoundException("Forum or User not found");
-        } else {
-            Forum forum = optionalForum.get();
-            User user = optionalUser.get();
-            forum.setUser(user);
-            forumRepository.save(forum);
-        }
+        return new HashSet<>(forumRepository.findByUser(user));
     }
 
     public ForumDto fromForum(Forum forum) {
