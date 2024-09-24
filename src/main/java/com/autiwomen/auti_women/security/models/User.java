@@ -37,32 +37,43 @@ public class User {
             cascade = CascadeType.ALL,
             orphanRemoval = true,
             fetch = FetchType.EAGER)
-    @JsonManagedReference
+//    @JsonManagedReference
+    @JsonIgnore
     private Set<Authority> authorities = new HashSet<>();
 
-    @OneToMany(
-            mappedBy = "user",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true,
-            fetch = FetchType.EAGER)
-    @JsonManagedReference
-    private Set<Forum> forums = new HashSet<>();
+//    @OneToMany(
+//            mappedBy = "user",
+//            cascade = CascadeType.ALL,
+//            orphanRemoval = true,
+//            fetch = FetchType.EAGER)
+////    @JsonManagedReference
+//    @JsonIgnore
+//    private Set<Forum> forums = new HashSet<>();
 
     @OneToMany(
             mappedBy = "user",
             cascade = CascadeType.ALL,
             orphanRemoval = true,
             fetch = FetchType.EAGER)
-    @JsonManagedReference
+//    @JsonManagedReference
+    @JsonIgnore
     private List<Comment> commentsList = new ArrayList<>();
 
-    @OneToMany(
-            mappedBy = "user",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true,
-            fetch = FetchType.EAGER)
+//    @OneToMany(
+//            mappedBy = "user",
+//            cascade = CascadeType.ALL,
+//            orphanRemoval = true,
+//            fetch = FetchType.EAGER)
+////    @JsonManagedReference
+//    @JsonIgnore
+//    private Set<Like> likes = new HashSet<>();
+
+    @OneToMany(mappedBy = "user")
     @JsonManagedReference
-    private Set<Like> likes = new HashSet<>();
+    private Set<Forum> forums;
+
+    @OneToMany(mappedBy = "user")
+    private Set<Like> likes;
 
     public User(String name, String username, String password, boolean enabled, String apikey, String email, String gender, LocalDate dob, String autismDiagnoses, Integer autismDiagnosesYear, Set<Authority> authorities, Set<Forum> forums, List<Comment> commentsList, Set<Like> likes) {
         this.name = name;

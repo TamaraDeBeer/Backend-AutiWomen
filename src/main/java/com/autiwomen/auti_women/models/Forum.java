@@ -24,26 +24,37 @@ public class Forum {
     private String date;
     private String lastReaction;
 
-    @ManyToOne (fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id")
+//    @ManyToOne (fetch = FetchType.EAGER)
+//    @JoinColumn(name = "user_id")
+////    @JsonBackReference
+//    @JsonIgnore
+//    private User user;
+
+    @OneToMany(
+            mappedBy = "forum",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.EAGER)
+//    @JsonManagedReference
+    @JsonIgnore
+    private List<Comment> commentsList = new ArrayList<>();
+
+//    @OneToMany(
+//            mappedBy = "forum",
+//            cascade = CascadeType.ALL,
+//            orphanRemoval = true,
+//            fetch = FetchType.EAGER)
+////    @JsonManagedReference
+//    @JsonIgnore
+//    private Set<Like> likes = new HashSet<>();
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "username")
     @JsonBackReference
     private User user;
 
-    @OneToMany(
-            mappedBy = "forum",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true,
-            fetch = FetchType.EAGER)
-    @JsonManagedReference
-    private List<Comment> commentsList = new ArrayList<>();
-
-    @OneToMany(
-            mappedBy = "forum",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true,
-            fetch = FetchType.EAGER)
-    @JsonManagedReference
-    private Set<Like> likes = new HashSet<>();
+    @OneToMany(mappedBy = "forum")
+    private Set<Like> likes;
 
     public Forum(String text, Long id, String name, String age, String title, String date, String lastReaction, List<Comment> commentsList, User user, Set<Like> likes) {
         this.text = text;

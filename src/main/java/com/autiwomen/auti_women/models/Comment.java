@@ -20,12 +20,14 @@ public class Comment {
 
     @ManyToOne (fetch = FetchType.EAGER)
     @JoinColumn(name = "forum_id")
-    @JsonBackReference
+//    @JsonBackReference
+    @JsonIgnore
     private Forum forum;
 
     @ManyToOne (fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
-    @JsonBackReference
+//    @JsonBackReference
+    @JsonIgnore
     private User user;
 
     public Comment(String name, String text, String date, String age, Forum forum, User user) {

@@ -2,24 +2,36 @@ package com.autiwomen.auti_women.models;
 
 import com.autiwomen.auti_women.security.models.User;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "likes")
 public class Like {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    @JsonBackReference
-    private User user;
+//    @ManyToOne
+//    @JoinColumn(name = "user_id")
+////    @JsonBackReference
+//    @JsonIgnore
+//    private User user;
+//
+//    @ManyToOne
+//    @JoinColumn(name = "forum_id")
+////    @JsonBackReference
+//    @JsonIgnore
+//    private Forum forum;
 
     @ManyToOne
     @JoinColumn(name = "forum_id", nullable = false)
-    @JsonBackReference
     private Forum forum;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     public Like() {
     }

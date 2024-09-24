@@ -43,6 +43,8 @@ public class ForumService {
 
         Forum forum = toForum(forumInputDto);
         forum.setDate(String.valueOf(LocalDateTime.now()));
+        forum.setName(user.getUsername());
+        forum.setAge(user.getDob().toString());
 
         forumRepository.save(forum);
         return fromForum(forum);
