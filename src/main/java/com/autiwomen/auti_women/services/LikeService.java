@@ -31,6 +31,11 @@ public class LikeService {
         Forum forum = forumRepository.findById(forumId)
                 .orElseThrow(() -> new RecordNotFoundException("Forum not found"));
 
+        Optional<Like> existingLike = likeRepository.findByUserAndForum(user, forum);
+        if (existingLike.isPresent()) {
+            throw new IllegalStateException("User has already liked this forum");
+        }
+
         Like like = new Like(user, forum);
         likeRepository.save(like);
     }
