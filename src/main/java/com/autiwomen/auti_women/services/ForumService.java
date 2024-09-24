@@ -5,6 +5,7 @@ import com.autiwomen.auti_women.dtos.forums.ForumInputDto;
 import com.autiwomen.auti_women.exceptions.RecordNotFoundException;
 import com.autiwomen.auti_women.models.Forum;
 import com.autiwomen.auti_women.repositories.ForumRepository;
+import com.autiwomen.auti_women.repositories.LikeRepository;
 import com.autiwomen.auti_women.security.UserRepository;
 import com.autiwomen.auti_women.security.models.User;
 import org.springframework.stereotype.Service;
@@ -14,16 +15,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.*;
 import java.time.LocalDateTime;
+import java.util.stream.Collectors;
 
 @Service
 public class ForumService {
 
     private final ForumRepository forumRepository;
     private final UserRepository userRepository;
+    private final LikeRepository likeRepository;
 
-    public ForumService(ForumRepository forumRepository, UserRepository userRepository) {
+    public ForumService(ForumRepository forumRepository, UserRepository userRepository, LikeRepository likeRepository) {
         this.forumRepository = forumRepository;
         this.userRepository = userRepository;
+        this.likeRepository = likeRepository;
     }
 
     public List<ForumDto> getAllForums() {
@@ -31,9 +35,11 @@ public class ForumService {
         List<ForumDto> forumDtoList = new ArrayList<>();
 
         for (Forum forum : forumList) {
-            ForumDto forumDto = fromForum(forum);
-            forumDtoList.add(forumDto);
+            int likeCount = likeRepository.getLikeCountByForumId(forum.getId());
+            forum.setLikesCount(likeCount);
+            forumDtoList.add(fromForum(forum));
         }
+
         return forumDtoList;
     }
 
@@ -67,6 +73,8 @@ public class ForumService {
         Optional<Forum> forumId = forumRepository.findById(id);
         if (forumId.isPresent()) {
             Forum forum = forumId.get();
+            int likeCount = likeRepository.getLikeCountByForumId(forum.getId());
+            forum.setLikesCount(likeCount);
             return fromForum(forum);
         } else {
             throw new RecordNotFoundException("Er is geen forum gevonden met id: " + id);
@@ -106,6 +114,7 @@ public class ForumService {
         forumDto.text = forum.getText();
         forumDto.date = forum.getDate();
         forumDto.lastReaction = forum.getLastReaction();
+        forumDto.likesCount = forum.getLikesCount();
 
         return forumDto;
     }

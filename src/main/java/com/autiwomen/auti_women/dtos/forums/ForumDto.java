@@ -12,10 +12,11 @@ public class ForumDto {
     public String text;
     public String date;
     public String lastReaction;
+    public int likesCount;
 
     public UserDto userDto;
 
-    public ForumDto (Long id, String name, String age, String title, String text, String date, String lastReaction, UserDto userDto) {
+    public ForumDto (Long id, String name, String age, String title, String text, String date, String lastReaction, UserDto userDto, int likesCount) {
         this.id = id;
         this.name = name;
         this.age = age;
@@ -24,6 +25,7 @@ public class ForumDto {
         this.date = date;
         this.lastReaction = lastReaction;
         this.userDto = userDto;
+        this.likesCount = likesCount;
     }
 
     public ForumDto() {
@@ -91,5 +93,13 @@ public class ForumDto {
 
     public void setUserDto(UserDto userDto) {
         this.userDto = userDto;
+    }
+
+    public int getLikesCount() {
+        return likesCount;
+    }
+
+    public void setLikesCount(int likesCount) {
+        this.likesCount = likesCount;
     }
 }
