@@ -1,6 +1,7 @@
 package com.autiwomen.auti_women.models;
 
 import com.autiwomen.auti_women.security.models.User;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 @Entity
@@ -12,10 +13,12 @@ public class Like {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonBackReference
     private User user;
 
     @ManyToOne
     @JoinColumn(name = "forum_id", nullable = false)
+    @JsonBackReference
     private Forum forum;
 
     public Like() {

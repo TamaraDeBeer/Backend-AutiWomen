@@ -26,7 +26,6 @@ public class ForumService {
         this.userRepository = userRepository;
     }
 
-
     public List<ForumDto> getAllForums() {
         List<Forum> forumList = forumRepository.findAll();
         List<ForumDto> forumDtoList = new ArrayList<>();
@@ -43,12 +42,7 @@ public class ForumService {
                 .orElseThrow(() -> new RecordNotFoundException("User not found"));
 
         Forum forum = toForum(forumInputDto);
-//        forum.setName(user.getUsername());
-//        forum.setAge(user.getDob().toString());
         forum.setDate(String.valueOf(LocalDateTime.now()));
-        forum.setViews(0);
-        forum.setLikes(0);
-        forum.setComments(0);
 
         forumRepository.save(forum);
         return fromForum(forum);
@@ -71,24 +65,9 @@ public class ForumService {
         Optional<Forum> forumId = forumRepository.findById(id);
         if (forumId.isPresent()) {
             Forum forum = forumId.get();
-            forum.setViews(forum.getViews() + 1);
             return fromForum(forum);
         } else {
             throw new RecordNotFoundException("Er is geen forum gevonden met id: " + id);
-        }
-    }
-
-    public ForumDto likeForum(@PathVariable Long id) {
-        Optional<Forum> forum = forumRepository.findById(id);
-        if (forum.isEmpty()) {
-            throw new RecordNotFoundException("Er is geen forum gevonden met id: " + id);
-        } else {
-            Forum forum1 = forum.get();
-            forum1.setLikes(forum1.getLikes() + 1);
-
-            Forum forum2 = forumRepository.save(forum1);
-
-            return fromForum(forum2);
         }
     }
 
@@ -101,7 +80,6 @@ public class ForumService {
             forum1.setName(updateForum.getName());
             forum1.setTitle(updateForum.getTitle());
             forum1.setText(updateForum.getText());
-            forum1.setTopic(updateForum.getTopic());
             Forum forum2 = forumRepository.save(forum1);
 
             return fromForum(forum2);
@@ -126,7 +104,6 @@ public class ForumService {
         forumDto.text = forum.getText();
         forumDto.date = forum.getDate();
         forumDto.lastReaction = forum.getLastReaction();
-        forumDto.topic = forum.getTopic();
 
         return forumDto;
     }
@@ -138,13 +115,8 @@ public class ForumService {
         forum.setText(forumInputDto.text);
         forum.setDate(forumInputDto.date);
         forum.setLastReaction(forumInputDto.lastReaction);
-        forum.setLikes(forumInputDto.likes);
-        forum.setComments(forumInputDto.comments);
-        forum.setViews(forumInputDto.views);
-        forum.setTopic(forumInputDto.topic);
 
         return forum;
     }
-
 
 }

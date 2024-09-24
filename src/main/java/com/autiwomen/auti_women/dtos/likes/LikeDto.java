@@ -7,13 +7,10 @@ import jakarta.validation.Valid;
 @Valid
 public class LikeDto {
     public Long id;
-    public UserDto userDto;
-    public ForumDto forumDto;
 
-    public LikeDto(Long id, UserDto userDto, ForumDto forumDto) {
+
+    public LikeDto(Long id) {
         this.id = id;
-        this.userDto = userDto;
-        this.forumDto = forumDto;
     }
 
     public LikeDto() {
@@ -27,19 +24,4 @@ public class LikeDto {
         this.id = id;
     }
 
-    public UserDto getUserDto() {
-        return userDto;
-    }
-
-    public void setUserDto(UserDto userDto) {
-        this.userDto = userDto;
-    }
-
-    public ForumDto getForumDto() {
-        return forumDto;
-    }
-
-    public void setForumDto(ForumDto forumDto) {
-        this.forumDto = forumDto;
-    }
 }

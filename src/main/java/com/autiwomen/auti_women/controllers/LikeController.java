@@ -31,4 +31,10 @@ public class LikeController {
         Long likeCount = likeService.getLikesByForumId(forumId);
         return ResponseEntity.ok(likeCount);
     }
+
+    //    @PutMapping(value = "/forums/{id}/like")
+//    public ResponseEntity<ForumDto> likeForum(@PathVariable Long id) {
+//        ForumDto forumDto = forumService.likeForum(id);
+//        return ResponseEntity.ok().body(forumDto);
+//    }
 }

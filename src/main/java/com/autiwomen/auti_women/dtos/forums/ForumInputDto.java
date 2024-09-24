@@ -19,22 +19,14 @@ public class ForumInputDto {
     public String age;
     public String date;
     public String lastReaction;
-    public Integer likes;
-    public Integer comments;
-    public Integer views;
-    public String topic;
 
-    public ForumInputDto(String name, String title, String text, String age, String date, String lastReaction, Integer likes, Integer comments, Integer views, String topic) {
+    public ForumInputDto(String name, String title, String text, String age, String date, String lastReaction) {
         this.name = name;
         this.title = title;
         this.text = text;
         this.age = age;
         this.date = date;
         this.lastReaction = lastReaction;
-        this.likes = likes;
-        this.comments = comments;
-        this.views = views;
-        this.topic = topic;
     }
 
     public ForumInputDto(String title, String text) {
@@ -93,35 +85,4 @@ public class ForumInputDto {
         this.date = date;
     }
 
-    public Integer getLikes() {
-        return likes;
-    }
-
-    public void setLikes(Integer likes) {
-        this.likes = likes;
-    }
-
-    public Integer getComments() {
-        return comments;
-    }
-
-    public void setComments(Integer comments) {
-        this.comments = comments;
-    }
-
-    public Integer getViews() {
-        return views;
-    }
-
-    public void setViews(Integer views) {
-        this.views = views;
-    }
-
-    public String getTopic() {
-        return topic;
-    }
-
-    public void setTopic(String topic) {
-        this.topic = topic;
-    }
 }

@@ -82,7 +82,7 @@ public class CommentService {
             throw new RecordNotFoundException("User not found");
         }
         User user = optionalUser.get();
-        return user.getComments();
+        return user.getCommentsList();
     }
 
     public int getCommentCountByForumId(Long forumId) {

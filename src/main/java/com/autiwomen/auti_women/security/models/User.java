@@ -2,13 +2,13 @@ package com.autiwomen.auti_women.security.models;
 
 import com.autiwomen.auti_women.models.Comment;
 import com.autiwomen.auti_women.models.Forum;
+import com.autiwomen.auti_women.models.Like;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "users")
@@ -17,6 +17,7 @@ public class User {
     @Column(nullable = false, unique = true)
     private String username;
     @Column(nullable = false)
+    @JsonIgnore
     private String password;
     @Column(nullable = false)
     private boolean enabled = true;
@@ -36,6 +37,7 @@ public class User {
             cascade = CascadeType.ALL,
             orphanRemoval = true,
             fetch = FetchType.EAGER)
+    @JsonManagedReference
     private Set<Authority> authorities = new HashSet<>();
 
     @OneToMany(
@@ -43,6 +45,7 @@ public class User {
             cascade = CascadeType.ALL,
             orphanRemoval = true,
             fetch = FetchType.EAGER)
+    @JsonManagedReference
     private Set<Forum> forums = new HashSet<>();
 
     @OneToMany(
@@ -50,10 +53,18 @@ public class User {
             cascade = CascadeType.ALL,
             orphanRemoval = true,
             fetch = FetchType.EAGER)
-    @JsonIgnore
-    private Set<Comment> Comments = new HashSet<>();
+    @JsonManagedReference
+    private List<Comment> commentsList = new ArrayList<>();
 
-    public User(String name, String username, String password, boolean enabled, String apikey, String email, String gender, LocalDate dob, String autismDiagnoses, Integer autismDiagnosesYear, Set<Authority> authorities, Set<Forum> forums, Set<Comment> comments) {
+    @OneToMany(
+            mappedBy = "user",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.EAGER)
+    @JsonManagedReference
+    private Set<Like> likes = new HashSet<>();
+
+    public User(String name, String username, String password, boolean enabled, String apikey, String email, String gender, LocalDate dob, String autismDiagnoses, Integer autismDiagnosesYear, Set<Authority> authorities, Set<Forum> forums, List<Comment> commentsList, Set<Like> likes) {
         this.name = name;
         this.username = username;
         this.password = password;
@@ -66,7 +77,8 @@ public class User {
         this.autismDiagnosesYear = autismDiagnosesYear;
         this.authorities = authorities;
         this.forums = forums;
-        Comments = comments;
+        this.commentsList = commentsList;
+        this.likes = likes;
     }
 
     public User() {
@@ -176,11 +188,19 @@ public class User {
         this.forums = forums;
     }
 
-    public Set<Comment> getComments() {
-        return Comments;
+    public List<Comment> getCommentsList() {
+        return commentsList;
     }
 
-    public void setComments(Set<Comment> comments) {
-        Comments = comments;
+    public void setCommentsList(List<Comment> commentsList) {
+        this.commentsList = commentsList;
+    }
+
+    public Set<Like> getLikes() {
+        return likes;
+    }
+
+    public void setLikes(Set<Like> likes) {
+        this.likes = likes;
     }
 }

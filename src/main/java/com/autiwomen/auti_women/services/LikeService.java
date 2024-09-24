@@ -62,4 +62,18 @@ public class LikeService {
             return principal.toString();
         }
     }
+
+    //    public ForumDto likeForum(@PathVariable Long id) {
+//        Optional<Forum> forum = forumRepository.findById(id);
+//        if (forum.isEmpty()) {
+//            throw new RecordNotFoundException("Er is geen forum gevonden met id: " + id);
+//        } else {
+//            Forum forum1 = forum.get();
+//            forum1.setLikes(forum1.getLikes() + 1);
+//
+//            Forum forum2 = forumRepository.save(forum1);
+//
+//            return fromForum(forum2);
+//        }
+//    }
 }
