@@ -36,6 +36,10 @@ public class Forum {
 //    @JsonIgnore
 //    private User user;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "topic_id", referencedColumnName = "id")
+    private Topic topic;
+
     @OneToMany(
             mappedBy = "forum",
             cascade = CascadeType.ALL,
@@ -65,7 +69,7 @@ public class Forum {
     @OneToMany(mappedBy = "forum")
     private Set<View> views;
 
-    public Forum(Long id, String name, String age, String title, String text, String date, String lastReaction, int likesCount, int viewsCount, int commentsCount, List<Comment> commentsList, User user, Set<Like> likes, Set<View> views) {
+    public Forum(Long id, String name, String age, String title, String text, String date, String lastReaction, int likesCount, int viewsCount, int commentsCount, Topic topic, List<Comment> commentsList, User user, Set<Like> likes, Set<View> views) {
         this.id = id;
         this.name = name;
         this.age = age;
@@ -76,6 +80,7 @@ public class Forum {
         this.likesCount = likesCount;
         this.viewsCount = viewsCount;
         this.commentsCount = commentsCount;
+        this.topic = topic;
         this.commentsList = commentsList;
         this.user = user;
         this.likes = likes;
@@ -195,5 +200,13 @@ public class Forum {
 
     public void setViews(Set<View> views) {
         this.views = views;
+    }
+
+    public Topic getTopic() {
+        return topic;
+    }
+
+    public void setTopic(Topic topic) {
+        this.topic = topic;
     }
 }
