@@ -105,6 +105,22 @@ public class ForumService {
         return new HashSet<>(forumRepository.findByUser(user));
     }
 
+    public Set<ForumDto> getLikedForumsByUsername(String username) {
+        User user = userRepository.findById(username)
+                .orElseThrow(() -> new RecordNotFoundException("User not found"));
+        Set<Forum> likedForums = likeRepository.findLikedForumsByUser(user);
+        Set<ForumDto> likedForumDtos = new HashSet<>();
+
+        for (Forum forum : likedForums) {
+            if (forum != null) {
+                ForumDto forumDto = fromForum(forum);
+                likedForumDtos.add(forumDto);
+            }
+        }
+
+        return likedForumDtos;
+    }
+
     public ForumDto fromForum(Forum forum) {
         var forumDto = new ForumDto();
         forumDto.id = forum.getId();
