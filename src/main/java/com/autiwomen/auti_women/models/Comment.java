@@ -14,6 +14,8 @@ public class Comment {
     @GeneratedValue
     private Long id;
     private String name;
+
+    @Column(length = 2000)
     private String text;
     private String date;
     private String age;

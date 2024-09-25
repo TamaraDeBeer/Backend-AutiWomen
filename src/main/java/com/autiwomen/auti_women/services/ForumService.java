@@ -3,6 +3,7 @@ package com.autiwomen.auti_women.services;
 import com.autiwomen.auti_women.dtos.forums.ForumDto;
 import com.autiwomen.auti_women.dtos.forums.ForumInputDto;
 import com.autiwomen.auti_women.exceptions.RecordNotFoundException;
+import com.autiwomen.auti_women.models.Comment;
 import com.autiwomen.auti_women.models.Forum;
 import com.autiwomen.auti_women.repositories.CommentRepository;
 import com.autiwomen.auti_women.repositories.ForumRepository;
@@ -17,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.*;
 import java.time.LocalDateTime;
-import java.util.stream.Collectors;
 
 @Service
 public class ForumService {
@@ -79,6 +79,15 @@ public class ForumService {
             Forum forum = optionalForum.get();
             User user = optionalUser.get();
             forum.setUser(user);
+            forumRepository.save(forum);
+        }
+    }
+
+    public void updateLastReaction(Long forumId) {
+        Optional<Comment> lastComment = commentRepository.findTopByForumIdOrderByDateDesc(forumId);
+        if (lastComment.isPresent()) {
+            Forum forum = forumRepository.findById(forumId).orElseThrow(() -> new RecordNotFoundException("Forum not found"));
+            forum.setLastReaction(String.valueOf(LocalDateTime.now()));
             forumRepository.save(forum);
         }
     }

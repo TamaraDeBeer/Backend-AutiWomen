@@ -80,6 +80,4 @@ public class ForumController {
         return ResponseEntity.ok(commentedForums);
     }
 
-
-
 }

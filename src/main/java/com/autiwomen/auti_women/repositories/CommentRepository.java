@@ -15,6 +15,7 @@ import java.util.Set;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
     Optional<Comment> findCommentsByUserAndForum(User user, Forum forum);
+    Optional<Comment> findTopByForumIdOrderByDateDesc(Long forumId);
 
     @Query("SELECT COUNT(c) FROM Comment c WHERE c.forum.id = :forumId")
     int getCommentCountByForumId(@Param("forumId") Long forumId);

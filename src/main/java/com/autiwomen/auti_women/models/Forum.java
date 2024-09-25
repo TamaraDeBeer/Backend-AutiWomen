@@ -20,7 +20,10 @@ public class Forum {
     private String name;
     private String age;
     private String title;
+
+    @Column(length = 4000)
     private String text;
+
     private String date;
     private String lastReaction;
     private int likesCount;

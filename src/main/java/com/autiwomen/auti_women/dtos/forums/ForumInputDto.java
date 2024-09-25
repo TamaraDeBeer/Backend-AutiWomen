@@ -13,7 +13,6 @@ public class ForumInputDto {
 
     @NotEmpty
     @Size(min = 1, max = 4000)
-//  VARCHAR default is 250 max dus nog aan te passen met code: ALTER TABLE forum ALTER COLUMN text TYPE VARCHAR(10000)
     public String text;
 
     public String age;
