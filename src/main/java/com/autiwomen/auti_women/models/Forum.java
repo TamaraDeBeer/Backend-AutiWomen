@@ -57,18 +57,22 @@ public class Forum {
     @OneToMany(mappedBy = "forum")
     private Set<Like> likes;
 
-    public Forum(String text, Long id, String name, String age, String title, String date, String lastReaction, List<Comment> commentsList, User user, Set<Like> likes, int likesCount) {
-        this.text = text;
+    @OneToMany(mappedBy = "forum")
+    private Set<View> views;
+
+    public Forum(String date, Long id, String name, String age, String title, String text, String lastReaction, int likesCount, List<Comment> commentsList, User user, Set<Like> likes, Set<View> views) {
+        this.date = date;
         this.id = id;
         this.name = name;
         this.age = age;
         this.title = title;
-        this.date = date;
+        this.text = text;
         this.lastReaction = lastReaction;
+        this.likesCount = likesCount;
         this.commentsList = commentsList;
         this.user = user;
         this.likes = likes;
-        this.likesCount = likesCount;
+        this.views = views;
     }
 
     public Forum() {
@@ -160,5 +164,13 @@ public class Forum {
 
     public void setLikesCount(int likesCount) {
         this.likesCount = likesCount;
+    }
+
+    public Set<View> getViews() {
+        return views;
+    }
+
+    public void setViews(Set<View> views) {
+        this.views = views;
     }
 }
