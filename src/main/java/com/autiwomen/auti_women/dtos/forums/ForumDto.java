@@ -14,10 +14,11 @@ public class ForumDto {
     public String lastReaction;
     public int likesCount;
     public int viewsCount;
+    public int commentsCount;
 
     public UserDto userDto;
 
-    public ForumDto(Long id, String name, String age, String title, String text, String date, String lastReaction, int likesCount, int viewsCount, UserDto userDto) {
+    public ForumDto(Long id, String name, String age, String title, String text, String date, String lastReaction, int likesCount, int viewsCount, int commentsCount, UserDto userDto) {
         this.id = id;
         this.name = name;
         this.age = age;
@@ -27,6 +28,7 @@ public class ForumDto {
         this.lastReaction = lastReaction;
         this.likesCount = likesCount;
         this.viewsCount = viewsCount;
+        this.commentsCount = commentsCount;
         this.userDto = userDto;
     }
 
@@ -103,6 +105,14 @@ public class ForumDto {
 
     public void setViewsCount(int viewsCount) {
         this.viewsCount = viewsCount;
+    }
+
+    public int getCommentsCount() {
+        return commentsCount;
+    }
+
+    public void setCommentsCount(int commentsCount) {
+        this.commentsCount = commentsCount;
     }
 
     public UserDto getUserDto() {

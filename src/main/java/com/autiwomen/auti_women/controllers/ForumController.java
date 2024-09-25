@@ -74,4 +74,12 @@ public class ForumController {
         return ResponseEntity.ok(viewedForums);
     }
 
+    @GetMapping("/users/{username}/commented-forums")
+    public ResponseEntity<Set<ForumDto>> getCommentedForumsByUsername(@PathVariable("username") String username) {
+        Set<ForumDto> commentedForums = forumService.getCommentedForumsByUsername(username);
+        return ResponseEntity.ok(commentedForums);
+    }
+
+
+
 }

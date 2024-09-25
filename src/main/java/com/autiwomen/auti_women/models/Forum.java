@@ -25,6 +25,7 @@ public class Forum {
     private String lastReaction;
     private int likesCount;
     private int viewsCount;
+    private int commentsCount;
 
 //    @ManyToOne (fetch = FetchType.EAGER)
 //    @JoinColumn(name = "user_id")
@@ -61,7 +62,7 @@ public class Forum {
     @OneToMany(mappedBy = "forum")
     private Set<View> views;
 
-    public Forum(Long id, String name, String age, String title, String text, String date, String lastReaction, int likesCount, int viewsCount, List<Comment> commentsList, User user, Set<Like> likes, Set<View> views) {
+    public Forum(Long id, String name, String age, String title, String text, String date, String lastReaction, int likesCount, int viewsCount, int commentsCount, List<Comment> commentsList, User user, Set<Like> likes, Set<View> views) {
         this.id = id;
         this.name = name;
         this.age = age;
@@ -71,6 +72,7 @@ public class Forum {
         this.lastReaction = lastReaction;
         this.likesCount = likesCount;
         this.viewsCount = viewsCount;
+        this.commentsCount = commentsCount;
         this.commentsList = commentsList;
         this.user = user;
         this.likes = likes;
@@ -150,6 +152,14 @@ public class Forum {
 
     public void setViewsCount(int viewsCount) {
         this.viewsCount = viewsCount;
+    }
+
+    public int getCommentsCount() {
+        return commentsCount;
+    }
+
+    public void setCommentsCount(int commentsCount) {
+        this.commentsCount = commentsCount;
     }
 
     public List<Comment> getCommentsList() {
