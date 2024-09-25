@@ -3,6 +3,7 @@ package com.autiwomen.auti_women.security.models;
 import com.autiwomen.auti_women.models.Comment;
 import com.autiwomen.auti_women.models.Forum;
 import com.autiwomen.auti_women.models.Like;
+import com.autiwomen.auti_women.models.View;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -75,21 +76,25 @@ public class User {
     @OneToMany(mappedBy = "user")
     private Set<Like> likes;
 
-    public User(String name, String username, String password, boolean enabled, String apikey, String email, String gender, LocalDate dob, String autismDiagnoses, Integer autismDiagnosesYear, Set<Authority> authorities, Set<Forum> forums, List<Comment> commentsList, Set<Like> likes) {
-        this.name = name;
+    @OneToMany(mappedBy = "user")
+    private Set<View> views;
+
+    public User(String username, String password, boolean enabled, String apikey, String email, String name, String gender, LocalDate dob, String autismDiagnoses, Integer autismDiagnosesYear, Set<Authority> authorities, List<Comment> commentsList, Set<Forum> forums, Set<Like> likes, Set<View> views) {
         this.username = username;
         this.password = password;
         this.enabled = enabled;
         this.apikey = apikey;
         this.email = email;
+        this.name = name;
         this.gender = gender;
         this.dob = dob;
         this.autismDiagnoses = autismDiagnoses;
         this.autismDiagnosesYear = autismDiagnosesYear;
         this.authorities = authorities;
-        this.forums = forums;
         this.commentsList = commentsList;
+        this.forums = forums;
         this.likes = likes;
+        this.views = views;
     }
 
     public User() {
@@ -213,5 +218,13 @@ public class User {
 
     public void setLikes(Set<Like> likes) {
         this.likes = likes;
+    }
+
+    public Set<View> getViews() {
+        return views;
+    }
+
+    public void setViews(Set<View> views) {
+        this.views = views;
     }
 }

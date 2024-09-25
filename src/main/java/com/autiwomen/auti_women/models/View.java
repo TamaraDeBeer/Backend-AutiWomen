@@ -1,29 +1,16 @@
 package com.autiwomen.auti_women.models;
 
+
 import com.autiwomen.auti_women.security.models.User;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "likes")
-public class Like {
+@Table(name = "views")
+public class View {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-//    @ManyToOne
-//    @JoinColumn(name = "user_id")
-////    @JsonBackReference
-//    @JsonIgnore
-//    private User user;
-//
-//    @ManyToOne
-//    @JoinColumn(name = "forum_id")
-////    @JsonBackReference
-//    @JsonIgnore
-//    private Forum forum;
 
     @ManyToOne
     @JoinColumn(name = "forum_id", nullable = false)
@@ -33,16 +20,16 @@ public class Like {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    public Like() {
+    public View() {
     }
 
-    public Like(Forum forum, Long id, User user) {
-        this.forum = forum;
+    public View(Long id, Forum forum, User user) {
         this.id = id;
+        this.forum = forum;
         this.user = user;
     }
 
-    public Like(User user, Forum forum) {
+    public View(User user, Forum forum) {
         this.user = user;
         this.forum = forum;
     }
@@ -55,14 +42,6 @@ public class Like {
         this.id = id;
     }
 
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
     public Forum getForum() {
         return forum;
     }
@@ -71,4 +50,11 @@ public class Like {
         this.forum = forum;
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 }
