@@ -1,5 +1,6 @@
 package com.autiwomen.auti_women.dtos.forums;
 
+import com.autiwomen.auti_women.security.dtos.user.UserDto;
 import jakarta.validation.Valid;
 
 @Valid
@@ -11,12 +12,11 @@ public class ForumDto {
     public String text;
     public String date;
     public String lastReaction;
-    public Integer likes;
-    public Integer comments;
-    public Integer views;
-    public String topic;
+    public int likesCount;
 
-    public ForumDto (Long id, String name, String age, String title, String text, String date, String lastReaction, Integer likes, Integer comments, Integer views, String topic) {
+    public UserDto userDto;
+
+    public ForumDto (Long id, String name, String age, String title, String text, String date, String lastReaction, UserDto userDto, int likesCount) {
         this.id = id;
         this.name = name;
         this.age = age;
@@ -24,10 +24,8 @@ public class ForumDto {
         this.text = text;
         this.date = date;
         this.lastReaction = lastReaction;
-        this.likes = likes;
-        this.comments = comments;
-        this.views = views;
-        this.topic = topic;
+        this.userDto = userDto;
+        this.likesCount = likesCount;
     }
 
     public ForumDto() {
@@ -89,35 +87,19 @@ public class ForumDto {
         this.lastReaction = lastReaction;
     }
 
-    public Integer getLikes() {
-        return likes;
+    public UserDto getUserDto() {
+        return userDto;
     }
 
-    public void setLikes(Integer likes) {
-        this.likes = likes;
+    public void setUserDto(UserDto userDto) {
+        this.userDto = userDto;
     }
 
-    public Integer getComments() {
-        return comments;
+    public int getLikesCount() {
+        return likesCount;
     }
 
-    public void setComments(Integer comments) {
-        this.comments = comments;
-    }
-
-    public Integer getViews() {
-        return views;
-    }
-
-    public void setViews(Integer views) {
-        this.views = views;
-    }
-
-    public String getTopic() {
-        return topic;
-    }
-
-    public void setTopic(String topic) {
-        this.topic = topic;
+    public void setLikesCount(int likesCount) {
+        this.likesCount = likesCount;
     }
 }

@@ -2,6 +2,7 @@ package com.autiwomen.auti_women.models;
 
 
 import com.autiwomen.auti_women.security.models.User;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
@@ -17,12 +18,15 @@ public class Comment {
     private String date;
     private String age;
 
-    @ManyToOne (fetch = FetchType.LAZY)
+    @ManyToOne (fetch = FetchType.EAGER)
     @JoinColumn(name = "forum_id")
+//    @JsonBackReference
+    @JsonIgnore
     private Forum forum;
 
-    @ManyToOne (fetch = FetchType.LAZY)
+    @ManyToOne (fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
+//    @JsonBackReference
     @JsonIgnore
     private User user;
 

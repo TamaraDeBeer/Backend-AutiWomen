@@ -1,10 +1,15 @@
 package com.autiwomen.auti_women.models;
 
 import com.autiwomen.auti_women.security.models.User;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "forums")
@@ -18,20 +23,41 @@ public class Forum {
     private String text;
     private String date;
     private String lastReaction;
-    private Integer likes;
-    private Integer comments;
-    private Integer views;
-    private String topic;
+    private int likesCount;
 
-    @OneToMany(mappedBy = "forum", fetch = FetchType.LAZY)
+//    @ManyToOne (fetch = FetchType.EAGER)
+//    @JoinColumn(name = "user_id")
+////    @JsonBackReference
+//    @JsonIgnore
+//    private User user;
+
+    @OneToMany(
+            mappedBy = "forum",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.EAGER)
+//    @JsonManagedReference
     @JsonIgnore
-    private List<Comment> commentsList;
+    private List<Comment> commentsList = new ArrayList<>();
 
-    @ManyToOne (fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+//    @OneToMany(
+//            mappedBy = "forum",
+//            cascade = CascadeType.ALL,
+//            orphanRemoval = true,
+//            fetch = FetchType.EAGER)
+////    @JsonManagedReference
+//    @JsonIgnore
+//    private Set<Like> likes = new HashSet<>();
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "username")
+    @JsonBackReference
     private User user;
 
-    public Forum(String text, Long id, String name, String age, String title, String date, String lastReaction, Integer likes, Integer comments, Integer views, String topic, List<Comment> commentsList, User user) {
+    @OneToMany(mappedBy = "forum")
+    private Set<Like> likes;
+
+    public Forum(String text, Long id, String name, String age, String title, String date, String lastReaction, List<Comment> commentsList, User user, Set<Like> likes, int likesCount) {
         this.text = text;
         this.id = id;
         this.name = name;
@@ -39,12 +65,10 @@ public class Forum {
         this.title = title;
         this.date = date;
         this.lastReaction = lastReaction;
-        this.likes = likes;
-        this.comments = comments;
-        this.views = views;
-        this.topic = topic;
         this.commentsList = commentsList;
         this.user = user;
+        this.likes = likes;
+        this.likesCount = likesCount;
     }
 
     public Forum() {
@@ -106,38 +130,6 @@ public class Forum {
         this.lastReaction = lastReaction;
     }
 
-    public Integer getLikes() {
-        return likes;
-    }
-
-    public void setLikes(Integer likes) {
-        this.likes = likes;
-    }
-
-    public Integer getComments() {
-        return comments;
-    }
-
-    public void setComments(Integer comments) {
-        this.comments = comments;
-    }
-
-    public Integer getViews() {
-        return views;
-    }
-
-    public void setViews(Integer views) {
-        this.views = views;
-    }
-
-    public String getTopic() {
-        return topic;
-    }
-
-    public void setTopic(String topic) {
-        this.topic = topic;
-    }
-
     public List<Comment> getCommentsList() {
         return commentsList;
     }
@@ -152,5 +144,21 @@ public class Forum {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Set<Like> getLikes() {
+        return likes;
+    }
+
+    public void setLikes(Set<Like> likes) {
+        this.likes = likes;
+    }
+
+    public int getLikesCount() {
+        return likesCount;
+    }
+
+    public void setLikesCount(int likesCount) {
+        this.likesCount = likesCount;
     }
 }

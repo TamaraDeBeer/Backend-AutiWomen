@@ -1,6 +1,7 @@
 package com.autiwomen.auti_women.dtos.comments;
 
 import com.autiwomen.auti_women.dtos.forums.ForumDto;
+import com.autiwomen.auti_women.security.dtos.user.UserDto;
 import jakarta.validation.Valid;
 
 @Valid
@@ -13,14 +14,16 @@ public class CommentDto {
     public String age;
 
     public ForumDto forumDto;
+    public UserDto userDto;
 
-    public CommentDto(String date, Long id, String name, String text, String age, ForumDto forumDto) {
+    public CommentDto(String date, Long id, String name, String text, String age, ForumDto forumDto, UserDto userDto) {
         this.date = date;
         this.id = id;
         this.name = name;
         this.text = text;
         this.age = age;
         this.forumDto = forumDto;
+        this.userDto = userDto;
     }
 
     public CommentDto() {
@@ -72,5 +75,13 @@ public class CommentDto {
 
     public void setAge(String age) {
         this.age = age;
+    }
+
+    public UserDto getUserDto() {
+        return userDto;
+    }
+
+    public void setUserDto(UserDto userDto) {
+        this.userDto = userDto;
     }
 }

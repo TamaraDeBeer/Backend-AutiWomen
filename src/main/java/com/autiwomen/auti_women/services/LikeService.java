@@ -1,0 +1,60 @@
+package com.autiwomen.auti_women.services;
+
+import com.autiwomen.auti_women.exceptions.RecordNotFoundException;
+import com.autiwomen.auti_women.models.Forum;
+import com.autiwomen.auti_women.models.Like;
+import com.autiwomen.auti_women.repositories.ForumRepository;
+import com.autiwomen.auti_women.repositories.LikeRepository;
+import com.autiwomen.auti_women.security.UserRepository;
+import com.autiwomen.auti_women.security.models.User;
+import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+import java.util.Set;
+
+@Service
+public class LikeService {
+
+    private final LikeRepository likeRepository;
+    private final ForumRepository forumRepository;
+    private final UserRepository userRepository;
+
+    public LikeService(LikeRepository likeRepository, ForumRepository forumRepository, UserRepository userRepository) {
+        this.likeRepository = likeRepository;
+        this.forumRepository = forumRepository;
+        this.userRepository = userRepository;
+    }
+
+    public void addLikeToForum(Long forumId, String username) {
+        User user = userRepository.findById(username)
+                .orElseThrow(() -> new RecordNotFoundException("User not found"));
+        Forum forum = forumRepository.findById(forumId)
+                .orElseThrow(() -> new RecordNotFoundException("Forum not found"));
+
+        Optional<Like> existingLike = likeRepository.findByUserAndForum(user, forum);
+        if (existingLike.isPresent()) {
+            throw new IllegalStateException("User has already liked this forum");
+        }
+
+        Like like = new Like(user, forum);
+        likeRepository.save(like);
+    }
+
+    public void removeLikeFromForum(Long forumId, String username) {
+        User user = userRepository.findById(username)
+                .orElseThrow(() -> new RecordNotFoundException("User not found"));
+        Forum forum = forumRepository.findById(forumId)
+                .orElseThrow(() -> new RecordNotFoundException("Forum not found"));
+
+        Optional<Like> like = likeRepository.findByUserAndForum(user, forum);
+        like.ifPresent(likeRepository::delete);
+    }
+
+    public int getLikeCountByForumId(Long forumId) {
+        Forum forum = forumRepository.findById(forumId)
+                .orElseThrow(() -> new RecordNotFoundException("Forum not found"));
+        Set<Like> likes = forum.getLikes();
+        int likeCount = likes.size();
+        return likeCount;
+    }
+}

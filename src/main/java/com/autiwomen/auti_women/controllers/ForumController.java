@@ -35,16 +35,10 @@ public class ForumController {
         return ResponseEntity.ok().body(forumDto);
     }
 
-    @PutMapping(value = "/forums/{id}/like")
-    public ResponseEntity<ForumDto> likeForum(@PathVariable Long id) {
-        ForumDto forumDto = forumService.likeForum(id);
-        return ResponseEntity.ok().body(forumDto);
-    }
-
     @PostMapping(value = "/forums/{username}")
     public ResponseEntity<ForumDto> createForum(@PathVariable("username") String username,@Valid @RequestBody ForumInputDto forumInputDto) {
         ForumDto forumDto = forumService.createForum(forumInputDto, username);
-        forumService.assignForumsToUser(forumDto.getId(),username);
+        forumService.assignForumToUser(forumDto.getId(),username);
         URI uri = URI.create(ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/" + forumDto.getId()).toUriString());
@@ -54,11 +48,7 @@ public class ForumController {
     @PutMapping(value = "/forums/{id}")
     public ResponseEntity<ForumDto> updateForum(@PathVariable Long id, @RequestBody ForumDto updateForumDto) {
         ForumDto forumDto = forumService.updateForum(id, updateForumDto);
-        if (forumDto.id == null) {
-            throw new RecordNotFoundException("Er is geen forum met dit id nummer: " + id);
-        } else {
-            return ResponseEntity.ok().body(forumDto);
-        }
+        return ResponseEntity.ok().body(forumDto);
     }
 
     @DeleteMapping(value = "/forums/{id}")
@@ -68,8 +58,14 @@ public class ForumController {
     }
 
     @GetMapping("/users/{username}/forums")
-    public ResponseEntity<Set<Forum>> getForumByUsername(@PathVariable("username") String username) {
+    public ResponseEntity<Set<Forum>> getForumsByUsername(@PathVariable("username") String username) {
         return ResponseEntity.ok(forumService.getForumsByUsername(username));
+    }
+
+    @GetMapping("/users/{username}/liked-forums")
+    public ResponseEntity<Set<ForumDto>> getLikedForumsByUsername(@PathVariable("username") String username) {
+        Set<ForumDto> likedForums = forumService.getLikedForumsByUsername(username);
+        return ResponseEntity.ok(likedForums);
     }
 
 }
