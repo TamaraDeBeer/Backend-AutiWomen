@@ -11,6 +11,9 @@ public class TopicInputDto {
         this.topic = topic;
     }
 
+    public TopicInputDto() {
+    }
+
     public @NotEmpty String getTopic() {
         return topic;
     }

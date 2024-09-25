@@ -9,12 +9,10 @@ public class TopicDto {
     public Long id;
     public String topic;
 
-    public ForumDto forumDto;
 
-    public TopicDto(String topic, Long id, ForumDto forumDto) {
+    public TopicDto(String topic, Long id) {
         this.topic = topic;
         this.id = id;
-        this.forumDto = forumDto;
     }
 
     public TopicDto() {
@@ -36,11 +34,4 @@ public class TopicDto {
         this.id = id;
     }
 
-    public ForumDto getForumDto() {
-        return forumDto;
-    }
-
-    public void setForumDto(ForumDto forumDto) {
-        this.forumDto = forumDto;
-    }
 }

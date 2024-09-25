@@ -36,8 +36,8 @@ public class Forum {
 //    @JsonIgnore
 //    private User user;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "topic_id", referencedColumnName = "id")
+    @ManyToOne
+    @JoinColumn(name = "topic_id")
     private Topic topic;
 
     @OneToMany(
@@ -209,4 +209,6 @@ public class Forum {
     public void setTopic(Topic topic) {
         this.topic = topic;
     }
+
+
 }

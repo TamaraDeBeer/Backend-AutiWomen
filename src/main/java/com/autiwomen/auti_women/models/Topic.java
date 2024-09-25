@@ -2,6 +2,8 @@ package com.autiwomen.auti_women.models;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 public class Topic {
 
@@ -11,8 +13,8 @@ public class Topic {
 
     private String topic;
 
-    @OneToOne(mappedBy = "topic")
-    private Forum forum;
+    @OneToMany(mappedBy = "topic")
+    private List<Forum> forums;
 
     public Topic() {
     }
@@ -21,10 +23,10 @@ public class Topic {
         this.topic = topic;
     }
 
-    public Topic(Forum forum, String topic, Long id) {
-        this.forum = forum;
-        this.topic = topic;
+    public Topic(Long id, String topic, List<Forum> forums) {
         this.id = id;
+        this.topic = topic;
+        this.forums = forums;
     }
 
     public Long getId() {
@@ -43,11 +45,11 @@ public class Topic {
         this.topic = topic;
     }
 
-    public Forum getForum() {
-        return forum;
+    public List<Forum> getForums() {
+        return forums;
     }
 
-    public void setForum(Forum forum) {
-        this.forum = forum;
+    public void setForums(List<Forum> forums) {
+        this.forums = forums;
     }
 }
