@@ -1,5 +1,6 @@
 package com.autiwomen.auti_women.dtos.forums;
 
+import com.autiwomen.auti_women.dtos.topics.TopicDto;
 import com.autiwomen.auti_women.security.dtos.user.UserDto;
 import jakarta.validation.Valid;
 
@@ -17,12 +18,13 @@ public class ForumDto {
     public int commentsCount;
 
     public UserDto userDto;
+    public TopicDto topicDto;
 
-    public ForumDto(Long id, String name, String age, String title, String text, String date, String lastReaction, int likesCount, int viewsCount, int commentsCount, UserDto userDto) {
+    public ForumDto(String title, Long id, String name, String age, String text, String date, String lastReaction, int likesCount, int viewsCount, int commentsCount, UserDto userDto, TopicDto topicDto) {
+        this.title = title;
         this.id = id;
         this.name = name;
         this.age = age;
-        this.title = title;
         this.text = text;
         this.date = date;
         this.lastReaction = lastReaction;
@@ -30,6 +32,7 @@ public class ForumDto {
         this.viewsCount = viewsCount;
         this.commentsCount = commentsCount;
         this.userDto = userDto;
+        this.topicDto = topicDto;
     }
 
     public ForumDto() {
@@ -121,5 +124,13 @@ public class ForumDto {
 
     public void setUserDto(UserDto userDto) {
         this.userDto = userDto;
+    }
+
+    public TopicDto getTopicDto() {
+        return topicDto;
+    }
+
+    public void setTopicDto(TopicDto topicDto) {
+        this.topicDto = topicDto;
     }
 }
