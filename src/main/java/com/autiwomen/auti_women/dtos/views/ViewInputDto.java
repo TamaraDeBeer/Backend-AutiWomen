@@ -1,14 +1,14 @@
-package com.autiwomen.auti_women.dtos.likes;
+package com.autiwomen.auti_women.dtos.views;
 
-public class LikeInputDto {
+public class ViewInputDto {
 
     public Long id;
 
-    public LikeInputDto(Long id) {
+    public ViewInputDto(Long id) {
         this.id = id;
     }
 
-    public LikeInputDto() {
+    public ViewInputDto() {
     }
 
     public Long getId() {
@@ -18,5 +18,4 @@ public class LikeInputDto {
     public void setId(Long id) {
         this.id = id;
     }
-
 }
