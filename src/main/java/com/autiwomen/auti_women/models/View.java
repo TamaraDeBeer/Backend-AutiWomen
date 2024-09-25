@@ -29,6 +29,11 @@ public class View {
         this.user = user;
     }
 
+    public View(User user, Forum forum) {
+        this.user = user;
+        this.forum = forum;
+    }
+
     public Long getId() {
         return id;
     }
