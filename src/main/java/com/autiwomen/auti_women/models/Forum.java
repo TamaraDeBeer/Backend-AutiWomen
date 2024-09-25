@@ -24,6 +24,7 @@ public class Forum {
     private String date;
     private String lastReaction;
     private int likesCount;
+    private int viewsCount;
 
 //    @ManyToOne (fetch = FetchType.EAGER)
 //    @JoinColumn(name = "user_id")
@@ -60,15 +61,16 @@ public class Forum {
     @OneToMany(mappedBy = "forum")
     private Set<View> views;
 
-    public Forum(String date, Long id, String name, String age, String title, String text, String lastReaction, int likesCount, List<Comment> commentsList, User user, Set<Like> likes, Set<View> views) {
-        this.date = date;
+    public Forum(Long id, String name, String age, String title, String text, String date, String lastReaction, int likesCount, int viewsCount, List<Comment> commentsList, User user, Set<Like> likes, Set<View> views) {
         this.id = id;
         this.name = name;
         this.age = age;
         this.title = title;
         this.text = text;
+        this.date = date;
         this.lastReaction = lastReaction;
         this.likesCount = likesCount;
+        this.viewsCount = viewsCount;
         this.commentsList = commentsList;
         this.user = user;
         this.likes = likes;
@@ -134,6 +136,22 @@ public class Forum {
         this.lastReaction = lastReaction;
     }
 
+    public int getLikesCount() {
+        return likesCount;
+    }
+
+    public void setLikesCount(int likesCount) {
+        this.likesCount = likesCount;
+    }
+
+    public int getViewsCount() {
+        return viewsCount;
+    }
+
+    public void setViewsCount(int viewsCount) {
+        this.viewsCount = viewsCount;
+    }
+
     public List<Comment> getCommentsList() {
         return commentsList;
     }
@@ -156,14 +174,6 @@ public class Forum {
 
     public void setLikes(Set<Like> likes) {
         this.likes = likes;
-    }
-
-    public int getLikesCount() {
-        return likesCount;
-    }
-
-    public void setLikesCount(int likesCount) {
-        this.likesCount = likesCount;
     }
 
     public Set<View> getViews() {

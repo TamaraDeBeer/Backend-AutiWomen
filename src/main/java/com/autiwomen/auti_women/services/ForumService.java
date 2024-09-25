@@ -6,6 +6,7 @@ import com.autiwomen.auti_women.exceptions.RecordNotFoundException;
 import com.autiwomen.auti_women.models.Forum;
 import com.autiwomen.auti_women.repositories.ForumRepository;
 import com.autiwomen.auti_women.repositories.LikeRepository;
+import com.autiwomen.auti_women.repositories.ViewRepository;
 import com.autiwomen.auti_women.security.UserRepository;
 import com.autiwomen.auti_women.security.models.User;
 import org.springframework.stereotype.Service;
@@ -23,11 +24,13 @@ public class ForumService {
     private final ForumRepository forumRepository;
     private final UserRepository userRepository;
     private final LikeRepository likeRepository;
+    private final ViewRepository viewRepository;
 
-    public ForumService(ForumRepository forumRepository, UserRepository userRepository, LikeRepository likeRepository) {
+    public ForumService(ForumRepository forumRepository, UserRepository userRepository, LikeRepository likeRepository, ViewRepository viewRepository) {
         this.forumRepository = forumRepository;
         this.userRepository = userRepository;
         this.likeRepository = likeRepository;
+        this.viewRepository = viewRepository;
     }
 
     public List<ForumDto> getAllForums() {
@@ -37,6 +40,10 @@ public class ForumService {
         for (Forum forum : forumList) {
             int likeCount = likeRepository.getLikeCountByForumId(forum.getId());
             forum.setLikesCount(likeCount);
+
+            int viewCount = viewRepository.getViewCountByForumId(forum.getId());
+            forum.setViewsCount(viewCount);
+
             forumDtoList.add(fromForum(forum));
         }
 
@@ -75,6 +82,10 @@ public class ForumService {
             Forum forum = forumId.get();
             int likeCount = likeRepository.getLikeCountByForumId(forum.getId());
             forum.setLikesCount(likeCount);
+
+            int viewCount = viewRepository.getViewCountByForumId(forum.getId());
+            forum.setViewsCount(viewCount);
+
             return fromForum(forum);
         } else {
             throw new RecordNotFoundException("Er is geen forum gevonden met id: " + id);
@@ -113,12 +124,38 @@ public class ForumService {
 
         for (Forum forum : likedForums) {
             if (forum != null) {
+                int likeCount = likeRepository.getLikeCountByForumId(forum.getId());
+                forum.setLikesCount(likeCount);
+
+                int viewCount = viewRepository.getViewCountByForumId(forum.getId());
+                forum.setViewsCount(viewCount);
+
                 ForumDto forumDto = fromForum(forum);
                 likedForumDtos.add(forumDto);
             }
         }
-
         return likedForumDtos;
+    }
+
+    public Set<ForumDto> getViewedForumsByUsername(String username) {
+        User user = userRepository.findById(username)
+                .orElseThrow(() -> new RecordNotFoundException("User not found"));
+        Set<Forum> viewedForums = viewRepository.findViewedForumsByUser(user);
+        Set<ForumDto> viewedForumDtos = new HashSet<>();
+
+        for (Forum forum : viewedForums) {
+            if (forum != null) {
+                int likeCount = likeRepository.getLikeCountByForumId(forum.getId());
+                forum.setLikesCount(likeCount);
+
+                int viewCount = viewRepository.getViewCountByForumId(forum.getId());
+                forum.setViewsCount(viewCount);
+
+                ForumDto forumDto = fromForum(forum);
+                viewedForumDtos.add(forumDto);
+            }
+        }
+        return viewedForumDtos;
     }
 
     public ForumDto fromForum(Forum forum) {
@@ -131,6 +168,7 @@ public class ForumService {
         forumDto.date = forum.getDate();
         forumDto.lastReaction = forum.getLastReaction();
         forumDto.likesCount = forum.getLikesCount();
+        forumDto.viewsCount = forum.getViewsCount();
 
         return forumDto;
     }

@@ -14,10 +14,10 @@ import java.util.Set;
 public interface ViewRepository extends JpaRepository<View, Long> {
     Optional<View> findViewByUserAndForum(User user, Forum forum);
 
-    @Query("SELECT COUNT(l) FROM View l WHERE l.forum.id = :forumId")
+    @Query("SELECT COUNT(v) FROM View v WHERE v.forum.id = :forumId")
     int getViewCountByForumId(@Param("forumId") Long forumId);
 
-    @Query("SELECT l.forum FROM View l WHERE l.user = :user")
+    @Query("SELECT v.forum FROM View v WHERE v.user = :user")
     Set<Forum> findViewedForumsByUser(@Param("user") User user);
 
 

@@ -68,4 +68,10 @@ public class ForumController {
         return ResponseEntity.ok(likedForums);
     }
 
+    @GetMapping("/users/{username}/viewed-forums")
+    public ResponseEntity<Set<ForumDto>> getViewedForumsByUsername(@PathVariable("username") String username) {
+        Set<ForumDto> viewedForums = forumService.getViewedForumsByUsername(username);
+        return ResponseEntity.ok(viewedForums);
+    }
+
 }
