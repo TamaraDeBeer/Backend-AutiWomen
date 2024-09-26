@@ -13,20 +13,16 @@ public class Topic {
 
     private String topic;
 
-    @OneToMany(mappedBy = "topic")
-    private List<Forum> forums;
-
     public Topic() {
+    }
+
+    public Topic(Long id, String topic) {
+        this.id = id;
+        this.topic = topic;
     }
 
     public Topic(String topic) {
         this.topic = topic;
-    }
-
-    public Topic(Long id, String topic, List<Forum> forums) {
-        this.id = id;
-        this.topic = topic;
-        this.forums = forums;
     }
 
     public Long getId() {
@@ -43,13 +39,5 @@ public class Topic {
 
     public void setTopic(String topic) {
         this.topic = topic;
-    }
-
-    public List<Forum> getForums() {
-        return forums;
-    }
-
-    public void setForums(List<Forum> forums) {
-        this.forums = forums;
     }
 }

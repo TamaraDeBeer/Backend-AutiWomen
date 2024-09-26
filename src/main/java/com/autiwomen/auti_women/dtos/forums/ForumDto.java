@@ -13,26 +13,26 @@ public class ForumDto {
     public String text;
     public String date;
     public String lastReaction;
+    public String topic;
     public int likesCount;
     public int viewsCount;
     public int commentsCount;
 
     public UserDto userDto;
-    public TopicDto topicDto;
 
-    public ForumDto(String title, Long id, String name, String age, String text, String date, String lastReaction, int likesCount, int viewsCount, int commentsCount, UserDto userDto, TopicDto topicDto) {
-        this.title = title;
+    public ForumDto(Long id, String name, String age, String title, String text, String date, String lastReaction, String topic, int likesCount, int viewsCount, int commentsCount, UserDto userDto) {
         this.id = id;
         this.name = name;
         this.age = age;
+        this.title = title;
         this.text = text;
         this.date = date;
         this.lastReaction = lastReaction;
+        this.topic = topic;
         this.likesCount = likesCount;
         this.viewsCount = viewsCount;
         this.commentsCount = commentsCount;
         this.userDto = userDto;
-        this.topicDto = topicDto;
     }
 
     public ForumDto() {
@@ -126,11 +126,11 @@ public class ForumDto {
         this.userDto = userDto;
     }
 
-    public TopicDto getTopicDto() {
-        return topicDto;
+    public String getTopic() {
+        return topic;
     }
 
-    public void setTopicDto(TopicDto topicDto) {
-        this.topicDto = topicDto;
+    public void setTopic(String topic) {
+        this.topic = topic;
     }
 }

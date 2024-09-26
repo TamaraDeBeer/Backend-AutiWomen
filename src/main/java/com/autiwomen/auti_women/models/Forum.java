@@ -26,6 +26,7 @@ public class Forum {
 
     private String date;
     private String lastReaction;
+    private String topic;
     private int likesCount;
     private int viewsCount;
     private int commentsCount;
@@ -35,10 +36,6 @@ public class Forum {
 ////    @JsonBackReference
 //    @JsonIgnore
 //    private User user;
-
-    @ManyToOne
-    @JoinColumn(name = "topic_id")
-    private Topic topic;
 
     @OneToMany(
             mappedBy = "forum",
@@ -69,7 +66,7 @@ public class Forum {
     @OneToMany(mappedBy = "forum")
     private Set<View> views;
 
-    public Forum(Long id, String name, String age, String title, String text, String date, String lastReaction, int likesCount, int viewsCount, int commentsCount, Topic topic, List<Comment> commentsList, User user, Set<Like> likes, Set<View> views) {
+    public Forum(Long id, String name, String age, String title, String text, String date, String lastReaction, int likesCount, int viewsCount, int commentsCount, String topic, List<Comment> commentsList, User user, Set<Like> likes, Set<View> views) {
         this.id = id;
         this.name = name;
         this.age = age;
@@ -202,13 +199,11 @@ public class Forum {
         this.views = views;
     }
 
-    public Topic getTopic() {
+    public String getTopic() {
         return topic;
     }
 
-    public void setTopic(Topic topic) {
+    public void setTopic(String topic) {
         this.topic = topic;
     }
-
-
 }
