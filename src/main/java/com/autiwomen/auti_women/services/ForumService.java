@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.*;
 import java.time.LocalDateTime;
+import java.util.stream.Collectors;
 
 @Service
 public class ForumService {
@@ -207,6 +208,8 @@ public class ForumService {
         }
         return commentedForumDtos;
     }
+
+
 
     public ForumDto fromForum(Forum forum) {
         var forumDto = new ForumDto();
