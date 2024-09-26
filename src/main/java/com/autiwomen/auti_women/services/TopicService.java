@@ -17,6 +17,7 @@ public class TopicService {
     }
 
     public List<Forum> getTopics() {
+
         return topicRepository.findAll();
     }
 

@@ -3,11 +3,9 @@ package com.autiwomen.auti_women.models;
 import com.autiwomen.auti_women.security.models.User;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -26,7 +24,7 @@ public class Forum {
 
     private String date;
     private String lastReaction;
-    private String topic;
+    private String forumTopic;
     private int likesCount;
     private int viewsCount;
     private int commentsCount;
@@ -66,7 +64,7 @@ public class Forum {
     @OneToMany(mappedBy = "forum")
     private Set<View> views;
 
-    public Forum(Long id, String name, String age, String title, String text, String date, String lastReaction, int likesCount, int viewsCount, int commentsCount, String topic, List<Comment> commentsList, User user, Set<Like> likes, Set<View> views) {
+    public Forum(Long id, String name, String age, String title, String text, String date, String lastReaction, int likesCount, int viewsCount, int commentsCount, String forumTopic, List<Comment> commentsList, User user, Set<Like> likes, Set<View> views) {
         this.id = id;
         this.name = name;
         this.age = age;
@@ -77,7 +75,7 @@ public class Forum {
         this.likesCount = likesCount;
         this.viewsCount = viewsCount;
         this.commentsCount = commentsCount;
-        this.topic = topic;
+        this.forumTopic = forumTopic;
         this.commentsList = commentsList;
         this.user = user;
         this.likes = likes;
@@ -199,11 +197,11 @@ public class Forum {
         this.views = views;
     }
 
-    public String getTopic() {
-        return topic;
+    public String getForumTopic() {
+        return forumTopic;
     }
 
-    public void setTopic(String topic) {
-        this.topic = topic;
+    public void setForumTopic(String forumTopic) {
+        this.forumTopic = forumTopic;
     }
 }

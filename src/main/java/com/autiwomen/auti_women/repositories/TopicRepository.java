@@ -9,5 +9,8 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface TopicRepository extends JpaRepository<Forum, Long> {
+    @Query("SELECT f FROM Forum f JOIN f.forumTopic t WHERE f.forumTopic = :topicName")
+    List<Forum> findForumsByTopicName(@Param("topicName") String topicName);
+
 
 }

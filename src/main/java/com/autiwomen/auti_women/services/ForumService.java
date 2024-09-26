@@ -217,7 +217,7 @@ public class ForumService {
         forumDto.text = forum.getText();
         forumDto.date = forum.getDate();
         forumDto.lastReaction = forum.getLastReaction();
-        forumDto.topic = forum.getTopic();
+        forumDto.forumTopic = forum.getForumTopic();
         forumDto.likesCount = forum.getLikesCount();
         forumDto.viewsCount = forum.getViewsCount();
         forumDto.commentsCount = forum.getCommentsCount();
@@ -232,7 +232,7 @@ public class ForumService {
         forum.setText(forumInputDto.text);
         forum.setDate(forumInputDto.date);
         forum.setLastReaction(forumInputDto.lastReaction);
-        forum.setTopic(forumInputDto.topic);
+        forum.setForumTopic(forumInputDto.forumTopic);
 
         return forum;
     }
