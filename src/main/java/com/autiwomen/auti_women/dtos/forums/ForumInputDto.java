@@ -1,6 +1,5 @@
 package com.autiwomen.auti_women.dtos.forums;
 
-import com.autiwomen.auti_women.dtos.topics.TopicInputDto;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
@@ -21,16 +20,16 @@ public class ForumInputDto {
     public String lastReaction;
 
     @NotEmpty
-    public String forumTopic;
+    public String topic;
 
-    public ForumInputDto(String name, String title, String text, String age, String date, String lastReaction, String forumTopic) {
+    public ForumInputDto(String name, String title, String text, String age, String date, String lastReaction, String topic) {
         this.name = name;
         this.title = title;
         this.text = text;
         this.age = age;
         this.date = date;
         this.lastReaction = lastReaction;
-        this.forumTopic = forumTopic;
+        this.topic = topic;
     }
 
     public ForumInputDto(String title, String text) {
@@ -90,11 +89,11 @@ public class ForumInputDto {
         this.date = date;
     }
 
-    public String getForumTopic() {
-        return forumTopic;
+    public String getTopic() {
+        return topic;
     }
 
-    public void setForumTopic(String forumTopic) {
-        this.forumTopic = forumTopic;
+    public void setTopic(String topic) {
+        this.topic = topic;
     }
 }

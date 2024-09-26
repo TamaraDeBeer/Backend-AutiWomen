@@ -24,7 +24,7 @@ public class Forum {
 
     private String date;
     private String lastReaction;
-    private String forumTopic;
+    private String topic;
     private int likesCount;
     private int viewsCount;
     private int commentsCount;
@@ -64,7 +64,8 @@ public class Forum {
     @OneToMany(mappedBy = "forum")
     private Set<View> views;
 
-    public Forum(Long id, String name, String age, String title, String text, String date, String lastReaction, int likesCount, int viewsCount, int commentsCount, String forumTopic, List<Comment> commentsList, User user, Set<Like> likes, Set<View> views) {
+    public Forum(int commentsCount, Long id, String name, String age, String title, String text, String date, String lastReaction, String topic, int likesCount, int viewsCount, List<Comment> commentsList, User user, Set<Like> likes, Set<View> views) {
+        this.commentsCount = commentsCount;
         this.id = id;
         this.name = name;
         this.age = age;
@@ -72,10 +73,9 @@ public class Forum {
         this.text = text;
         this.date = date;
         this.lastReaction = lastReaction;
+        this.topic = topic;
         this.likesCount = likesCount;
         this.viewsCount = viewsCount;
-        this.commentsCount = commentsCount;
-        this.forumTopic = forumTopic;
         this.commentsList = commentsList;
         this.user = user;
         this.likes = likes;
@@ -197,11 +197,11 @@ public class Forum {
         this.views = views;
     }
 
-    public String getForumTopic() {
-        return forumTopic;
+    public String getTopic() {
+        return topic;
     }
 
-    public void setForumTopic(String forumTopic) {
-        this.forumTopic = forumTopic;
+    public void setTopic(String topic) {
+        this.topic = topic;
     }
 }
