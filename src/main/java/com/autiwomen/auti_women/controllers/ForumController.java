@@ -81,4 +81,10 @@ public class ForumController {
         return ResponseEntity.ok(commentedForums);
     }
 
+    @GetMapping("/forums/topic/{topic}")
+    public ResponseEntity<List<Forum>> getForumsByTopic(@PathVariable String topic) {
+        List<Forum> forumsByTopic = forumService.getForumsByTopic(topic);
+        return ResponseEntity.ok(forumsByTopic);
+    }
+
 }

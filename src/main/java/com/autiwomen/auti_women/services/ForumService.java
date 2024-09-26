@@ -209,6 +209,18 @@ public class ForumService {
         return commentedForumDtos;
     }
 
+    public List<Forum> getForumsByTopic(String topic) {
+        List<Forum> forums = forumRepository.findAll();
+        List<Forum> forumsByTopic = new ArrayList<>();
+        for (Forum forum : forums) {
+            if (forum.getTopic().equals(topic)) {
+                forumsByTopic.add(forum);
+            }
+        }
+        return forumsByTopic;
+    }
+
+
 
 
     public ForumDto fromForum(Forum forum) {
