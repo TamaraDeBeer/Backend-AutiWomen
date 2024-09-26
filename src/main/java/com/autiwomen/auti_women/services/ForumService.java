@@ -220,6 +220,18 @@ public class ForumService {
         return forumsByTopic;
     }
 
+    public Set<String> getUniqueTopics() {
+        List<Forum> forums = forumRepository.findAll();
+        Set<String> uniqueTopics = new HashSet<>();
+        for (Forum forum : forums) {
+            if (!uniqueTopics.contains(forum.getTopic())) {
+                uniqueTopics.add(forum.getTopic());
+            }
+        }
+        return uniqueTopics;
+    }
+
+
 
 
 

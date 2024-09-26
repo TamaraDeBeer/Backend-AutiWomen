@@ -87,4 +87,11 @@ public class ForumController {
         return ResponseEntity.ok(forumsByTopic);
     }
 
+    @GetMapping("/forums/unique-topics")
+    public ResponseEntity<Set<String>> getUniqueTopics() {
+        Set<String> uniqueTopics = forumService.getUniqueTopics();
+        return ResponseEntity.ok(uniqueTopics);
+    }
+
+
 }
