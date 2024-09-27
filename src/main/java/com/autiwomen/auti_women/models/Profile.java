@@ -14,16 +14,21 @@ public class Profile {
     @JoinColumn(name = "username", referencedColumnName = "username")
     private User user;
 
-    @Column(length = 1000)
+    @Column(length = 2000)
     private String bio;
+
+    private String name;
+    private String date;
 
     public Profile() {
     }
 
-    public Profile(Long id, User user, String bio) {
+    public Profile(Long id, User user, String bio, String name, String date) {
         this.id = id;
         this.user = user;
         this.bio = bio;
+        this.name = name;
+        this.date = date;
     }
 
     public Long getId() {
@@ -48,5 +53,21 @@ public class Profile {
 
     public void setBio(String bio) {
         this.bio = bio;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 }
