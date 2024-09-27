@@ -77,7 +77,11 @@ public class User {
     @OneToMany(mappedBy = "user")
     private Set<View> views;
 
-    public User(String username, String password, boolean enabled, String apikey, String email, String name, String gender, LocalDate dob, String autismDiagnoses, Integer autismDiagnosesYear, String profilePictureUrl, Set<Authority> authorities, List<Comment> commentsList, Set<Forum> forums, Set<Like> likes, Set<View> views) {
+    @OneToOne
+    @JoinColumn(name = "profile_id")
+    private Profile profile;
+
+    public User(Profile profile, String username, String password, boolean enabled, String apikey, String email, String name, String gender, LocalDate dob, String autismDiagnoses, Integer autismDiagnosesYear, String profilePictureUrl, Set<Authority> authorities, List<Comment> commentsList, Set<Forum> forums, Set<Like> likes, Set<View> views) {
         this.username = username;
         this.password = password;
         this.enabled = enabled;
@@ -94,6 +98,7 @@ public class User {
         this.forums = forums;
         this.likes = likes;
         this.views = views;
+        this.profile = profile;
     }
 
     public User() {
@@ -233,6 +238,14 @@ public class User {
 
     public void setProfilePictureUrl(String profilePictureUrl) {
         this.profilePictureUrl = profilePictureUrl;
+    }
+
+    public Profile getProfile() {
+        return profile;
+    }
+
+    public void setProfile(Profile profile) {
+        this.profile = profile;
     }
 
 }

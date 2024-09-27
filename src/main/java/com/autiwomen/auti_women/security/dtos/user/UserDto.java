@@ -1,5 +1,6 @@
 package com.autiwomen.auti_women.security.dtos.user;
 
+import com.autiwomen.auti_women.dtos.profiles.ProfileDto;
 import com.autiwomen.auti_women.security.models.Authority;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.validation.Valid;
@@ -21,11 +22,12 @@ public class UserDto {
     public String autismDiagnoses;
     public Integer autismDiagnosesYear;
     private String profilePictureUrl;
+    private ProfileDto profileDto;
 
     @JsonSerialize
     public Set<Authority> authorities;
 
-    public UserDto(String username, String password, boolean enabled, String apikey, String email, String name, String gender, LocalDate dob, String autismDiagnoses, Integer autismDiagnosesYear, String profilePictureUrl, Set<Authority> authorities) {
+    public UserDto(ProfileDto profileDto, String username, String password, boolean enabled, String apikey, String email, String name, String gender, LocalDate dob, String autismDiagnoses, Integer autismDiagnosesYear, String profilePictureUrl, Set<Authority> authorities) {
         this.username = username;
         this.password = password;
         this.enabled = enabled;
@@ -38,6 +40,7 @@ public class UserDto {
         this.autismDiagnosesYear = autismDiagnosesYear;
         this.profilePictureUrl = profilePictureUrl;
         this.authorities = authorities;
+        this.profileDto = profileDto;
     }
 
     public UserDto() {
@@ -142,4 +145,13 @@ public class UserDto {
     public void setProfilePictureUrl(String profilePictureUrl) {
         this.profilePictureUrl = profilePictureUrl;
     }
+
+    public ProfileDto getProfileDto() {
+        return profileDto;
+    }
+
+    public void setProfileDto(ProfileDto profileDto) {
+        this.profileDto = profileDto;
+    }
+
 }
