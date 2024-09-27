@@ -1,6 +1,9 @@
 package com.autiwomen.auti_women.security.services;
 
+import com.autiwomen.auti_women.dtos.images.ImageOutputDto;
 import com.autiwomen.auti_women.exceptions.RecordNotFoundException;
+import com.autiwomen.auti_women.models.Image;
+import com.autiwomen.auti_women.repositories.ImageRepository;
 import com.autiwomen.auti_women.security.UserRepository;
 import com.autiwomen.auti_women.security.dtos.user.UserDto;
 import com.autiwomen.auti_women.security.dtos.user.UserInputDto;
@@ -21,11 +24,13 @@ import java.util.Set;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final ImageRepository imageRepository;
 
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, ImageRepository imageRepository) {
         this.userRepository = userRepository;
+        this.imageRepository = imageRepository;
     }
 
     public List<UserOutputDto> getUsers() {
@@ -126,6 +131,24 @@ public class UserService {
             }
         } else {
             throw new UsernameNotFoundException(username);
+        }
+    }
+
+    public void assignImageToUser(String fileName, String username) {
+        Optional<User> userOptional = userRepository.findById(username);
+        Optional<ImageOutputDto> imageOptional = imageRepository.findByFileName(fileName);
+        if(userOptional.isPresent() && imageOptional.isPresent()) {
+            ImageOutputDto imageOutputDto = imageOptional.get();
+            User user = userOptional.get();
+            // Convert ImageOutputDto to Image
+            Image image = new Image();
+//            image.setId(imageOutputDto.getId());
+            image.setFileName(imageOutputDto.getFileName());
+            image.setUrl(imageOutputDto.getUrl());
+            user.setImage(image);
+            userRepository.save(user);
+        } else {
+            throw new RecordNotFoundException("Er is geen user gevonden met username: " + username + " of er is geen image gevonden met filename: " + fileName);
         }
     }
 

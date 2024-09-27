@@ -1,5 +1,7 @@
 package com.autiwomen.auti_women.security.controllers;
 
+import com.autiwomen.auti_women.controllers.ImageController;
+import com.autiwomen.auti_women.dtos.images.ImageOutputDto;
 import com.autiwomen.auti_women.exceptions.BadRequestException;
 import com.autiwomen.auti_women.security.dtos.user.UserDto;
 import com.autiwomen.auti_women.security.dtos.user.UserInputDto;
@@ -9,6 +11,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
@@ -25,9 +28,11 @@ public class UserController {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     private final UserService userService;
+    private final ImageController imageController;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, ImageController imageController) {
         this.userService = userService;
+        this.imageController = imageController;
     }
 
     @GetMapping(value = "/users")
@@ -68,6 +73,12 @@ public class UserController {
                 .buildAndExpand(newUsername).toUri();
 
         return ResponseEntity.created(location).body(outputDto);
+    }
+
+    @PostMapping("/{username}/photo")
+    public void assignPhotoToUser(@PathVariable String username, @RequestParam("file") MultipartFile file) {
+        ImageOutputDto imageOutputDto = imageController.singleFileUpload(file);
+        userService.assignImageToUser(imageOutputDto.getFileName(), username);
     }
 
     @PutMapping(value = "/{username}")
