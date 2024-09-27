@@ -1,9 +1,6 @@
 package com.autiwomen.auti_women.security.models;
 
-import com.autiwomen.auti_women.models.Comment;
-import com.autiwomen.auti_women.models.Forum;
-import com.autiwomen.auti_women.models.Like;
-import com.autiwomen.auti_women.models.View;
+import com.autiwomen.auti_women.models.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -31,6 +28,7 @@ public class User {
     private LocalDate dob;
     private String autismDiagnoses;
     private Integer autismDiagnosesYear;
+    private String profilePictureUrl;
 
     @OneToMany(
             targetEntity = Authority.class,
@@ -79,7 +77,7 @@ public class User {
     @OneToMany(mappedBy = "user")
     private Set<View> views;
 
-    public User(String username, String password, boolean enabled, String apikey, String email, String name, String gender, LocalDate dob, String autismDiagnoses, Integer autismDiagnosesYear, Set<Authority> authorities, List<Comment> commentsList, Set<Forum> forums, Set<Like> likes, Set<View> views) {
+    public User(String username, String password, boolean enabled, String apikey, String email, String name, String gender, LocalDate dob, String autismDiagnoses, Integer autismDiagnosesYear, String profilePictureUrl, Set<Authority> authorities, List<Comment> commentsList, Set<Forum> forums, Set<Like> likes, Set<View> views) {
         this.username = username;
         this.password = password;
         this.enabled = enabled;
@@ -90,6 +88,7 @@ public class User {
         this.dob = dob;
         this.autismDiagnoses = autismDiagnoses;
         this.autismDiagnosesYear = autismDiagnosesYear;
+        this.profilePictureUrl = profilePictureUrl;
         this.authorities = authorities;
         this.commentsList = commentsList;
         this.forums = forums;
@@ -227,4 +226,13 @@ public class User {
     public void setViews(Set<View> views) {
         this.views = views;
     }
+
+    public String getProfilePictureUrl() {
+        return profilePictureUrl;
+    }
+
+    public void setProfilePictureUrl(String profilePictureUrl) {
+        this.profilePictureUrl = profilePictureUrl;
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.autiwomen.auti_women.security.services;
 
+
 import com.autiwomen.auti_women.exceptions.RecordNotFoundException;
 import com.autiwomen.auti_women.security.UserRepository;
 import com.autiwomen.auti_women.security.dtos.user.UserDto;
@@ -11,11 +12,18 @@ import com.autiwomen.auti_women.security.utils.RandomStringGenerator;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+
 
 @Service
 public class UserService {
@@ -62,18 +70,6 @@ public class UserService {
 //        return userRepository.existsById(username);
 //    }
 
-    public String createUser(UserInputDto userInputDto) {
-        if (userInputDto.getPassword() == null || userInputDto.getPassword().isEmpty()) {
-            throw new IllegalArgumentException("Password cannot be null or empty");
-        }
-        String randomString = RandomStringGenerator.generateAlphaNumeric(20);
-        userInputDto.setApikey(randomString);
-        User newUser = userRepository.save(toUser(userInputDto));
-        newUser.setPassword(passwordEncoder.encode(userInputDto.getPassword()));
-        userRepository.save(newUser);
-        return newUser.getUsername();
-    }
-
     public UserDto updatePasswordUser(String username, UserDto updateUser) {
         Optional<User> userOptional = userRepository.findById(username);
         if (userOptional.isPresent()) {
@@ -83,6 +79,35 @@ public class UserService {
             return fromUser(user);
         } else {
             throw new RecordNotFoundException("Er is geen user gevonden met username: " + username);
+        }
+    }
+
+    public void updateProfilePicture(String username, MultipartFile file) throws IOException {
+        Optional<User> userOptional = userRepository.findById(username);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            if (file != null && !file.isEmpty()) {
+                String fileName = saveImage(file, username);
+                String imageUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
+                        .path("/images/")
+                        .path(fileName)
+                        .toUriString();
+                user.setProfilePictureUrl(imageUrl);
+                userRepository.save(user);
+            }
+        } else {
+            throw new UsernameNotFoundException(username);
+        }
+    }
+
+    public void removeProfilePicture(String username) {
+        Optional<User> userOptional = userRepository.findById(username);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            user.setProfilePictureUrl(null);
+            userRepository.save(user);
+        } else {
+            throw new UsernameNotFoundException(username);
         }
     }
 
@@ -129,6 +154,40 @@ public class UserService {
         }
     }
 
+    public String createUserWithImage(UserInputDto userInputDto, MultipartFile file) throws IOException {
+        if (userInputDto.getPassword() == null || userInputDto.getPassword().isEmpty()) {
+            throw new IllegalArgumentException("Password cannot be null or empty");
+        }
+        if (userRepository.existsById(userInputDto.getUsername())) {
+            throw new IllegalArgumentException("Username already exists");
+        }
+        String randomString = RandomStringGenerator.generateAlphaNumeric(20);
+        userInputDto.setApikey(randomString);
+
+        User newUser = toUser(userInputDto);
+        newUser.setPassword(passwordEncoder.encode(userInputDto.getPassword()));
+
+        if (file != null && !file.isEmpty()) {
+            String fileName = saveImage(file, newUser.getUsername());
+            String imageUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
+                    .path("/images/")
+                    .path(fileName)
+                    .toUriString();
+            newUser.setProfilePictureUrl(imageUrl);
+        }
+
+        userRepository.save(newUser);
+        return newUser.getUsername();
+    }
+
+    private String saveImage(MultipartFile file, String username) throws IOException {
+        String fileName = file.getOriginalFilename();
+        Path path = Paths.get("images/" + fileName);
+        Files.createDirectories(path.getParent());
+        Files.write(path, file.getBytes());
+        return fileName;
+    }
+
     public static UserDto fromUser(User user) {
         var dto = new UserDto();
         dto.username = user.getUsername();
@@ -171,6 +230,8 @@ public class UserService {
         dto.setDob(user.getDob());
         dto.setAutismDiagnoses(user.getAutismDiagnoses());
         dto.setAutismDiagnosesYear(user.getAutismDiagnosesYear());
+        dto.setProfilePictureUrl(user.getProfilePictureUrl());
+
         return dto;
     }
 

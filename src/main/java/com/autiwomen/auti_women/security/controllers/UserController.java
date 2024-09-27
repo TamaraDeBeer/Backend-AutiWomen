@@ -4,27 +4,27 @@ import com.autiwomen.auti_women.exceptions.BadRequestException;
 import com.autiwomen.auti_women.security.dtos.user.UserDto;
 import com.autiwomen.auti_women.security.dtos.user.UserInputDto;
 import com.autiwomen.auti_women.security.dtos.user.UserOutputDto;
+import com.autiwomen.auti_women.security.models.Authority;
+import com.autiwomen.auti_women.security.models.User;
 import com.autiwomen.auti_women.security.services.UserService;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @CrossOrigin
 @RestController
 public class UserController {
 
-    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
-
     private final UserService userService;
+
 
     public UserController(UserService userService) {
         this.userService = userService;
@@ -36,29 +36,16 @@ public class UserController {
         return ResponseEntity.ok().body(userOutputDtos);
     }
 
-//    @GetMapping(value = "/users/{username}")
-//    public ResponseEntity<UserOutputDto> getOneUser(@PathVariable("username") String username) {
-//        UserOutputDto optionalUser = userService.getOneUser(username);
-//        return ResponseEntity.ok().body(optionalUser);
-//    }
-
     @GetMapping(value = "/users/{username}")
     public ResponseEntity<UserOutputDto> getOneUser(@PathVariable("username") String username) {
-        try {
-            UserOutputDto optionalUser = userService.getOneUser(username);
-            return ResponseEntity.ok().body(optionalUser);
-        } catch (Exception e) {
-            // Log the exception
-            logger.error("Error fetching user with username: " + username, e);
-            // Return an appropriate error response
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
+        UserOutputDto optionalUser = userService.getOneUser(username);
+        return ResponseEntity.ok().body(optionalUser);
     }
 
     @PostMapping(value = "/register")
-    public ResponseEntity<UserOutputDto> createUser(@Valid @RequestBody UserInputDto userInputDto) {
-        String newUsername = userService.createUser(userInputDto);
-        userService.addUserAuthority(newUsername, "ROLE_USER");
+    public ResponseEntity<UserOutputDto> createUser(@Valid @RequestPart("user") UserInputDto userInputDto,
+                                                    @RequestPart(value = "file", required = false) MultipartFile file) throws IOException {
+        String newUsername = userService.createUserWithImage(userInputDto, file);
 
         UserOutputDto outputDto = new UserOutputDto();
         outputDto.setUsername(newUsername);
@@ -76,7 +63,20 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping(value = "/{username}")
+    @PutMapping(value = "/users/{username}/profile-picture")
+    public ResponseEntity<Void> updateProfilePicture(@PathVariable("username") String username,
+                                                     @RequestPart("file") MultipartFile file) throws IOException {
+        userService.updateProfilePicture(username, file);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping(value = "/users/{username}/profile-picture")
+    public ResponseEntity<Void> removeProfilePicture(@PathVariable("username") String username) {
+        userService.removeProfilePicture(username);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping(value = "/users/{username}")
     public ResponseEntity<Object> deleteUser(@PathVariable("username") String username) {
         userService.deleteUser(username);
         return ResponseEntity.noContent().build();

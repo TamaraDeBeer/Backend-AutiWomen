@@ -11,6 +11,7 @@ public class UserOutputDto {
     private LocalDate dob;
     private String autismDiagnoses;
     private Integer autismDiagnosesYear;
+    private String profilePictureUrl;
 
 //    moet authority ook hier als output dto? Heb ik deze in de Front nodig?
     // en forums?
@@ -23,7 +24,7 @@ public class UserOutputDto {
         this.email = email;
     }
 
-    public UserOutputDto(String username, String email, String name, String gender, LocalDate dob, String autismDiagnoses, Integer autismDiagnosesYear) {
+    public UserOutputDto(String username, String email, String name, String gender, LocalDate dob, String autismDiagnoses, Integer autismDiagnosesYear, String profilePictureUrl) {
         this.username = username;
         this.email = email;
         this.name = name;
@@ -31,6 +32,7 @@ public class UserOutputDto {
         this.dob = dob;
         this.autismDiagnoses = autismDiagnoses;
         this.autismDiagnosesYear = autismDiagnosesYear;
+        this.profilePictureUrl = profilePictureUrl;
     }
 
     public String getUsername() {
@@ -88,4 +90,13 @@ public class UserOutputDto {
     public void setAutismDiagnosesYear(Integer autismDiagnosesYear) {
         this.autismDiagnosesYear = autismDiagnosesYear;
     }
+
+    public String getProfilePictureUrl() {
+        return profilePictureUrl;
+    }
+
+    public void setProfilePictureUrl(String profilePictureUrl) {
+        this.profilePictureUrl = profilePictureUrl;
+    }
+
 }
