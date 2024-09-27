@@ -1,6 +1,5 @@
 package com.autiwomen.auti_women.security.dtos.user;
 
-import com.autiwomen.auti_women.dtos.images.ImageDto;
 import com.autiwomen.auti_women.security.models.Authority;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.validation.Valid;
@@ -22,12 +21,12 @@ public class UserDto {
     public String autismDiagnoses;
     public Integer autismDiagnosesYear;
 
-    public ImageDto imageDto;
+//    public ImageDto imageDto;
 
     @JsonSerialize
     public Set<Authority> authorities;
 
-    public UserDto(String username, String password, boolean enabled, String apikey, String email, String name, String gender, LocalDate dob, String autismDiagnoses, Integer autismDiagnosesYear, ImageDto imageDto, Set<Authority> authorities) {
+    public UserDto(String username, String password, boolean enabled, String apikey, String email, String name, String gender, LocalDate dob, String autismDiagnoses, Integer autismDiagnosesYear, Set<Authority> authorities) {
         this.username = username;
         this.password = password;
         this.enabled = enabled;
@@ -38,7 +37,7 @@ public class UserDto {
         this.dob = dob;
         this.autismDiagnoses = autismDiagnoses;
         this.autismDiagnosesYear = autismDiagnosesYear;
-        this.imageDto = imageDto;
+//        this.imageDto = imageDto;
         this.authorities = authorities;
     }
 
@@ -137,11 +136,11 @@ public class UserDto {
         this.autismDiagnosesYear = autismDiagnosesYear;
     }
 
-    public ImageDto getImageDto() {
-        return imageDto;
-    }
-
-    public void setImageDto(ImageDto imageDto) {
-        this.imageDto = imageDto;
-    }
+//    public ImageDto getImageDto() {
+//        return imageDto;
+//    }
+//
+//    public void setImageDto(ImageDto imageDto) {
+//        this.imageDto = imageDto;
+//    }
 }

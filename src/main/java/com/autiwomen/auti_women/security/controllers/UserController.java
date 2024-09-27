@@ -77,7 +77,7 @@ public class UserController {
 
     @PostMapping("/{username}/photo")
     public void assignPhotoToUser(@PathVariable String username, @RequestParam("file") MultipartFile file) {
-        ImageOutputDto imageOutputDto = imageController.singleFileUpload(file);
+        ImageOutputDto imageOutputDto = imageController.singleFileUpload(file, username);
         userService.assignImageToUser(imageOutputDto.getFileName(), username);
     }
 

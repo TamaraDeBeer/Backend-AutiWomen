@@ -29,9 +29,9 @@ public class User {
     private String autismDiagnoses;
     private Integer autismDiagnosesYear;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "profiel foto", nullable = true)
-    private Image image;
+//    @OneToOne(cascade = CascadeType.ALL)
+//    @JoinColumn(name = "profiel foto", nullable = true)
+//    private Image image;
 
     @OneToMany(
             targetEntity = Authority.class,
@@ -80,7 +80,7 @@ public class User {
     @OneToMany(mappedBy = "user")
     private Set<View> views;
 
-    public User(String username, String password, boolean enabled, String apikey, String email, String name, String gender, LocalDate dob, String autismDiagnoses, Integer autismDiagnosesYear, Image image, Set<Authority> authorities, List<Comment> commentsList, Set<Forum> forums, Set<Like> likes, Set<View> views) {
+    public User(String username, String password, boolean enabled, String apikey, String email, String name, String gender, LocalDate dob, String autismDiagnoses, Integer autismDiagnosesYear, Set<Authority> authorities, List<Comment> commentsList, Set<Forum> forums, Set<Like> likes, Set<View> views) {
         this.username = username;
         this.password = password;
         this.enabled = enabled;
@@ -91,7 +91,7 @@ public class User {
         this.dob = dob;
         this.autismDiagnoses = autismDiagnoses;
         this.autismDiagnosesYear = autismDiagnosesYear;
-        this.image = image;
+//        this.image = image;
         this.authorities = authorities;
         this.commentsList = commentsList;
         this.forums = forums;
@@ -230,11 +230,11 @@ public class User {
         this.views = views;
     }
 
-    public Image getImage() {
-        return image;
-    }
-
-    public void setImage(Image image) {
-        this.image = image;
-    }
+//    public Image getImage() {
+//        return image;
+//    }
+//
+//    public void setImage(Image image) {
+//        this.image = image;
+//    }
 }
