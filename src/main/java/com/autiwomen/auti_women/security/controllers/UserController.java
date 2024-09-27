@@ -44,7 +44,7 @@ public class UserController {
 
     @PostMapping(value = "/register")
     public ResponseEntity<UserOutputDto> createUser(@Valid @RequestPart("user") UserInputDto userInputDto,
-                                                    @RequestPart("file") MultipartFile file) throws IOException, IOException {
+                                                    @RequestPart(value = "file", required = false) MultipartFile file) throws IOException, IOException {
         User user = new User();
         user.setUsername(userInputDto.getUsername());
         user.setPassword(userInputDto.getPassword());

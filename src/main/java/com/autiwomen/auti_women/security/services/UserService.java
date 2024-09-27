@@ -126,13 +126,14 @@ public class UserService {
     }
 
     public String createUserWithImage(User user, MultipartFile file) throws IOException {
-        userRepository.save(user);
-        String fileName = saveImage(file, user.getUsername());
-        String imageUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/images/")
-                .path(fileName)
-                .toUriString();
-        user.setProfilePictureUrl(imageUrl);
+        if (file != null && !file.isEmpty()) {
+            String fileName = saveImage(file, user.getUsername());
+            String imageUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
+                    .path("/images/")
+                    .path(fileName)
+                    .toUriString();
+            user.setProfilePictureUrl(imageUrl);
+        }
         userRepository.save(user);
         return user.getUsername();
     }
