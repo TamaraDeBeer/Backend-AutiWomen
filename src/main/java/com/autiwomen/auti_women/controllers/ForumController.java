@@ -93,5 +93,15 @@ public class ForumController {
         return ResponseEntity.ok(uniqueTopics);
     }
 
+    @GetMapping("/forums/sorted-unique-topics")
+    public ResponseEntity<List<String>> getSortedUniqueTopics() {
+        List<String> sortedUniqueTopics = forumService.getSortedUniqueTopics();
+        return ResponseEntity.ok(sortedUniqueTopics);
+    }
+
+    @GetMapping("/topics/frequency")
+    public ResponseEntity<Map<String, Integer>> getTopicFrequency() {
+        return ResponseEntity.ok(forumService.getTopicFrequency());
+    }
 
 }

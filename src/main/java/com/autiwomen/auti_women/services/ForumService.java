@@ -231,9 +231,36 @@ public class ForumService {
         return uniqueTopics;
     }
 
+    public List<String> getSortedUniqueTopics() {
+        List<Forum> forums = forumRepository.findAll();
+        Map<String, Integer> topicFrequency = new HashMap<>();
+        for (Forum forum : forums) {
+            String topic = forum.getTopic();
+            topicFrequency.put(topic, topicFrequency.getOrDefault(topic, 0) + 1);
+        }
+        return topicFrequency.entrySet()
+                .stream()
+                .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
+    }
 
-
-
+    public Map<String, Integer> getTopicFrequency() {
+        List<Forum> forums = forumRepository.findAll();
+        Map<String, Integer> topicFrequency = new HashMap<>();
+        for (Forum forum : forums) {
+            String topic = forum.getTopic();
+            if (topicFrequency.containsKey(topic)) {
+                topicFrequency.put(topic, topicFrequency.get(topic) + 1);
+            } else {
+                topicFrequency.put(topic, 1);
+            }
+        }
+        return topicFrequency.entrySet()
+                .stream()
+                .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+                .collect(LinkedHashMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), LinkedHashMap::putAll);
+    }
 
     public ForumDto fromForum(Forum forum) {
         var forumDto = new ForumDto();
