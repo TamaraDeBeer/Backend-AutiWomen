@@ -1,5 +1,7 @@
 package com.autiwomen.auti_women.dtos.images;
 
+import com.autiwomen.auti_women.models.Image;
+
 public class ImageOutputDto {
 
     String fileName;

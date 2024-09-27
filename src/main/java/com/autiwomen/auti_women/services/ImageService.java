@@ -1,5 +1,7 @@
 package com.autiwomen.auti_women.services;
 
+import com.autiwomen.auti_women.models.Image;
+import com.autiwomen.auti_women.repositories.ImageRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -23,10 +25,12 @@ public class ImageService {
 
     private Path fileStoragePath;
     private final String fileStorageLocation;
+    private final ImageRepository imageRepository;
 
-    public ImageService(@Value("${my.upload_location}") String fileStorageLocation) {
+    public ImageService(@Value("${my.upload_location}") String fileStorageLocation, ImageRepository imageRepository) {
         fileStoragePath = Paths.get(fileStorageLocation).toAbsolutePath().normalize();
         this.fileStorageLocation = fileStorageLocation;
+        this.imageRepository = imageRepository;
         try {
             Files.createDirectories(fileStoragePath);
         } catch (IOException e) {
@@ -42,6 +46,7 @@ public class ImageService {
         } catch (IOException e) {
             throw new RuntimeException("Issue in storing the file", e);
         }
+//        imageRepository.save(new Image(fileName, file.getContentType(), url));
         return fileName;
     }
 

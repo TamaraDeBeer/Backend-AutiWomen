@@ -3,7 +3,6 @@ package com.autiwomen.auti_women.models;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
 
 @Entity
 public class Image {
@@ -17,7 +16,7 @@ public class Image {
     private String url;
 
 
-    public Image() {
+    public Image(String fileName, String contentType, String url) {
     }
 
     public Image(Long id, String fileName, String contentType, String url) {
