@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.*;
 import java.time.LocalDateTime;
+import java.util.stream.Collectors;
 
 @Service
 public class ForumService {
@@ -208,6 +209,59 @@ public class ForumService {
         return commentedForumDtos;
     }
 
+    public List<Forum> getForumsByTopic(String topic) {
+        List<Forum> forums = forumRepository.findAll();
+        List<Forum> forumsByTopic = new ArrayList<>();
+        for (Forum forum : forums) {
+            if (forum.getTopic().equals(topic)) {
+                forumsByTopic.add(forum);
+            }
+        }
+        return forumsByTopic;
+    }
+
+    public Set<String> getUniqueTopics() {
+        List<Forum> forums = forumRepository.findAll();
+        Set<String> uniqueTopics = new HashSet<>();
+        for (Forum forum : forums) {
+            if (!uniqueTopics.contains(forum.getTopic())) {
+                uniqueTopics.add(forum.getTopic());
+            }
+        }
+        return uniqueTopics;
+    }
+
+    public List<String> getSortedUniqueTopics() {
+        List<Forum> forums = forumRepository.findAll();
+        Map<String, Integer> topicFrequency = new HashMap<>();
+        for (Forum forum : forums) {
+            String topic = forum.getTopic();
+            topicFrequency.put(topic, topicFrequency.getOrDefault(topic, 0) + 1);
+        }
+        return topicFrequency.entrySet()
+                .stream()
+                .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
+    }
+
+    public Map<String, Integer> getTopicFrequency() {
+        List<Forum> forums = forumRepository.findAll();
+        Map<String, Integer> topicFrequency = new HashMap<>();
+        for (Forum forum : forums) {
+            String topic = forum.getTopic();
+            if (topicFrequency.containsKey(topic)) {
+                topicFrequency.put(topic, topicFrequency.get(topic) + 1);
+            } else {
+                topicFrequency.put(topic, 1);
+            }
+        }
+        return topicFrequency.entrySet()
+                .stream()
+                .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+                .collect(LinkedHashMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), LinkedHashMap::putAll);
+    }
+
     public ForumDto fromForum(Forum forum) {
         var forumDto = new ForumDto();
         forumDto.id = forum.getId();
@@ -217,6 +271,7 @@ public class ForumService {
         forumDto.text = forum.getText();
         forumDto.date = forum.getDate();
         forumDto.lastReaction = forum.getLastReaction();
+        forumDto.topic = forum.getTopic();
         forumDto.likesCount = forum.getLikesCount();
         forumDto.viewsCount = forum.getViewsCount();
         forumDto.commentsCount = forum.getCommentsCount();
@@ -231,6 +286,7 @@ public class ForumService {
         forum.setText(forumInputDto.text);
         forum.setDate(forumInputDto.date);
         forum.setLastReaction(forumInputDto.lastReaction);
+        forum.setTopic(forumInputDto.topic);
 
         return forum;
     }

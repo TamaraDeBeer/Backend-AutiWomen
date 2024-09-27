@@ -19,18 +19,23 @@ public class ForumInputDto {
     public String date;
     public String lastReaction;
 
-    public ForumInputDto(String name, String title, String text, String age, String date, String lastReaction) {
+    @NotEmpty
+    public String topic;
+
+    public ForumInputDto(String name, String title, String text, String age, String date, String lastReaction, String topic) {
         this.name = name;
         this.title = title;
         this.text = text;
         this.age = age;
         this.date = date;
         this.lastReaction = lastReaction;
+        this.topic = topic;
     }
 
     public ForumInputDto(String title, String text) {
         this.title = title;
         this.text = text;
+//        this.forumTopic = forumTopic;
     }
 
     public ForumInputDto() {
@@ -84,4 +89,11 @@ public class ForumInputDto {
         this.date = date;
     }
 
+    public String getTopic() {
+        return topic;
+    }
+
+    public void setTopic(String topic) {
+        this.topic = topic;
+    }
 }
