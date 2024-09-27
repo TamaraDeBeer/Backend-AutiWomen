@@ -46,7 +46,6 @@ public class ImageService {
         } catch (IOException e) {
             throw new RuntimeException("Issue in storing the file", e);
         }
-//        imageRepository.save(new Image(fileName, file.getContentType(), url));
         return fileName;
     }
 

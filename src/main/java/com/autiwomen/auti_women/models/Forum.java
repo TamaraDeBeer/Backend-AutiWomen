@@ -64,8 +64,7 @@ public class Forum {
     @OneToMany(mappedBy = "forum")
     private Set<View> views;
 
-    public Forum(int commentsCount, Long id, String name, String age, String title, String text, String date, String lastReaction, String topic, int likesCount, int viewsCount, List<Comment> commentsList, User user, Set<Like> likes, Set<View> views) {
-        this.commentsCount = commentsCount;
+    public Forum(Long id, String name, String age, String title, String text, String date, String lastReaction, String topic, int likesCount, int viewsCount, int commentsCount, List<Comment> commentsList, User user, Set<Like> likes, Set<View> views) {
         this.id = id;
         this.name = name;
         this.age = age;
@@ -76,6 +75,7 @@ public class Forum {
         this.topic = topic;
         this.likesCount = likesCount;
         this.viewsCount = viewsCount;
+        this.commentsCount = commentsCount;
         this.commentsList = commentsList;
         this.user = user;
         this.likes = likes;
@@ -204,4 +204,6 @@ public class Forum {
     public void setTopic(String topic) {
         this.topic = topic;
     }
+
+
 }
