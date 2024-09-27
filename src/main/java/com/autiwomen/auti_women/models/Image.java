@@ -13,33 +13,50 @@ public class Image {
     private Long id;
 
     private String fileName;
-
-    @Lob
-    private byte[] docFile;
+    private String contentType;
+    private String url;
 
 
     public Image() {
     }
 
-    public Image(String fileName, byte[] docFile) {
+    public Image(Long id, String fileName, String contentType, String url) {
+        this.id = id;
         this.fileName = fileName;
-        this.docFile = docFile;
+        this.contentType = contentType;
+        this.url = url;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getFileName() {
         return fileName;
     }
 
-    public byte[] getDocFile() {
-        return docFile;
-    }
-
     public void setFileName(String fileName) {
         this.fileName = fileName;
     }
 
-    public void setDocFile(byte[] docFile) {
-        this.docFile = docFile;
+    public String getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }
 

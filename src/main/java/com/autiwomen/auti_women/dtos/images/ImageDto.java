@@ -7,39 +7,48 @@ public class ImageDto {
 
     public Long id;
     public String fileName;
-    public byte[] docFile;
+    public String contentType;
+    public String url;
 
     public ImageDto() {
     }
 
-    public ImageDto(Long id, String fileName, byte[] docFile) {
+    public ImageDto(Long id, String fileName, String contentType, String url) {
         this.id = id;
         this.fileName = fileName;
-        this.docFile = docFile;
+        this.contentType = contentType;
+        this.url = url;
     }
 
     public Long getId() {
         return id;
     }
 
-    public String getFileName() {
-        return fileName;
-    }
-
-    public byte[] getDocFile() {
-        return docFile;
-    }
-
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getFileName() {
+        return fileName;
     }
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
     }
 
-    public void setDocFile(byte[] docFile) {
-        this.docFile = docFile;
+    public String getContentType() {
+        return contentType;
     }
 
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
 }
