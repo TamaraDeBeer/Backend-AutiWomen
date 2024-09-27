@@ -100,6 +100,17 @@ public class UserService {
         }
     }
 
+    public void removeProfilePicture(String username) {
+        Optional<User> userOptional = userRepository.findById(username);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            user.setProfilePictureUrl(null);
+            userRepository.save(user);
+        } else {
+            throw new UsernameNotFoundException(username);
+        }
+    }
+
     public void deleteUser(String username) {
         userRepository.deleteById(username);
     }

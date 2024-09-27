@@ -42,33 +42,6 @@ public class UserController {
         return ResponseEntity.ok().body(optionalUser);
     }
 
-//    @PostMapping(value = "/register")
-//    public ResponseEntity<UserOutputDto> createUser(@Valid @RequestPart("user") UserInputDto userInputDto,
-//                                                    @RequestPart(value = "file", required = false) MultipartFile file) throws IOException, IOException {
-//        User user = new User();
-//        user.setUsername(userInputDto.getUsername());
-//        user.setPassword(userInputDto.getPassword());
-//        user.setEmail(userInputDto.getEmail());
-//        user.setName(userInputDto.getName());
-//        user.setGender(userInputDto.getGender());
-//        user.setDob(userInputDto.getDob());
-//        user.setAutismDiagnoses(userInputDto.getAutismDiagnoses());
-//        user.setAutismDiagnosesYear(userInputDto.getAutismDiagnosesYear());
-//        user.addAuthority(new Authority(user.getUsername(), "ROLE_USER"));
-//
-//        String newUsername = userService.createUser(user, file);
-//
-//        UserOutputDto outputDto = new UserOutputDto();
-//        outputDto.setUsername(newUsername);
-//        outputDto.setEmail(userInputDto.getEmail());
-//        outputDto.setProfilePictureUrl(user.getProfilePictureUrl());
-//
-//        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{username}")
-//                .buildAndExpand(newUsername).toUri();
-//
-//        return ResponseEntity.created(location).body(outputDto);
-//    }
-
     @PostMapping(value = "/register")
     public ResponseEntity<UserOutputDto> createUser(@Valid @RequestPart("user") UserInputDto userInputDto,
                                                     @RequestPart(value = "file", required = false) MultipartFile file) throws IOException {
@@ -97,7 +70,13 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping(value = "/{username}")
+    @DeleteMapping(value = "/users/{username}/profile-picture")
+    public ResponseEntity<Void> removeProfilePicture(@PathVariable("username") String username) {
+        userService.removeProfilePicture(username);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping(value = "/users/{username}")
     public ResponseEntity<Object> deleteUser(@PathVariable("username") String username) {
         userService.deleteUser(username);
         return ResponseEntity.noContent().build();
