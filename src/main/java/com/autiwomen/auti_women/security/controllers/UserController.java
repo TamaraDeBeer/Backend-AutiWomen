@@ -1,38 +1,33 @@
 package com.autiwomen.auti_women.security.controllers;
 
-import com.autiwomen.auti_women.controllers.ImageController;
-import com.autiwomen.auti_women.dtos.images.ImageOutputDto;
 import com.autiwomen.auti_women.exceptions.BadRequestException;
 import com.autiwomen.auti_women.security.dtos.user.UserDto;
 import com.autiwomen.auti_women.security.dtos.user.UserInputDto;
 import com.autiwomen.auti_women.security.dtos.user.UserOutputDto;
+import com.autiwomen.auti_women.security.models.Authority;
+import com.autiwomen.auti_women.security.models.User;
 import com.autiwomen.auti_women.security.services.UserService;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @CrossOrigin
 @RestController
 public class UserController {
 
-    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
-
     private final UserService userService;
-    private final ImageController imageController;
 
-    public UserController(UserService userService, ImageController imageController) {
+
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.imageController = imageController;
     }
 
     @GetMapping(value = "/users")
@@ -41,44 +36,37 @@ public class UserController {
         return ResponseEntity.ok().body(userOutputDtos);
     }
 
-//    @GetMapping(value = "/users/{username}")
-//    public ResponseEntity<UserOutputDto> getOneUser(@PathVariable("username") String username) {
-//        UserOutputDto optionalUser = userService.getOneUser(username);
-//        return ResponseEntity.ok().body(optionalUser);
-//    }
-
     @GetMapping(value = "/users/{username}")
     public ResponseEntity<UserOutputDto> getOneUser(@PathVariable("username") String username) {
-        try {
-            UserOutputDto optionalUser = userService.getOneUser(username);
-            return ResponseEntity.ok().body(optionalUser);
-        } catch (Exception e) {
-            // Log the exception
-            logger.error("Error fetching user with username: " + username, e);
-            // Return an appropriate error response
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
+        UserOutputDto optionalUser = userService.getOneUser(username);
+        return ResponseEntity.ok().body(optionalUser);
     }
 
     @PostMapping(value = "/register")
-    public ResponseEntity<UserOutputDto> createUser(@Valid @RequestBody UserInputDto userInputDto) {
-        String newUsername = userService.createUser(userInputDto);
-        userService.addUserAuthority(newUsername, "ROLE_USER");
+    public ResponseEntity<UserOutputDto> createUser(@Valid @RequestPart("user") UserInputDto userInputDto,
+                                                    @RequestPart("file") MultipartFile file) throws IOException, IOException {
+        User user = new User();
+        user.setUsername(userInputDto.getUsername());
+        user.setPassword(userInputDto.getPassword());
+        user.setEmail(userInputDto.getEmail());
+        user.setName(userInputDto.getName());
+        user.setGender(userInputDto.getGender());
+        user.setDob(userInputDto.getDob());
+        user.setAutismDiagnoses(userInputDto.getAutismDiagnoses());
+        user.setAutismDiagnosesYear(userInputDto.getAutismDiagnosesYear());
+        user.addAuthority(new Authority(user.getUsername(), "ROLE_USER"));
+
+        String newUsername = userService.createUserWithImage(user, file);
 
         UserOutputDto outputDto = new UserOutputDto();
         outputDto.setUsername(newUsername);
         outputDto.setEmail(userInputDto.getEmail());
+        outputDto.setProfilePictureUrl(user.getProfilePictureUrl());
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{username}")
                 .buildAndExpand(newUsername).toUri();
 
         return ResponseEntity.created(location).body(outputDto);
-    }
-
-    @PostMapping("/{username}/photo")
-    public void assignPhotoToUser(@PathVariable String username, @RequestParam("file") MultipartFile file) {
-        ImageOutputDto imageOutputDto = imageController.singleFileUpload(file, username);
-        userService.assignImageToUser(imageOutputDto.getFileName(), username);
     }
 
     @PutMapping(value = "/{username}")

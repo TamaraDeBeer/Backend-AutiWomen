@@ -20,13 +20,12 @@ public class UserDto {
     public LocalDate dob;
     public String autismDiagnoses;
     public Integer autismDiagnosesYear;
-
-//    public ImageDto imageDto;
+    private String profilePictureUrl;
 
     @JsonSerialize
     public Set<Authority> authorities;
 
-    public UserDto(String username, String password, boolean enabled, String apikey, String email, String name, String gender, LocalDate dob, String autismDiagnoses, Integer autismDiagnosesYear, Set<Authority> authorities) {
+    public UserDto(String username, String password, boolean enabled, String apikey, String email, String name, String gender, LocalDate dob, String autismDiagnoses, Integer autismDiagnosesYear, String profilePictureUrl, Set<Authority> authorities) {
         this.username = username;
         this.password = password;
         this.enabled = enabled;
@@ -37,7 +36,7 @@ public class UserDto {
         this.dob = dob;
         this.autismDiagnoses = autismDiagnoses;
         this.autismDiagnosesYear = autismDiagnosesYear;
-//        this.imageDto = imageDto;
+        this.profilePictureUrl = profilePictureUrl;
         this.authorities = authorities;
     }
 
@@ -136,11 +135,11 @@ public class UserDto {
         this.autismDiagnosesYear = autismDiagnosesYear;
     }
 
-//    public ImageDto getImageDto() {
-//        return imageDto;
-//    }
-//
-//    public void setImageDto(ImageDto imageDto) {
-//        this.imageDto = imageDto;
-//    }
+    public String getProfilePictureUrl() {
+        return profilePictureUrl;
+    }
+
+    public void setProfilePictureUrl(String profilePictureUrl) {
+        this.profilePictureUrl = profilePictureUrl;
+    }
 }

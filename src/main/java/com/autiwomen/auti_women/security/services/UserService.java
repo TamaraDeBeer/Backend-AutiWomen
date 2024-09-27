@@ -12,17 +12,23 @@ import com.autiwomen.auti_women.security.utils.RandomStringGenerator;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
-//    private final ImageRepository imageRepository;
 
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -39,19 +45,6 @@ public class UserService {
         return collection;
     }
 
-//    public List<UserOutputDto> getUsers() {
-//        List<UserOutputDto> collection = new ArrayList<>();
-//        List<User> list = userRepository.findAll();
-//        for (User user : list) {
-//            if (user.getImage() != null) {
-//                Image image = imageRepository.findById(user.getImage().getId()).orElse(null);
-//                user.setImage(image);
-//            }
-//            collection.add(toUserOutputDto(user));
-//        }
-//        return collection;
-//    }
-
     public UserOutputDto getOneUser(String username) {
         UserOutputDto dto;
         Optional<User> user = userRepository.findById(username);
@@ -62,22 +55,6 @@ public class UserService {
         }
         return dto;
     }
-
-//    public UserOutputDto getOneUser(String username) {
-//        UserOutputDto dto;
-//        Optional<User> user = userRepository.findById(username);
-//        if (user.isPresent()) {
-//            User foundUser = user.get();
-//            if (foundUser.getImage() != null) {
-//                Image image = imageRepository.findById(foundUser.getImage().getId()).orElse(null);
-//                foundUser.setImage(image);
-//            }
-//            dto = toUserOutputDto(foundUser);
-//        } else {
-//            throw new UsernameNotFoundException(username);
-//        }
-//        return dto;
-//    }
 
     //    Deze methode is enkel voor de CustomUserDetailsService omdat we daar een wachtwoord nodig hebben en de UserOutputDto geen wachtwoord bevat
     public UserDto getUserEntity(String username) {
@@ -92,18 +69,6 @@ public class UserService {
 //    public boolean userExists(String username) {
 //        return userRepository.existsById(username);
 //    }
-
-    public String createUser(UserInputDto userInputDto) {
-        if (userInputDto.getPassword() == null || userInputDto.getPassword().isEmpty()) {
-            throw new IllegalArgumentException("Password cannot be null or empty");
-        }
-        String randomString = RandomStringGenerator.generateAlphaNumeric(20);
-        userInputDto.setApikey(randomString);
-        User newUser = userRepository.save(toUser(userInputDto));
-        newUser.setPassword(passwordEncoder.encode(userInputDto.getPassword()));
-        userRepository.save(newUser);
-        return newUser.getUsername();
-    }
 
     public UserDto updatePasswordUser(String username, UserDto updateUser) {
         Optional<User> userOptional = userRepository.findById(username);
@@ -160,36 +125,25 @@ public class UserService {
         }
     }
 
-//    public void assignImageToUser(String fileName, String username) {
-//        Optional<User> userOptional = userRepository.findById(username);
-//        Optional<ImageOutputDto> imageOptional = imageRepository.findByFileName(fileName);
-//        if(userOptional.isPresent() && imageOptional.isPresent()) {
-//            ImageOutputDto imageOutputDto = imageOptional.get();
-//            User user = userOptional.get();
-//            // Convert ImageOutputDto to Image
-//            Image image = new Image();
-////            image.setId(imageOutputDto.getId());
-//            image.setFileName(imageOutputDto.getFileName());
-//            image.setUrl(imageOutputDto.getUrl());
-//            user.setImage(image);
-//            userRepository.save(user);
-//        } else {
-//            throw new RecordNotFoundException("Er is geen user gevonden met username: " + username + " of er is geen image gevonden met filename: " + fileName);
-//        }
-//    }
+    public String createUserWithImage(User user, MultipartFile file) throws IOException {
+        userRepository.save(user);
+        String fileName = saveImage(file, user.getUsername());
+        String imageUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/images/")
+                .path(fileName)
+                .toUriString();
+        user.setProfilePictureUrl(imageUrl);
+        userRepository.save(user);
+        return user.getUsername();
+    }
 
-//    public void assignImageToUser(String fileName, String username) {
-//        Optional<User> userOptional = userRepository.findById(username);
-//        Optional<Image> imageOptional = imageRepository.findByFileName(fileName);
-//        if (userOptional.isPresent() && imageOptional.isPresent()) {
-//            Image image = imageOptional.get();
-//            User user = userOptional.get();
-//            user.setImage(image);
-//            userRepository.save(user);
-//        } else {
-//            throw new RecordNotFoundException("Er is geen user gevonden met username: " + username + " of er is geen image gevonden met filename: " + fileName);
-//        }
-//    }
+    private String saveImage(MultipartFile file, String username) throws IOException {
+        String fileName = file.getOriginalFilename();
+        Path path = Paths.get("images/" + fileName);
+        Files.createDirectories(path.getParent());
+        Files.write(path, file.getBytes());
+        return fileName;
+    }
 
     public static UserDto fromUser(User user) {
         var dto = new UserDto();
@@ -233,6 +187,7 @@ public class UserService {
         dto.setDob(user.getDob());
         dto.setAutismDiagnoses(user.getAutismDiagnoses());
         dto.setAutismDiagnosesYear(user.getAutismDiagnosesYear());
+        dto.setProfilePictureUrl(user.getProfilePictureUrl());
 
         return dto;
     }

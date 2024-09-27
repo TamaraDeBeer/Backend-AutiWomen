@@ -37,15 +37,20 @@ public class UserInputDto {
     @Digits(integer = 4, fraction = 0)
     public Integer autismDiagnosesYear;
 
-    public UserInputDto(String username, String password, String email, String name, String gender, LocalDate dob, String autismDiagnoses, Integer autismDiagnosesYear) {
+    public String profilePictureUrl;
+
+    public UserInputDto(String username, String password, String email, String apikey, boolean enabled, String name, String gender, LocalDate dob, String autismDiagnoses, Integer autismDiagnosesYear, String profilePictureUrl) {
         this.username = username;
         this.password = password;
         this.email = email;
+        this.apikey = apikey;
+        this.enabled = enabled;
         this.name = name;
         this.gender = gender;
         this.dob = dob;
         this.autismDiagnoses = autismDiagnoses;
         this.autismDiagnosesYear = autismDiagnosesYear;
+        this.profilePictureUrl = profilePictureUrl;
     }
 
     public UserInputDto(String email, String password) {
@@ -147,5 +152,13 @@ public class UserInputDto {
 
     public void setAutismDiagnosesYear(Integer autismDiagnosesYear) {
         this.autismDiagnosesYear = autismDiagnosesYear;
+    }
+
+    public String getProfilePictureUrl() {
+        return profilePictureUrl;
+    }
+
+    public void setProfilePictureUrl(String profilePictureUrl) {
+        this.profilePictureUrl = profilePictureUrl;
     }
 }
