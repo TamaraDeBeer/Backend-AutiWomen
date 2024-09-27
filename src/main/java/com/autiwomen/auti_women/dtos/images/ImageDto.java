@@ -1,5 +1,6 @@
 package com.autiwomen.auti_women.dtos.images;
 
+import com.autiwomen.auti_women.security.dtos.user.UserDto;
 import jakarta.validation.Valid;
 
 @Valid
@@ -10,14 +11,17 @@ public class ImageDto {
     public String contentType;
     public String url;
 
+    public UserDto userDto;
+
     public ImageDto() {
     }
 
-    public ImageDto(Long id, String fileName, String contentType, String url) {
+    public ImageDto(Long id, String fileName, String contentType, String url, UserDto userDto) {
         this.id = id;
         this.fileName = fileName;
         this.contentType = contentType;
         this.url = url;
+        this.userDto = userDto;
     }
 
     public Long getId() {
@@ -50,5 +54,13 @@ public class ImageDto {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public UserDto getUserDto() {
+        return userDto;
+    }
+
+    public void setUserDto(UserDto userDto) {
+        this.userDto = userDto;
     }
 }
