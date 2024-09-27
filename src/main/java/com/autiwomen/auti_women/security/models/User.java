@@ -77,6 +77,9 @@ public class User {
     @OneToMany(mappedBy = "user")
     private Set<View> views;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Profile profile;
+
     public User(String username, String password, boolean enabled, String apikey, String email, String name, String gender, LocalDate dob, String autismDiagnoses, Integer autismDiagnosesYear, String profilePictureUrl, Set<Authority> authorities, List<Comment> commentsList, Set<Forum> forums, Set<Like> likes, Set<View> views) {
         this.username = username;
         this.password = password;
@@ -233,6 +236,15 @@ public class User {
 
     public void setProfilePictureUrl(String profilePictureUrl) {
         this.profilePictureUrl = profilePictureUrl;
+    }
+
+    public Profile getProfile() {
+        return profile;
+    }
+
+    public void setProfile(Profile profile) {
+        this.profile = profile;
+        profile.setUser(this);
     }
 
 }
