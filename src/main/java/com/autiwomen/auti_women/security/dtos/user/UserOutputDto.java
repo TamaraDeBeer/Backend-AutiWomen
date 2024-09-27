@@ -1,5 +1,7 @@
 package com.autiwomen.auti_women.security.dtos.user;
 
+import com.autiwomen.auti_women.dtos.profiles.ProfileDto;
+
 import java.time.LocalDate;
 
 public class UserOutputDto {
@@ -13,6 +15,8 @@ public class UserOutputDto {
     private Integer autismDiagnosesYear;
     private String profilePictureUrl;
 
+    private ProfileDto profileDto;
+
 //    moet authority ook hier als output dto? Heb ik deze in de Front nodig?
     // en forums?
 
@@ -24,7 +28,7 @@ public class UserOutputDto {
         this.email = email;
     }
 
-    public UserOutputDto(String username, String email, String name, String gender, LocalDate dob, String autismDiagnoses, Integer autismDiagnosesYear, String profilePictureUrl) {
+    public UserOutputDto(ProfileDto profileDto, String username, String email, String name, String gender, LocalDate dob, String autismDiagnoses, Integer autismDiagnosesYear, String profilePictureUrl) {
         this.username = username;
         this.email = email;
         this.name = name;
@@ -33,6 +37,7 @@ public class UserOutputDto {
         this.autismDiagnoses = autismDiagnoses;
         this.autismDiagnosesYear = autismDiagnosesYear;
         this.profilePictureUrl = profilePictureUrl;
+        this.profileDto = profileDto;
     }
 
     public String getUsername() {
@@ -97,6 +102,14 @@ public class UserOutputDto {
 
     public void setProfilePictureUrl(String profilePictureUrl) {
         this.profilePictureUrl = profilePictureUrl;
+    }
+
+    public ProfileDto getProfileDto() {
+        return profileDto;
+    }
+
+    public void setProfileDto(ProfileDto profileDto) {
+        this.profileDto = profileDto;
     }
 
 }

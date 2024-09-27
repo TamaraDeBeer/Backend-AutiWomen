@@ -2,6 +2,8 @@ package com.autiwomen.auti_women.security.services;
 
 
 import com.autiwomen.auti_women.exceptions.RecordNotFoundException;
+import com.autiwomen.auti_women.models.Profile;
+import com.autiwomen.auti_women.repositories.ProfileRepository;
 import com.autiwomen.auti_women.security.UserRepository;
 import com.autiwomen.auti_women.security.dtos.user.UserDto;
 import com.autiwomen.auti_women.security.dtos.user.UserInputDto;
@@ -9,6 +11,7 @@ import com.autiwomen.auti_women.security.dtos.user.UserOutputDto;
 import com.autiwomen.auti_women.security.models.Authority;
 import com.autiwomen.auti_women.security.models.User;
 import com.autiwomen.auti_women.security.utils.RandomStringGenerator;
+import com.autiwomen.auti_women.services.ProfileService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -29,11 +32,13 @@ import java.util.Set;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final ProfileService profileService;
 
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, ProfileService profileService) {
         this.userRepository = userRepository;
+        this.profileService = profileService;
     }
 
     public List<UserOutputDto> getUsers() {
@@ -218,10 +223,11 @@ public class UserService {
         user.setAutismDiagnoses(userInputDto.getAutismDiagnoses());
         user.setAutismDiagnosesYear(userInputDto.getAutismDiagnosesYear());
 
+
         return user;
     }
 
-    public static UserOutputDto toUserOutputDto(User user) {
+    public UserOutputDto toUserOutputDto(User user) {
         var dto = new UserOutputDto();
         dto.setUsername(user.getUsername());
         dto.setEmail(user.getEmail());
@@ -231,6 +237,10 @@ public class UserService {
         dto.setAutismDiagnoses(user.getAutismDiagnoses());
         dto.setAutismDiagnosesYear(user.getAutismDiagnosesYear());
         dto.setProfilePictureUrl(user.getProfilePictureUrl());
+
+//        if(user.getProfile() != null){
+//            dto.setProfileDto(profileService.fromProfile(user.getProfile()));
+//        }
 
         return dto;
     }
