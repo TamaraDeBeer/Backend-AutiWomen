@@ -42,26 +42,41 @@ public class UserController {
         return ResponseEntity.ok().body(optionalUser);
     }
 
+//    @PostMapping(value = "/register")
+//    public ResponseEntity<UserOutputDto> createUser(@Valid @RequestPart("user") UserInputDto userInputDto,
+//                                                    @RequestPart(value = "file", required = false) MultipartFile file) throws IOException, IOException {
+//        User user = new User();
+//        user.setUsername(userInputDto.getUsername());
+//        user.setPassword(userInputDto.getPassword());
+//        user.setEmail(userInputDto.getEmail());
+//        user.setName(userInputDto.getName());
+//        user.setGender(userInputDto.getGender());
+//        user.setDob(userInputDto.getDob());
+//        user.setAutismDiagnoses(userInputDto.getAutismDiagnoses());
+//        user.setAutismDiagnosesYear(userInputDto.getAutismDiagnosesYear());
+//        user.addAuthority(new Authority(user.getUsername(), "ROLE_USER"));
+//
+//        String newUsername = userService.createUser(user, file);
+//
+//        UserOutputDto outputDto = new UserOutputDto();
+//        outputDto.setUsername(newUsername);
+//        outputDto.setEmail(userInputDto.getEmail());
+//        outputDto.setProfilePictureUrl(user.getProfilePictureUrl());
+//
+//        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{username}")
+//                .buildAndExpand(newUsername).toUri();
+//
+//        return ResponseEntity.created(location).body(outputDto);
+//    }
+
     @PostMapping(value = "/register")
     public ResponseEntity<UserOutputDto> createUser(@Valid @RequestPart("user") UserInputDto userInputDto,
-                                                    @RequestPart(value = "file", required = false) MultipartFile file) throws IOException, IOException {
-        User user = new User();
-        user.setUsername(userInputDto.getUsername());
-        user.setPassword(userInputDto.getPassword());
-        user.setEmail(userInputDto.getEmail());
-        user.setName(userInputDto.getName());
-        user.setGender(userInputDto.getGender());
-        user.setDob(userInputDto.getDob());
-        user.setAutismDiagnoses(userInputDto.getAutismDiagnoses());
-        user.setAutismDiagnosesYear(userInputDto.getAutismDiagnosesYear());
-        user.addAuthority(new Authority(user.getUsername(), "ROLE_USER"));
-
-        String newUsername = userService.createUserWithImage(user, file);
+                                                    @RequestPart(value = "file", required = false) MultipartFile file) throws IOException {
+        String newUsername = userService.createUserWithImage(userInputDto, file);
 
         UserOutputDto outputDto = new UserOutputDto();
         outputDto.setUsername(newUsername);
         outputDto.setEmail(userInputDto.getEmail());
-        outputDto.setProfilePictureUrl(user.getProfilePictureUrl());
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{username}")
                 .buildAndExpand(newUsername).toUri();
@@ -72,6 +87,13 @@ public class UserController {
     @PutMapping(value = "/{username}")
     public ResponseEntity<UserDto> updatePasswordUser(@PathVariable("username") String username, @RequestBody UserDto dto) {
         userService.updatePasswordUser(username, dto);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping(value = "/users/{username}/profile-picture")
+    public ResponseEntity<Void> updateProfilePicture(@PathVariable("username") String username,
+                                                     @RequestPart("file") MultipartFile file) throws IOException {
+        userService.updateProfilePicture(username, file);
         return ResponseEntity.noContent().build();
     }
 

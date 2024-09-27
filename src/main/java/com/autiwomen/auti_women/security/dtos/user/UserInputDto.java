@@ -1,6 +1,7 @@
 package com.autiwomen.auti_women.security.dtos.user;
 
 import jakarta.validation.constraints.*;
+import org.hibernate.validator.constraints.UniqueElements;
 
 import java.time.LocalDate;
 import java.time.Year;
