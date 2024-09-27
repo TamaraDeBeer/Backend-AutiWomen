@@ -8,6 +8,9 @@ import com.autiwomen.auti_women.security.UserRepository;
 import com.autiwomen.auti_women.security.models.User;
 import com.autiwomen.auti_women.models.Profile;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -29,6 +32,7 @@ public class ProfileService {
         Profile profile = toProfile(profileInputDto);
         profile.setName(user.getUsername());
         profile.setDate(String.valueOf(LocalDateTime.now()));
+        profile.setUser(user);
         profileRepository.save(profile);
         return fromProfile(profile);
     }
@@ -40,29 +44,25 @@ public class ProfileService {
     }
 
     public ProfileDto updateProfile(String username, ProfileInputDto profileInputDto) {
-        Optional<User> optionalUser = userRepository.findById(username);
-        Optional<Profile> optionalProfile = profileRepository.findByUser(optionalUser.orElseThrow(() -> new RecordNotFoundException("User not found")));
-        if (optionalProfile.isEmpty()) {
-            throw new RecordNotFoundException("Profile not found");
-        } else {
-            Profile profile = optionalProfile.get();
-            profile.setName(optionalUser.get().getUsername());
-            profile.setDate(String.valueOf(LocalDateTime.now()));
-            profile.setBio(profileInputDto.getBio());
-            profileRepository.save(profile);
-            return fromProfile(profile);
-        }
+        User user = userRepository.findById(username).orElseThrow(() -> new RecordNotFoundException("User not found"));
+        Profile profile = profileRepository.findByUser(user).orElseThrow(() -> new RecordNotFoundException("Profile not found"));
+
+        profile.setBio(profileInputDto.getBio());
+        profile.setDate(String.valueOf(LocalDateTime.now()));
+        profileRepository.save(profile);
+
+        return fromProfile(profile);
     }
 
-    public void deleteProfile(String username) {
-        Optional<User> optionalUser = userRepository.findById(username);
-        Optional<Profile> optionalProfile = profileRepository.findByUser(optionalUser.orElseThrow(() -> new RecordNotFoundException("User not found")));
-        if (optionalProfile.isEmpty()) {
-            throw new RecordNotFoundException("Profile not found");
-        } else {
-            profileRepository.delete(optionalProfile.get());
-        }
-    }
+//    public void deleteProfile(@RequestParam String username) {
+//        Optional<User> optionalUser = userRepository.findById(username);
+//        Optional<Profile> optionalProfile = profileRepository.findByUser(optionalUser.orElseThrow(() -> new RecordNotFoundException("User not found")));
+//        if (optionalProfile.isEmpty()) {
+//            throw new RecordNotFoundException("Profile not found");
+//        } else {
+//            profileRepository.delete(optionalProfile.get());
+//        }
+//    }
 
     public ProfileDto fromProfile(Profile profile) {
         var profileDto = new ProfileDto();
