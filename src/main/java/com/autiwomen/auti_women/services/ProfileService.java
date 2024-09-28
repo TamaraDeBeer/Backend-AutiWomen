@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ProfileService {
@@ -31,7 +33,7 @@ public class ProfileService {
 
         Profile profile = toProfile(profileInputDto);
         profile.setName(user.getUsername());
-        profile.setDate(String.valueOf(LocalDateTime.now()));
+        profile.setDate(String.valueOf(LocalDate.now()));
         profile.setUser(user);
         profileRepository.save(profile);
         return fromProfile(profile);
@@ -43,12 +45,18 @@ public class ProfileService {
         return fromProfile(profile);
     }
 
+    public List<ProfileDto> getAllProfiles() {
+        return profileRepository.findAll().stream()
+                .map(this::fromProfile)
+                .collect(Collectors.toList());
+    }
+
     public ProfileDto updateProfile(String username, ProfileInputDto profileInputDto) {
         User user = userRepository.findById(username).orElseThrow(() -> new RecordNotFoundException("User not found"));
         Profile profile = profileRepository.findByUser(user).orElseThrow(() -> new RecordNotFoundException("Profile not found"));
 
         profile.setBio(profileInputDto.getBio());
-        profile.setDate(String.valueOf(LocalDateTime.now()));
+        profile.setDate(String.valueOf(LocalDate.now()));
         profileRepository.save(profile);
 
         return fromProfile(profile);

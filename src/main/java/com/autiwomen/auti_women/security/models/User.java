@@ -101,6 +101,10 @@ public class User {
         this.profile = profile;
     }
 
+    public User(String username) {
+        this.username = username;
+    }
+
     public User() {
     }
 
