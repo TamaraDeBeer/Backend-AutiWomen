@@ -41,6 +41,14 @@ public class Comment {
         this.user = user;
     }
 
+    public Comment(Long id, String name, String text, String date, String age) {
+        this.id = id;
+        this.name = name;
+        this.text = text;
+        this.date = date;
+        this.age = age;
+    }
+
     public Comment() {
     }
 

@@ -82,6 +82,16 @@ public class Forum {
         this.views = views;
     }
 
+    public Forum(Long id, String name, String age, String title, String text, String date, String topic) {
+        this.id = id;
+        this.name = name;
+        this.age = age;
+        this.title = title;
+        this.text = text;
+        this.date = date;
+        this.topic = topic;
+    }
+
     public Forum() {
     }
 

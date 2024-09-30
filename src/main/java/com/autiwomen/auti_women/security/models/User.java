@@ -105,6 +105,11 @@ public class User {
         this.username = username;
     }
 
+    public User(String username, LocalDate dob) {
+        this.username = username;
+        this.dob = dob;
+    }
+
     public User() {
     }
 
