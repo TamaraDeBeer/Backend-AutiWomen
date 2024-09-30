@@ -18,6 +18,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -61,6 +62,12 @@ class CommentServiceTest {
         comment2 = new Comment(2L, "user2", "comment2", currentDate, "1990-05-15");
         forum1 = new Forum(1L, "user1", "1990-05-15", "title1", "text1", currentDate, "School");
         forum2 = new Forum(2L, "user2", "1990-05-15", "title2", "text2", currentDate, "School");
+
+        comment1.setForum(forum1);
+        comment2.setForum(forum2);
+        comment1.setUser(user1);
+        comment2.setUser(user2);
+
     }
 
     @AfterEach
@@ -82,28 +89,77 @@ class CommentServiceTest {
         assertEquals(comment1.getText(), commentCreated.getText());
         assertEquals(comment1.getDate(), commentCreated.getDate());
         assertEquals(comment1.getAge(), commentCreated.getAge());
-
-
     }
 
     @Test
     void assignCommentToForum() {
+        Long commentId = 1L;
+        Long forumId = 1L;
+
+        when(commentRepository.findById(commentId)).thenReturn(Optional.of(comment1));
+        when(forumRepository.findById(forumId)).thenReturn(Optional.of(forum1));
+
+        commentService.assignCommentToForum(commentId, forumId);
+
+        verify(commentRepository, times(1)).save(captor.capture());
+        Comment savedComment = captor.getValue();
+
+        assertEquals(forum1, savedComment.getForum());
     }
 
     @Test
     void assignCommentToUser() {
+        Long commentId = 1L;
+        String username = "user1";
+
+        when(commentRepository.findById(commentId)).thenReturn(Optional.of(comment1));
+        when(userRepository.findById(username)).thenReturn(Optional.of(user1));
+
+        commentService.assignCommentToUser(commentId, username);
+
+        verify(commentRepository, times(1)).save(captor.capture());
+        Comment savedComment = captor.getValue();
+
+        assertEquals(user1, savedComment.getUser());
     }
 
     @Test
     void getCommentsByForumId() {
+        Long forumId = 1L;
+        List<Comment> expectedComments = List.of(comment1);
+        forum1.setCommentsList(expectedComments);
+
+        when(forumRepository.findById(forumId)).thenReturn(Optional.of(forum1));
+
+        List<Comment> actualComments = commentService.getCommentsByForumId(forumId);
+
+        assertEquals(expectedComments, actualComments);
     }
 
     @Test
     void getCommentsByUsername() {
+        String username = "user1";
+        List<Comment> expectedComments = List.of(comment1);
+        user1.setCommentsList(expectedComments);
+
+        when(userRepository.findById(username)).thenReturn(Optional.of(user1));
+
+        List<Comment> actualComments = commentService.getCommentsByUsername(username);
+
+        assertEquals(expectedComments, actualComments);
     }
 
     @Test
     void getCommentCountByForumId() {
+        Long forumId = 1L;
+        List<Comment> comments = List.of(comment1);
+        forum1.setCommentsList(comments);
+
+        when(forumRepository.findById(forumId)).thenReturn(Optional.of(forum1));
+
+        int commentCount = commentService.getCommentCountByForumId(forumId);
+
+        assertEquals(comments.size(), commentCount);
     }
 
     @Test
