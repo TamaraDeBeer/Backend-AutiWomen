@@ -1,6 +1,9 @@
 package com.autiwomen.auti_women.services;
 
+import com.autiwomen.auti_women.dtos.comments.CommentDto;
 import com.autiwomen.auti_women.dtos.comments.CommentInputDto;
+import com.autiwomen.auti_women.dtos.forums.ForumDto;
+import com.autiwomen.auti_women.exceptions.RecordNotFoundException;
 import com.autiwomen.auti_women.models.Comment;
 import com.autiwomen.auti_women.models.Forum;
 import com.autiwomen.auti_women.repositories.CommentRepository;
@@ -164,17 +167,69 @@ class CommentServiceTest {
 
     @Test
     void deleteComment() {
+        Long commentId = 1L;
+
+        when(commentRepository.findById(commentId)).thenReturn(Optional.of(comment1));
+
+        commentService.deleteComment(commentId);
+
+        verify(commentRepository, times(1)).delete(comment1);
     }
 
     @Test
     void updateComment() {
+        Long commentId = 1L;
+        CommentDto updateCommentDto = new CommentDto();
+        updateCommentDto.setText("Updated comment text");
+
+        when(commentRepository.findById(commentId)).thenReturn(Optional.of(comment1));
+        when(commentRepository.save(any(Comment.class))).thenReturn(comment1);
+
+        CommentDto updatedCommentDto = commentService.updateComment(commentId, updateCommentDto);
+
+        verify(commentRepository, times(1)).save(captor.capture());
+        Comment savedComment = captor.getValue();
+
+        assertEquals("Updated comment text", savedComment.getText());
+        assertEquals(updatedCommentDto.getText(), updatedCommentDto.getText());
     }
 
     @Test
     void fromComment() {
+        Comment comment = new Comment();
+        comment.setId(1L);
+        comment.setName("user1");
+        comment.setText("Comment");
+        comment.setDate("2023-10-01");
+
+        Forum forum = new Forum();
+        forum.setId(1L);
+        comment.setForum(forum);
+        ForumDto forumDto = new ForumDto();
+        forumDto.setId(1L);
+        when(forumService.fromForum(forum)).thenReturn(forumDto);
+
+        CommentDto commentDto = commentService.fromComment(comment);
+
+        assertEquals(comment.getId(), commentDto.getId());
+        assertEquals(comment.getName(), commentDto.getName());
+        assertEquals(comment.getText(), commentDto.getText());
+        assertEquals(comment.getDate(), commentDto.getDate());
+        assertEquals(forumDto, commentDto.getForumDto());
     }
 
     @Test
     void toComment() {
+        CommentInputDto commentInputDto = new CommentInputDto();
+        commentInputDto.setName("user1");
+        commentInputDto.setText("Comment");
+        commentInputDto.setDate("2023-10-01");
+
+        Comment comment = commentService.toComment(commentInputDto);
+
+        assertEquals(commentInputDto.getName(), comment.getName());
+        assertEquals(commentInputDto.getText(), comment.getText());
+        assertEquals(commentInputDto.getDate(), comment.getDate());
     }
+
 }

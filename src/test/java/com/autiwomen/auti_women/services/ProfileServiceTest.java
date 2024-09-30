@@ -74,7 +74,6 @@ class ProfileServiceTest {
         assertEquals(profile1.getBio(), profileCreated.getBio());
         assertEquals(profile1.getName(), profileCreated.getName());
         assertEquals(profile1.getDate(), profileCreated.getDate());
-
     }
 
     @Test
@@ -106,9 +105,6 @@ class ProfileServiceTest {
         assertEquals(profile1.getBio(), profileUpdated.getBio());
         assertEquals(profile1.getName(), profileUpdated.getName());
         assertEquals(profile1.getDate(), profileUpdated.getDate());
-
-
-
     }
 
     @Test
