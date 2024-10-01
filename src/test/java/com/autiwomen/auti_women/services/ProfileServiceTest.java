@@ -6,6 +6,7 @@ import com.autiwomen.auti_women.models.Profile;
 import com.autiwomen.auti_women.repositories.ProfileRepository;
 import com.autiwomen.auti_women.security.UserRepository;
 import com.autiwomen.auti_women.security.models.User;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-//@MockitoSettings(strictness = Strictness.LENIENT)
 class ProfileServiceTest {
 
     @Mock
@@ -51,9 +51,9 @@ class ProfileServiceTest {
         profile2 = new Profile(2L, user2, "bio", "user2", currentDate);
     }
 
-//    @AfterEach
-//    void tearDown() {
-//    }
+    @AfterEach
+    void tearDown() {
+    }
 
     @Test
     void createProfile() {

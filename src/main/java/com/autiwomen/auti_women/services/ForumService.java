@@ -204,13 +204,10 @@ public class ForumService {
             if (forum != null) {
                 int likeCount = likeRepository.getLikeCountByForumId(forum.getId());
                 forum.setLikesCount(likeCount);
-
                 int viewCount = viewRepository.getViewCountByForumId(forum.getId());
                 forum.setViewsCount(viewCount);
-
                 int commentCount = commentRepository.getCommentCountByForumId(forum.getId());
                 forum.setCommentsCount(commentCount);
-
                 ForumDto forumDto = fromForum(forum);
                 commentedForumDtos.add(forumDto);
             }
@@ -299,5 +296,4 @@ public class ForumService {
 
         return forum;
     }
-
 }

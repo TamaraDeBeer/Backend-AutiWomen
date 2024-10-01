@@ -111,6 +111,28 @@ class CommentServiceTest {
     }
 
     @Test
+    void assignCommentToForum_CommentNotFound() {
+        Long commentId = 1L;
+        Long forumId = 1L;
+
+        when(commentRepository.findById(commentId)).thenReturn(Optional.empty());
+        when(forumRepository.findById(forumId)).thenReturn(Optional.of(forum1));
+
+        assertThrows(RecordNotFoundException.class, () -> commentService.assignCommentToForum(commentId, forumId));
+    }
+
+    @Test
+    void assignCommentToForum_ForumNotFound() {
+        Long commentId = 1L;
+        Long forumId = 1L;
+
+        when(commentRepository.findById(commentId)).thenReturn(Optional.of(comment1));
+        when(forumRepository.findById(forumId)).thenReturn(Optional.empty());
+
+        assertThrows(RecordNotFoundException.class, () -> commentService.assignCommentToForum(commentId, forumId));
+    }
+
+    @Test
     void assignCommentToUser() {
         Long commentId = 1L;
         String username = "user1";
@@ -124,6 +146,28 @@ class CommentServiceTest {
         Comment savedComment = captor.getValue();
 
         assertEquals(user1, savedComment.getUser());
+    }
+
+    @Test
+    void assignCommentToUser_CommentNotFound() {
+        Long commentId = 1L;
+        String username = "user1";
+
+        when(commentRepository.findById(commentId)).thenReturn(Optional.empty());
+        when(userRepository.findById(username)).thenReturn(Optional.of(user1));
+
+        assertThrows(RecordNotFoundException.class, () -> commentService.assignCommentToUser(commentId, username));
+    }
+
+    @Test
+    void assignCommentToUser_UserNotFound() {
+        Long commentId = 1L;
+        String username = "user1";
+
+        when(commentRepository.findById(commentId)).thenReturn(Optional.of(comment1));
+        when(userRepository.findById(username)).thenReturn(Optional.empty());
+
+        assertThrows(RecordNotFoundException.class, () -> commentService.assignCommentToUser(commentId, username));
     }
 
     @Test
@@ -153,6 +197,15 @@ class CommentServiceTest {
     }
 
     @Test
+    void getCommentsByUsername_UserNotFound() {
+        String username = "nonexistentUser";
+
+        when(userRepository.findById(username)).thenReturn(Optional.empty());
+
+        assertThrows(RecordNotFoundException.class, () -> commentService.getCommentsByUsername(username));
+    }
+
+    @Test
     void getCommentCountByForumId() {
         Long forumId = 1L;
         List<Comment> comments = List.of(comment1);
@@ -166,6 +219,15 @@ class CommentServiceTest {
     }
 
     @Test
+    void getCommentCountByForumId_ForumNotFound() {
+        Long forumId = 1L;
+
+        when(forumRepository.findById(forumId)).thenReturn(Optional.empty());
+
+        assertThrows(RecordNotFoundException.class, () -> commentService.getCommentCountByForumId(forumId));
+    }
+
+    @Test
     void deleteComment() {
         Long commentId = 1L;
 
@@ -174,6 +236,15 @@ class CommentServiceTest {
         commentService.deleteComment(commentId);
 
         verify(commentRepository, times(1)).delete(comment1);
+    }
+
+    @Test
+    void deleteComment_CommentNotFound() {
+        Long commentId = 1L;
+
+        when(commentRepository.findById(commentId)).thenReturn(Optional.empty());
+
+        assertThrows(RecordNotFoundException.class, () -> commentService.deleteComment(commentId));
     }
 
     @Test
@@ -191,6 +262,17 @@ class CommentServiceTest {
         Comment savedComment = captor.getValue();
 
         assertEquals("Updated comment text", savedComment.getText());
+    }
+
+    @Test
+    void updateComment_CommentNotFound() {
+        Long commentId = 1L;
+        CommentDto updateCommentDto = new CommentDto();
+        updateCommentDto.setText("Updated comment text");
+
+        when(commentRepository.findById(commentId)).thenReturn(Optional.empty());
+
+        assertThrows(RecordNotFoundException.class, () -> commentService.updateComment(commentId, updateCommentDto));
     }
 
     @Test
@@ -231,87 +313,4 @@ class CommentServiceTest {
         assertEquals(commentInputDto.getText(), comment.getText());
         assertEquals(commentInputDto.getDate(), comment.getDate());
     }
-
-    @Test
-    void assignCommentToForum_CommentNotFound() {
-        Long commentId = 1L;
-        Long forumId = 1L;
-
-        when(commentRepository.findById(commentId)).thenReturn(Optional.empty());
-        when(forumRepository.findById(forumId)).thenReturn(Optional.of(forum1));
-
-        assertThrows(RecordNotFoundException.class, () -> commentService.assignCommentToForum(commentId, forumId));
-    }
-
-    @Test
-    void assignCommentToForum_ForumNotFound() {
-        Long commentId = 1L;
-        Long forumId = 1L;
-
-        when(commentRepository.findById(commentId)).thenReturn(Optional.of(comment1));
-        when(forumRepository.findById(forumId)).thenReturn(Optional.empty());
-
-        assertThrows(RecordNotFoundException.class, () -> commentService.assignCommentToForum(commentId, forumId));
-    }
-
-    @Test
-    void getCommentsByUsername_UserNotFound() {
-        String username = "nonexistentUser";
-
-        when(userRepository.findById(username)).thenReturn(Optional.empty());
-
-        assertThrows(RecordNotFoundException.class, () -> commentService.getCommentsByUsername(username));
-    }
-
-    @Test
-    void getCommentCountByForumId_ForumNotFound() {
-        Long forumId = 1L;
-
-        when(forumRepository.findById(forumId)).thenReturn(Optional.empty());
-
-        assertThrows(RecordNotFoundException.class, () -> commentService.getCommentCountByForumId(forumId));
-    }
-
-    @Test
-    void deleteComment_CommentNotFound() {
-        Long commentId = 1L;
-
-        when(commentRepository.findById(commentId)).thenReturn(Optional.empty());
-
-        assertThrows(RecordNotFoundException.class, () -> commentService.deleteComment(commentId));
-    }
-
-    @Test
-    void updateComment_CommentNotFound() {
-        Long commentId = 1L;
-        CommentDto updateCommentDto = new CommentDto();
-        updateCommentDto.setText("Updated comment text");
-
-        when(commentRepository.findById(commentId)).thenReturn(Optional.empty());
-
-        assertThrows(RecordNotFoundException.class, () -> commentService.updateComment(commentId, updateCommentDto));
-    }
-
-    @Test
-    void assignCommentToUser_CommentNotFound() {
-        Long commentId = 1L;
-        String username = "user1";
-
-        when(commentRepository.findById(commentId)).thenReturn(Optional.empty());
-        when(userRepository.findById(username)).thenReturn(Optional.of(user1));
-
-        assertThrows(RecordNotFoundException.class, () -> commentService.assignCommentToUser(commentId, username));
-    }
-
-    @Test
-    void assignCommentToUser_UserNotFound() {
-        Long commentId = 1L;
-        String username = "user1";
-
-        when(commentRepository.findById(commentId)).thenReturn(Optional.of(comment1));
-        when(userRepository.findById(username)).thenReturn(Optional.empty());
-
-        assertThrows(RecordNotFoundException.class, () -> commentService.assignCommentToUser(commentId, username));
-    }
-
 }
