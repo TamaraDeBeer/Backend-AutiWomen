@@ -158,6 +158,23 @@ class ForumServiceTest {
     }
 
     @Test
+    void updateLastReaction() {
+        Long forumId = 1L;
+        Comment lastComment = new Comment();
+        lastComment.setDate(String.valueOf(LocalDate.now()));
+
+        when(commentRepository.findTopByForumIdOrderByDateDesc(forumId)).thenReturn(Optional.of(lastComment));
+        when(forumRepository.findById(forumId)).thenReturn(Optional.of(forum1));
+
+        forumService.updateLastReaction(forumId);
+
+        verify(forumRepository, times(1)).save(captor.capture());
+        Forum updatedForum = captor.getValue();
+
+        assertEquals(String.valueOf(LocalDate.now()), updatedForum.getLastReaction());
+    }
+
+    @Test
     void getForumById() {
     }
 
@@ -242,6 +259,29 @@ class ForumServiceTest {
         when(userRepository.findById(username)).thenReturn(Optional.empty());
 
         assertThrows(RecordNotFoundException.class, () -> forumService.assignForumToUser(forumId, username));
+    }
+
+    @Test
+    void updateLastReaction_CommentNotFound() {
+        Long forumId = 1L;
+
+        when(commentRepository.findTopByForumIdOrderByDateDesc(forumId)).thenReturn(Optional.empty());
+
+        forumService.updateLastReaction(forumId);
+
+        verify(forumRepository, never()).save(any(Forum.class));
+    }
+
+    @Test
+    void updateLastReaction_ForumNotFound() {
+        Long forumId = 1L;
+        Comment lastComment = new Comment();
+        lastComment.setDate(String.valueOf(LocalDate.now()));
+
+        when(commentRepository.findTopByForumIdOrderByDateDesc(forumId)).thenReturn(Optional.of(lastComment));
+        when(forumRepository.findById(forumId)).thenReturn(Optional.empty());
+
+        assertThrows(RecordNotFoundException.class, () -> forumService.updateLastReaction(forumId));
     }
 
 
