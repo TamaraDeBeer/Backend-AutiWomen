@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.time.LocalDate;
 import java.util.*;
-import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
 @Service
@@ -63,7 +63,7 @@ public class ForumService {
                 .orElseThrow(() -> new RecordNotFoundException("User not found"));
 
         Forum forum = toForum(forumInputDto);
-        forum.setDate(String.valueOf(LocalDateTime.now()));
+        forum.setDate(String.valueOf(LocalDate.now()));
         forum.setName(user.getUsername());
         forum.setAge(user.getDob().toString());
 
@@ -88,7 +88,7 @@ public class ForumService {
         Optional<Comment> lastComment = commentRepository.findTopByForumIdOrderByDateDesc(forumId);
         if (lastComment.isPresent()) {
             Forum forum = forumRepository.findById(forumId).orElseThrow(() -> new RecordNotFoundException("Forum not found"));
-            forum.setLastReaction(String.valueOf(LocalDateTime.now()));
+            forum.setLastReaction(String.valueOf(LocalDate.now()));
             forumRepository.save(forum);
         }
     }

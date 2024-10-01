@@ -92,6 +92,20 @@ public class Forum {
         this.topic = topic;
     }
 
+    public Forum(Long id, String name, String age, String title, String text, String date, String lastReaction, String topic, int likesCount, int viewsCount, int commentsCount) {
+        this.id = id;
+        this.name = name;
+        this.age = age;
+        this.title = title;
+        this.text = text;
+        this.date = date;
+        this.lastReaction = lastReaction;
+        this.topic = topic;
+        this.likesCount = likesCount;
+        this.viewsCount = viewsCount;
+        this.commentsCount = commentsCount;
+    }
+
     public Forum() {
     }
 
