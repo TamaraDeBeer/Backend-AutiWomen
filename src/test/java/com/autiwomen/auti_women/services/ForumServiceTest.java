@@ -1,6 +1,8 @@
 package com.autiwomen.auti_women.services;
 
 import com.autiwomen.auti_women.dtos.forums.ForumDto;
+import com.autiwomen.auti_women.dtos.forums.ForumInputDto;
+import com.autiwomen.auti_women.exceptions.RecordNotFoundException;
 import com.autiwomen.auti_women.models.Comment;
 import com.autiwomen.auti_women.models.Forum;
 import com.autiwomen.auti_women.models.Like;
@@ -24,9 +26,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ForumServiceTest {
@@ -85,7 +89,6 @@ class ForumServiceTest {
 
     @Test
     void getAllForums() {
-        // Set up test data
         List<Forum> forumList = Arrays.asList(forum1, forum2);
 
         when(forumRepository.findAll()).thenReturn(forumList);
@@ -115,14 +118,43 @@ class ForumServiceTest {
 
     @Test
     void createForum() {
+        String username = "user1";
+        ForumInputDto forumInputDto = new ForumInputDto();
+        forumInputDto.setTitle("Test Title");
+        forumInputDto.setText("Test Text");
+        forumInputDto.setTopic("Test Topic");
+
+        when(userRepository.findById(username)).thenReturn(Optional.of(user1));
+
+        ForumDto forumDto = forumService.createForum(forumInputDto, username);
+
+        assertNotNull(forumDto);
+        assertEquals(forumInputDto.getTitle(), forumDto.getTitle());
+        assertEquals(forumInputDto.getText(), forumDto.getText());
+        assertEquals(forumInputDto.getTopic(), forumDto.getTopic());
+        assertEquals(username, forumDto.getName());
+        assertEquals(user1.getDob().toString(), forumDto.getAge());
+        assertEquals(0, forumDto.getLikesCount());
+        assertEquals(0, forumDto.getViewsCount());
+        assertEquals(0, forumDto.getCommentsCount());
+
+        verify(forumRepository).save(any(Forum.class));
     }
 
     @Test
     void assignForumToUser() {
-    }
+        Long forumId = 1L;
+        String username = "user1";
 
-    @Test
-    void updateLastReaction() {
+        when(forumRepository.findById(forumId)).thenReturn(Optional.of(forum1));
+        when(userRepository.findById(username)).thenReturn(Optional.of(user1));
+
+        forumService.assignForumToUser(forumId, username);
+
+        verify(forumRepository, times(1)).save(captor.capture());
+        Forum forum = captor.getValue();
+
+        assertEquals(username, forum.getName());
     }
 
     @Test
@@ -176,4 +208,41 @@ class ForumServiceTest {
     @Test
     void toForum() {
     }
+
+    @Test
+    void createForum_UserNotFound() {
+        String username = "nonexistentUser";
+        ForumInputDto forumInputDto = new ForumInputDto();
+        forumInputDto.setTitle("Test Title");
+        forumInputDto.setText("Test Text");
+        forumInputDto.setTopic("Test Topic");
+
+        when(userRepository.findById(username)).thenReturn(Optional.empty());
+
+        assertThrows(RecordNotFoundException.class, () -> forumService.createForum(forumInputDto, username));
+    }
+
+    @Test
+    void assignForumToUser_ForumNotFound() {
+        Long forumId = 1L;
+        String username = "user1";
+
+        when(forumRepository.findById(forumId)).thenReturn(Optional.empty());
+        when(userRepository.findById(username)).thenReturn(Optional.of(user1));
+
+        assertThrows(RecordNotFoundException.class, () -> forumService.assignForumToUser(forumId, username));
+    }
+
+    @Test
+    void assignForumToUser_UserNotFound() {
+        Long forumId = 1L;
+        String username = "user1";
+
+        when(forumRepository.findById(forumId)).thenReturn(Optional.of(forum1));
+        when(userRepository.findById(username)).thenReturn(Optional.empty());
+
+        assertThrows(RecordNotFoundException.class, () -> forumService.assignForumToUser(forumId, username));
+    }
+
+
 }
