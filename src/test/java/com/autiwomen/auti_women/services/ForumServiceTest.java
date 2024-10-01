@@ -24,9 +24,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -193,7 +191,7 @@ class ForumServiceTest {
     }
 
     @Test
-    void updateForum() {
+    void updateForum_Success() {
         Long forumId = 1L;
         ForumDto updateForumDto = new ForumDto();
         updateForumDto.setName("Updated Name");
@@ -203,14 +201,31 @@ class ForumServiceTest {
         when(forumRepository.findById(forumId)).thenReturn(Optional.of(forum1));
         when(forumRepository.save(any(Forum.class))).thenReturn(forum1);
 
-        ForumDto result = forumService.updateForum(forumId, updateForumDto);
+        ForumDto updatedForumDto = forumService.updateForum(forumId, updateForumDto);
 
-        assertNotNull(result);
-        assertEquals(updateForumDto.getName(), result.getName());
-        assertEquals(updateForumDto.getTitle(), result.getTitle());
-        assertEquals(updateForumDto.getText(), result.getText());
+        assertNotNull(updatedForumDto);
+        assertEquals(updateForumDto.getName(), updatedForumDto.getName());
+        assertEquals(updateForumDto.getTitle(), updatedForumDto.getTitle());
+        assertEquals(updateForumDto.getText(), updatedForumDto.getText());
 
-        verify(forumRepository).save(any(Forum.class));
+        verify(forumRepository, times(1)).findById(forumId);
+        verify(forumRepository, times(1)).save(any(Forum.class));
+    }
+
+    @Test
+    void updateForum_ForumNotFound() {
+        Long forumId = 1L;
+        ForumDto updateForumDto = new ForumDto();
+        updateForumDto.setName("Updated Name");
+        updateForumDto.setTitle("Updated Title");
+        updateForumDto.setText("Updated Text");
+
+        when(forumRepository.findById(forumId)).thenReturn(Optional.empty());
+
+        assertThrows(RecordNotFoundException.class, () -> forumService.updateForum(forumId, updateForumDto));
+
+        verify(forumRepository, times(1)).findById(forumId);
+        verify(forumRepository, never()).save(any(Forum.class));
     }
 
 
@@ -218,14 +233,30 @@ class ForumServiceTest {
     void deleteForum() {
         Long forumId = 1L;
 
+        when(forumRepository.findById(forumId)).thenReturn(Optional.of(forum1));
+        when(commentRepository.findAllByForumId(forumId)).thenReturn(Arrays.asList(comment1, comment2));
+
         forumService.deleteForum(forumId);
 
+        verify(commentRepository, times(1)).findAllByForumId(forumId);
+        verify(commentRepository, times(1)).save(comment1);
+        verify(commentRepository, times(1)).save(comment2);
+        verify(commentRepository, times(1)).deleteAllByForumId(forumId);
         verify(forumRepository, times(1)).deleteById(forumId);
+
+        for (Comment comment : Arrays.asList(comment1, comment2)) {
+            comment.setForum(null);
+            comment.setUser(null);
+            commentRepository.save(comment);
+        }
+
+        assertNull(comment1.getForum());
+        assertNull(comment1.getUser());
+        assertNull(comment2.getForum());
+        assertNull(comment2.getUser());
     }
 
-    @Test
-    void getForumsByUsername() {
-    }
+
 
     @Test
     void getLikedForumsByUsername() {
@@ -257,10 +288,54 @@ class ForumServiceTest {
 
     @Test
     void fromForum() {
+        Forum forum = new Forum();
+        forum.setId(1L);
+        forum.setName("Test Name");
+        forum.setAge("30");
+        forum.setTitle("Test Title");
+        forum.setText("Test Text");
+        forum.setDate("2023-10-01");
+        forum.setLastReaction("2023-10-02");
+        forum.setTopic("Test Topic");
+        forum.setLikesCount(10);
+        forum.setViewsCount(100);
+        forum.setCommentsCount(5);
+
+        ForumDto forumDto = forumService.fromForum(forum);
+
+        assertNotNull(forumDto);
+        assertEquals(forum.getId(), forumDto.id);
+        assertEquals(forum.getName(), forumDto.name);
+        assertEquals(forum.getAge(), forumDto.age);
+        assertEquals(forum.getTitle(), forumDto.title);
+        assertEquals(forum.getText(), forumDto.text);
+        assertEquals(forum.getDate(), forumDto.date);
+        assertEquals(forum.getLastReaction(), forumDto.lastReaction);
+        assertEquals(forum.getTopic(), forumDto.topic);
+        assertEquals(forum.getLikesCount(), forumDto.likesCount);
+        assertEquals(forum.getViewsCount(), forumDto.viewsCount);
+        assertEquals(forum.getCommentsCount(), forumDto.commentsCount);
     }
 
     @Test
     void toForum() {
+        ForumInputDto forumInputDto = new ForumInputDto();
+        forumInputDto.setName("Test Name");
+        forumInputDto.setTitle("Test Title");
+        forumInputDto.setText("Test Text");
+        forumInputDto.setDate("2023-10-01");
+        forumInputDto.setLastReaction("2023-10-02");
+        forumInputDto.setTopic("Test Topic");
+
+        Forum forum = forumService.toForum(forumInputDto);
+
+        assertNotNull(forum);
+        assertEquals(forumInputDto.getName(), forum.getName());
+        assertEquals(forumInputDto.getTitle(), forum.getTitle());
+        assertEquals(forumInputDto.getText(), forum.getText());
+        assertEquals(forumInputDto.getDate(), forum.getDate());
+        assertEquals(forumInputDto.getLastReaction(), forum.getLastReaction());
+        assertEquals(forumInputDto.getTopic(), forum.getTopic());
     }
 
     @Test
@@ -331,17 +406,19 @@ class ForumServiceTest {
     }
 
     @Test
-    void updateForum_ForumNotFound() {
+    void deleteForum_ForumNotFound() {
         Long forumId = 1L;
-        ForumDto updateForumDto = new ForumDto();
-        updateForumDto.setName("Updated Name");
-        updateForumDto.setTitle("Updated Title");
-        updateForumDto.setText("Updated Text");
 
         when(forumRepository.findById(forumId)).thenReturn(Optional.empty());
 
-        assertThrows(RecordNotFoundException.class, () -> forumService.updateForum(forumId, updateForumDto));
+        assertThrows(RecordNotFoundException.class, () -> forumService.deleteForum(forumId));
+
+        verify(commentRepository, never()).findAllByForumId(anyLong());
+        verify(commentRepository, never()).save(any(Comment.class));
+        verify(commentRepository, never()).deleteAllByForumId(anyLong());
+        verify(forumRepository, never()).deleteById(anyLong());
     }
+
 
 
 }

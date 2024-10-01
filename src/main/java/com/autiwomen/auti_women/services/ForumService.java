@@ -15,7 +15,6 @@ import com.autiwomen.auti_women.security.models.User;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -130,17 +129,6 @@ public class ForumService {
         }
     }
 
-//    @Transactional
-//    public void deleteForum(@RequestParam Long id) {
-//        Optional<Forum> optionalForum = forumRepository.findById(id);
-//        if (optionalForum.isPresent()) {
-//            Forum forum = optionalForum.get();
-//            commentRepository.deleteAllByForumId(id);
-//            forumRepository.deleteById(id);
-//        } else {
-//            throw new RecordNotFoundException("Forum not found with id: " + id);
-//        }
-//    }
 
     @Transactional
     public void deleteForum(Long id) {
