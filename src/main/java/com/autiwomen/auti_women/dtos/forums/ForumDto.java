@@ -31,7 +31,6 @@ public class ForumDto {
         this.likesCount = likesCount;
         this.viewsCount = viewsCount;
         this.commentsCount = commentsCount;
-        this.userDto = userDto;
     }
 
     public ForumDto() {
@@ -132,4 +131,6 @@ public class ForumDto {
     public void setTopic(String topic) {
         this.topic = topic;
     }
+
+
 }

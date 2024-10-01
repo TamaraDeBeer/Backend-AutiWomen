@@ -120,7 +120,7 @@ public class ForumService {
             throw new RecordNotFoundException("Er is geen forum gevonden met id: " + id);
         } else {
             Forum forum1 = forum.get();
-            forum1.setName(updateForum.getName());
+//            forum1.setName(updateForum.getName());
             forum1.setTitle(updateForum.getTitle());
             forum1.setText(updateForum.getText());
             Forum forum2 = forumRepository.save(forum1);
@@ -128,7 +128,6 @@ public class ForumService {
             return fromForum(forum2);
         }
     }
-
 
     @Transactional
     public void deleteForum(Long id) {
@@ -153,23 +152,20 @@ public class ForumService {
         return new HashSet<>(forumRepository.findByUser(user));
     }
 
+
     public Set<ForumDto> getLikedForumsByUsername(String username) {
         User user = userRepository.findById(username)
                 .orElseThrow(() -> new RecordNotFoundException("User not found"));
         Set<Forum> likedForums = likeRepository.findLikedForumsByUser(user);
         Set<ForumDto> likedForumDtos = new HashSet<>();
-
         for (Forum forum : likedForums) {
             if (forum != null) {
                 int likeCount = likeRepository.getLikeCountByForumId(forum.getId());
                 forum.setLikesCount(likeCount);
-
                 int viewCount = viewRepository.getViewCountByForumId(forum.getId());
                 forum.setViewsCount(viewCount);
-
                 int commentCount = commentRepository.getCommentCountByForumId(forum.getId());
                 forum.setCommentsCount(commentCount);
-
                 ForumDto forumDto = fromForum(forum);
                 likedForumDtos.add(forumDto);
             }
@@ -177,23 +173,20 @@ public class ForumService {
         return likedForumDtos;
     }
 
+
     public Set<ForumDto> getViewedForumsByUsername(String username) {
         User user = userRepository.findById(username)
                 .orElseThrow(() -> new RecordNotFoundException("User not found"));
         Set<Forum> viewedForums = viewRepository.findViewedForumsByUser(user);
         Set<ForumDto> viewedForumDtos = new HashSet<>();
-
         for (Forum forum : viewedForums) {
             if (forum != null) {
                 int likeCount = likeRepository.getLikeCountByForumId(forum.getId());
                 forum.setLikesCount(likeCount);
-
                 int viewCount = viewRepository.getViewCountByForumId(forum.getId());
                 forum.setViewsCount(viewCount);
-
                 int commentCount = commentRepository.getCommentCountByForumId(forum.getId());
                 forum.setCommentsCount(commentCount);
-
                 ForumDto forumDto = fromForum(forum);
                 viewedForumDtos.add(forumDto);
             }

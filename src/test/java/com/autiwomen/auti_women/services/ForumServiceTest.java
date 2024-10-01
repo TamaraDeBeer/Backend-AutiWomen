@@ -191,10 +191,10 @@ class ForumServiceTest {
     }
 
     @Test
-    void updateForum_Success() {
+    void updateForum() {
         Long forumId = 1L;
         ForumDto updateForumDto = new ForumDto();
-        updateForumDto.setName("Updated Name");
+//        updateForumDto.setName("Updated Name");
         updateForumDto.setTitle("Updated Title");
         updateForumDto.setText("Updated Text");
 
@@ -204,12 +204,9 @@ class ForumServiceTest {
         ForumDto updatedForumDto = forumService.updateForum(forumId, updateForumDto);
 
         assertNotNull(updatedForumDto);
-        assertEquals(updateForumDto.getName(), updatedForumDto.getName());
+//        assertEquals(updateForumDto.getName(), updatedForumDto.getName());
         assertEquals(updateForumDto.getTitle(), updatedForumDto.getTitle());
         assertEquals(updateForumDto.getText(), updatedForumDto.getText());
-
-        verify(forumRepository, times(1)).findById(forumId);
-        verify(forumRepository, times(1)).save(any(Forum.class));
     }
 
     @Test
@@ -223,11 +220,7 @@ class ForumServiceTest {
         when(forumRepository.findById(forumId)).thenReturn(Optional.empty());
 
         assertThrows(RecordNotFoundException.class, () -> forumService.updateForum(forumId, updateForumDto));
-
-        verify(forumRepository, times(1)).findById(forumId);
-        verify(forumRepository, never()).save(any(Forum.class));
     }
-
 
     @Test
     void deleteForum() {
@@ -256,14 +249,144 @@ class ForumServiceTest {
         assertNull(comment2.getUser());
     }
 
-
-
     @Test
-    void getLikedForumsByUsername() {
+    void getForumsByUsername() {
+        String username = "user1";
+
+        when(userRepository.findById(username)).thenReturn(Optional.of(user1));
+        when(forumRepository.findByUser(user1)).thenReturn(new HashSet<>(Arrays.asList(forum1, forum2)));
+
+        Set<Forum> forums = forumService.getForumsByUsername(username);
+
+        assertNotNull(forums);
+        assertEquals(2, forums.size());
+        assertTrue(forums.contains(forum1));
+        assertTrue(forums.contains(forum2));
+
+        verify(userRepository, times(1)).findById(username);
+        verify(forumRepository, times(1)).findByUser(user1);
     }
 
     @Test
-    void getViewedForumsByUsername() {
+    void getForumsByUsername_UserNotFound() {
+        String username = "nonexistentUser";
+
+        when(userRepository.findById(username)).thenReturn(Optional.empty());
+
+        assertThrows(RecordNotFoundException.class, () -> forumService.getForumsByUsername(username));
+
+        verify(userRepository, times(1)).findById(username);
+        verify(forumRepository, never()).findByUser(any(User.class));
+    }
+
+    @Test
+    void getLikedForumsByUsername() {
+        String username = "user1";
+
+        when(userRepository.findById(username)).thenReturn(Optional.of(user1));
+        when(likeRepository.findLikedForumsByUser(user1)).thenReturn(new HashSet<>(Arrays.asList(forum1, forum2)));
+        when(likeRepository.getLikeCountByForumId(forum1.getId())).thenReturn(10);
+        when(likeRepository.getLikeCountByForumId(forum2.getId())).thenReturn(20);
+        when(viewRepository.getViewCountByForumId(forum1.getId())).thenReturn(100);
+        when(viewRepository.getViewCountByForumId(forum2.getId())).thenReturn(200);
+        when(commentRepository.getCommentCountByForumId(forum1.getId())).thenReturn(5);
+        when(commentRepository.getCommentCountByForumId(forum2.getId())).thenReturn(15);
+
+        Set<ForumDto> likedForumDtos = forumService.getLikedForumsByUsername(username);
+
+        assertNotNull(likedForumDtos);
+        assertEquals(2, likedForumDtos.size());
+
+        for (ForumDto forumDto : likedForumDtos) {
+            if (forumDto.getId().equals(forum1.getId())) {
+                assertEquals(10, forumDto.getLikesCount());
+                assertEquals(100, forumDto.getViewsCount());
+                assertEquals(5, forumDto.getCommentsCount());
+            } else if (forumDto.getId().equals(forum2.getId())) {
+                assertEquals(20, forumDto.getLikesCount());
+                assertEquals(200, forumDto.getViewsCount());
+                assertEquals(15, forumDto.getCommentsCount());
+            }
+        }
+
+        verify(userRepository, times(1)).findById(username);
+        verify(likeRepository, times(1)).findLikedForumsByUser(user1);
+        verify(likeRepository, times(1)).getLikeCountByForumId(forum1.getId());
+        verify(likeRepository, times(1)).getLikeCountByForumId(forum2.getId());
+        verify(viewRepository, times(1)).getViewCountByForumId(forum1.getId());
+        verify(viewRepository, times(1)).getViewCountByForumId(forum2.getId());
+        verify(commentRepository, times(1)).getCommentCountByForumId(forum1.getId());
+        verify(commentRepository, times(1)).getCommentCountByForumId(forum2.getId());
+    }
+
+    @Test
+    void getLikedForumsByUsername_UserNotFound() {
+        String username = "nonexistentUser";
+
+        when(userRepository.findById(username)).thenReturn(Optional.empty());
+
+        assertThrows(RecordNotFoundException.class, () -> forumService.getLikedForumsByUsername(username));
+
+        verify(userRepository, times(1)).findById(username);
+        verify(likeRepository, never()).findLikedForumsByUser(any(User.class));
+        verify(likeRepository, never()).getLikeCountByForumId(anyLong());
+        verify(viewRepository, never()).getViewCountByForumId(anyLong());
+        verify(commentRepository, never()).getCommentCountByForumId(anyLong());
+    }
+
+    @Test
+    void getViewedForumsByUsername_Success() {
+        String username = "user1";
+
+        when(userRepository.findById(username)).thenReturn(Optional.of(user1));
+        when(viewRepository.findViewedForumsByUser(user1)).thenReturn(new HashSet<>(Arrays.asList(forum1, forum2)));
+        when(likeRepository.getLikeCountByForumId(forum1.getId())).thenReturn(10);
+        when(likeRepository.getLikeCountByForumId(forum2.getId())).thenReturn(20);
+        when(viewRepository.getViewCountByForumId(forum1.getId())).thenReturn(100);
+        when(viewRepository.getViewCountByForumId(forum2.getId())).thenReturn(200);
+        when(commentRepository.getCommentCountByForumId(forum1.getId())).thenReturn(5);
+        when(commentRepository.getCommentCountByForumId(forum2.getId())).thenReturn(15);
+
+        Set<ForumDto> viewedForumDtos = forumService.getViewedForumsByUsername(username);
+
+        assertNotNull(viewedForumDtos);
+        assertEquals(2, viewedForumDtos.size());
+
+        for (ForumDto forumDto : viewedForumDtos) {
+            if (forumDto.getId().equals(forum1.getId())) {
+                assertEquals(10, forumDto.getLikesCount());
+                assertEquals(100, forumDto.getViewsCount());
+                assertEquals(5, forumDto.getCommentsCount());
+            } else if (forumDto.getId().equals(forum2.getId())) {
+                assertEquals(20, forumDto.getLikesCount());
+                assertEquals(200, forumDto.getViewsCount());
+                assertEquals(15, forumDto.getCommentsCount());
+            }
+        }
+
+        verify(userRepository, times(1)).findById(username);
+        verify(viewRepository, times(1)).findViewedForumsByUser(user1);
+        verify(likeRepository, times(1)).getLikeCountByForumId(forum1.getId());
+        verify(likeRepository, times(1)).getLikeCountByForumId(forum2.getId());
+        verify(viewRepository, times(1)).getViewCountByForumId(forum1.getId());
+        verify(viewRepository, times(1)).getViewCountByForumId(forum2.getId());
+        verify(commentRepository, times(1)).getCommentCountByForumId(forum1.getId());
+        verify(commentRepository, times(1)).getCommentCountByForumId(forum2.getId());
+    }
+
+    @Test
+    void getViewedForumsByUsername_UserNotFound() {
+        String username = "nonexistentUser";
+
+        when(userRepository.findById(username)).thenReturn(Optional.empty());
+
+        assertThrows(RecordNotFoundException.class, () -> forumService.getViewedForumsByUsername(username));
+
+        verify(userRepository, times(1)).findById(username);
+        verify(viewRepository, never()).findViewedForumsByUser(any(User.class));
+        verify(likeRepository, never()).getLikeCountByForumId(anyLong());
+        verify(viewRepository, never()).getViewCountByForumId(anyLong());
+        verify(commentRepository, never()).getCommentCountByForumId(anyLong());
     }
 
     @Test

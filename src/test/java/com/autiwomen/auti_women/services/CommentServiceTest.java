@@ -191,7 +191,6 @@ class CommentServiceTest {
         Comment savedComment = captor.getValue();
 
         assertEquals("Updated comment text", savedComment.getText());
-        assertEquals(updatedCommentDto.getText(), updatedCommentDto.getText());
     }
 
     @Test
@@ -211,6 +210,7 @@ class CommentServiceTest {
 
         CommentDto commentDto = commentService.fromComment(comment);
 
+        assertNotNull(commentDto);
         assertEquals(comment.getId(), commentDto.getId());
         assertEquals(comment.getName(), commentDto.getName());
         assertEquals(comment.getText(), commentDto.getText());
