@@ -216,6 +216,11 @@ class ForumServiceTest {
 
     @Test
     void deleteForum() {
+        Long forumId = 1L;
+
+        forumService.deleteForum(forumId);
+
+        verify(forumRepository, times(1)).deleteById(forumId);
     }
 
     @Test

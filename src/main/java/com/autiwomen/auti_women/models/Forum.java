@@ -29,39 +29,26 @@ public class Forum {
     private int viewsCount;
     private int commentsCount;
 
-//    @ManyToOne (fetch = FetchType.EAGER)
-//    @JoinColumn(name = "user_id")
-////    @JsonBackReference
-//    @JsonIgnore
-//    private User user;
-
     @OneToMany(
             mappedBy = "forum",
             cascade = CascadeType.ALL,
-            orphanRemoval = true,
-            fetch = FetchType.EAGER)
-//    @JsonManagedReference
+            orphanRemoval = true)
     @JsonIgnore
     private List<Comment> commentsList = new ArrayList<>();
-
-//    @OneToMany(
-//            mappedBy = "forum",
-//            cascade = CascadeType.ALL,
-//            orphanRemoval = true,
-//            fetch = FetchType.EAGER)
-////    @JsonManagedReference
-//    @JsonIgnore
-//    private Set<Like> likes = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "username")
     @JsonBackReference
     private User user;
 
-    @OneToMany(mappedBy = "forum")
+    @OneToMany(mappedBy = "forum",
+    cascade = CascadeType.ALL,
+    orphanRemoval = true)
     private Set<Like> likes;
 
-    @OneToMany(mappedBy = "forum")
+    @OneToMany(mappedBy = "forum",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
     private Set<View> views;
 
     public Forum(Long id, String name, String age, String title, String text, String date, String lastReaction, String topic, int likesCount, int viewsCount, int commentsCount, List<Comment> commentsList, User user, Set<Like> likes, Set<View> views) {

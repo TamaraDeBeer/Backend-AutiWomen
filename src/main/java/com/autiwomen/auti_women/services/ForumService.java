@@ -11,10 +11,12 @@ import com.autiwomen.auti_women.repositories.LikeRepository;
 import com.autiwomen.auti_women.repositories.ViewRepository;
 import com.autiwomen.auti_women.security.UserRepository;
 import com.autiwomen.auti_women.security.models.User;
+
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -128,8 +130,37 @@ public class ForumService {
         }
     }
 
-    public void deleteForum(@RequestParam Long id) {
-        forumRepository.deleteById(id);
+//    @Transactional
+//    public void deleteForum(@RequestParam Long id) {
+//        Optional<Forum> optionalForum = forumRepository.findById(id);
+//        if (optionalForum.isPresent()) {
+//            Forum forum = optionalForum.get();
+//            commentRepository.deleteAllByForumId(id);
+//            forumRepository.deleteById(id);
+//        } else {
+//            throw new RecordNotFoundException("Forum not found with id: " + id);
+//        }
+//    }
+
+    @Transactional
+    public void deleteForum(Long id) {
+        Optional<Forum> optionalForum = forumRepository.findById(id);
+        if (optionalForum.isPresent()) {
+            Forum forum = optionalForum.get();
+            // Haal alle comments op die bij het forum horen
+            List<Comment> comments = commentRepository.findAllByForumId(id);
+            for (Comment comment : comments) {
+                // Koppel de comment los van de user
+                comment.setUser(null);
+                commentRepository.save(comment);
+            }
+            // Verwijder alle comments
+            commentRepository.deleteAllByForumId(id);
+            // Verwijder het forum
+            forumRepository.deleteById(id);
+        } else {
+            throw new RecordNotFoundException("Forum not found with id: " + id);
+        }
     }
 
     public Set<Forum> getForumsByUsername(String username) {
