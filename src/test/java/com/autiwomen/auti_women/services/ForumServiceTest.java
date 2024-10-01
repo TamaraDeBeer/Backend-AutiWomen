@@ -176,11 +176,43 @@ class ForumServiceTest {
 
     @Test
     void getForumById() {
+        Long forumId = 1L;
+
+        when(forumRepository.findById(forumId)).thenReturn(Optional.of(forum1));
+        when(likeRepository.getLikeCountByForumId(forum1.getId())).thenReturn(10);
+        when(viewRepository.getViewCountByForumId(forum1.getId())).thenReturn(100);
+        when(commentRepository.getCommentCountByForumId(forum1.getId())).thenReturn(5);
+
+        ForumDto forumDto = forumService.getForumById(forumId);
+
+        assertNotNull(forumDto);
+        assertEquals(forum1.getId(), forumDto.getId());
+        assertEquals(10, forumDto.getLikesCount());
+        assertEquals(100, forumDto.getViewsCount());
+        assertEquals(5, forumDto.getCommentsCount());
     }
 
     @Test
     void updateForum() {
+        Long forumId = 1L;
+        ForumDto updateForumDto = new ForumDto();
+        updateForumDto.setName("Updated Name");
+        updateForumDto.setTitle("Updated Title");
+        updateForumDto.setText("Updated Text");
+
+        when(forumRepository.findById(forumId)).thenReturn(Optional.of(forum1));
+        when(forumRepository.save(any(Forum.class))).thenReturn(forum1);
+
+        ForumDto result = forumService.updateForum(forumId, updateForumDto);
+
+        assertNotNull(result);
+        assertEquals(updateForumDto.getName(), result.getName());
+        assertEquals(updateForumDto.getTitle(), result.getTitle());
+        assertEquals(updateForumDto.getText(), result.getText());
+
+        verify(forumRepository).save(any(Forum.class));
     }
+
 
     @Test
     void deleteForum() {
@@ -282,6 +314,28 @@ class ForumServiceTest {
         when(forumRepository.findById(forumId)).thenReturn(Optional.empty());
 
         assertThrows(RecordNotFoundException.class, () -> forumService.updateLastReaction(forumId));
+    }
+
+    @Test
+    void getForumById_ForumNotFound() {
+        Long forumId = 1L;
+
+        when(forumRepository.findById(forumId)).thenReturn(Optional.empty());
+
+        assertThrows(RecordNotFoundException.class, () -> forumService.getForumById(forumId));
+    }
+
+    @Test
+    void updateForum_ForumNotFound() {
+        Long forumId = 1L;
+        ForumDto updateForumDto = new ForumDto();
+        updateForumDto.setName("Updated Name");
+        updateForumDto.setTitle("Updated Title");
+        updateForumDto.setText("Updated Text");
+
+        when(forumRepository.findById(forumId)).thenReturn(Optional.empty());
+
+        assertThrows(RecordNotFoundException.class, () -> forumService.updateForum(forumId, updateForumDto));
     }
 
 
