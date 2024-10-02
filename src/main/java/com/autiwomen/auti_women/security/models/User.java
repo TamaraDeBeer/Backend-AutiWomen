@@ -77,8 +77,7 @@ public class User {
     @OneToMany(mappedBy = "user")
     private Set<View> views;
 
-    @OneToOne
-    @JoinColumn(name = "profile_id")
+    @OneToOne (mappedBy = "user", cascade = CascadeType.ALL)
     private Profile profile;
 
     public User(Profile profile, String username, String password, boolean enabled, String apikey, String email, String name, String gender, LocalDate dob, String autismDiagnoses, Integer autismDiagnosesYear, String profilePictureUrl, Set<Authority> authorities, List<Comment> commentsList, Set<Forum> forums, Set<Like> likes, Set<View> views) {
