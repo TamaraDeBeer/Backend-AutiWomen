@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -28,6 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(classes = AutiWomenApplication.class)
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class ProfileControllerIntegrationTest {
 
     @Autowired
@@ -64,6 +66,35 @@ public class ProfileControllerIntegrationTest {
         profileInputDto.setBio("bio1");
         profileInputDto.setName("naam1");
 
+        User user2 = new User("user2", LocalDate.of(1990, 5, 15));
+        user2.setEmail("user2@example.com");
+        user2.setPassword("password2");
+        user2.setName("User2");
+        user2.setGender("Gender2");
+        user2.setAutismDiagnoses("Diagnoses2");
+        userRepository.save(user2);
+
+        Profile profile2 = new Profile(2L, user2, "bio2", "naam2", LocalDate.now().toString());
+        profileRepository.save(profile2);
+
+        profileInputDto = new ProfileInputDto();
+        profileInputDto.setBio("bio1");
+        profileInputDto.setName("naam1");
+
+    }
+
+    @Test
+    void testGetAllProfiles() throws Exception {
+        mockMvc.perform(get("/users/profiles"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(1L))
+                .andExpect(jsonPath("$[0].bio").value("bio1"))
+                .andExpect(jsonPath("$[0].name").value("naam1"))
+                .andExpect(jsonPath("$[0].date").value(LocalDate.now().toString()))
+                .andExpect(jsonPath("$[1].id").value(2L))
+                .andExpect(jsonPath("$[1].bio").value("bio2"))
+                .andExpect(jsonPath("$[1].name").value("naam2"))
+                .andExpect(jsonPath("$[1].date").value(LocalDate.now().toString()));
     }
 
     @Test
@@ -76,24 +107,24 @@ public class ProfileControllerIntegrationTest {
 
     @Test
     public void testCreateProfile() throws Exception {
-        User user2 = new User("user2", LocalDate.of(1990, 5, 15));
-        user2.setEmail("user2@example.com");
-        user2.setPassword("password2");
-        user2.setName("User2");
-        user2.setGender("Gender2");
-        user2.setAutismDiagnoses("Diagnoses2");
-        userRepository.save(user2);
+        User user3 = new User("user3", LocalDate.of(1990, 5, 15));
+        user3.setEmail("user3@example.com");
+        user3.setPassword("password3");
+        user3.setName("User3");
+        user3.setGender("Gender3");
+        user3.setAutismDiagnoses("Diagnoses3");
+        userRepository.save(user3);
 
-        profileInputDto.setBio("bio2");
-        profileInputDto.setName("user2");
+        profileInputDto.setBio("bio3");
+        profileInputDto.setName("user3");
 
-        mockMvc.perform(post("/users/profiles/user2")
+        mockMvc.perform(post("/users/profiles/user3")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(profileInputDto)))
                 .andExpect(status().isCreated())
                 .andExpect(header().exists("Location"))
-                .andExpect(jsonPath("$.bio").value("bio2"))
-                .andExpect(jsonPath("$.name").value("user2"));
+                .andExpect(jsonPath("$.bio").value("bio3"))
+                .andExpect(jsonPath("$.name").value("user3"));
     }
 
     @Test
@@ -118,6 +149,5 @@ public class ProfileControllerIntegrationTest {
             throw new RuntimeException(e);
         }
     }
-
 
 }
