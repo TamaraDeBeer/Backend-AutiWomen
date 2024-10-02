@@ -25,7 +25,7 @@ import java.time.LocalDate;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest (classes = AutiWomenApplication.class)
+@SpringBootTest(classes = AutiWomenApplication.class)
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 public class ProfileControllerIntegrationTest {
@@ -76,7 +76,6 @@ public class ProfileControllerIntegrationTest {
 
     @Test
     public void testCreateProfile() throws Exception {
-        // Ensure the user exists before creating the profile
         User user2 = new User("user2", LocalDate.of(1990, 5, 15));
         user2.setEmail("user2@example.com");
         user2.setPassword("password2");
@@ -121,4 +120,4 @@ public class ProfileControllerIntegrationTest {
     }
 
 
-    }
+}
