@@ -10,7 +10,8 @@ public class Profile {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(mappedBy = "profile")
+    @OneToOne
+    @JoinColumn(name = "username", referencedColumnName = "username")
     private User user;
 
     @Column(length = 2000)

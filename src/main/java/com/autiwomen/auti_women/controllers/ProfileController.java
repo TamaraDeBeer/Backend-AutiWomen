@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/users/profiles")
@@ -36,6 +37,12 @@ public class ProfileController {
     @PutMapping("/{username}")
     public ResponseEntity<ProfileDto> updateProfile(@PathVariable("username") String username, @RequestBody ProfileInputDto profileInputDto) {
         return ResponseEntity.ok(profileService.updateProfile(username, profileInputDto));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ProfileDto>> getAllProfiles() {
+        List<ProfileDto> profiles = profileService.getAllProfiles();
+        return ResponseEntity.ok(profiles);
     }
 
 //    @DeleteMapping("/{username}")

@@ -13,18 +13,6 @@ public class Like {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    @ManyToOne
-//    @JoinColumn(name = "user_id")
-////    @JsonBackReference
-//    @JsonIgnore
-//    private User user;
-//
-//    @ManyToOne
-//    @JoinColumn(name = "forum_id")
-////    @JsonBackReference
-//    @JsonIgnore
-//    private Forum forum;
-
     @ManyToOne
     @JoinColumn(name = "forum_id", nullable = false)
     private Forum forum;
