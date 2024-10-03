@@ -22,6 +22,7 @@ public class LikeController {
     @DeleteMapping("/users/{username}/likes/remove")
     public void removeLikeFromForum(@PathVariable Long forumId, @PathVariable String username) {
         likeService.removeLikeFromForum(forumId, username);
+
     }
 
     @GetMapping("likes/count")
