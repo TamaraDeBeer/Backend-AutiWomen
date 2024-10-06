@@ -5,7 +5,7 @@ import com.autiwomen.auti_women.models.Forum;
 import com.autiwomen.auti_women.models.Like;
 import com.autiwomen.auti_women.repositories.ForumRepository;
 import com.autiwomen.auti_women.repositories.LikeRepository;
-import com.autiwomen.auti_women.security.UserRepository;
+import com.autiwomen.auti_women.security.repositories.UserRepository;
 import com.autiwomen.auti_women.security.models.User;
 import org.springframework.stereotype.Service;
 

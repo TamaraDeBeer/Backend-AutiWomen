@@ -1,9 +1,8 @@
-package com.autiwomen.auti_women.security;
+package com.autiwomen.auti_women.security.repositories;
 
 import com.autiwomen.auti_women.security.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, String> {

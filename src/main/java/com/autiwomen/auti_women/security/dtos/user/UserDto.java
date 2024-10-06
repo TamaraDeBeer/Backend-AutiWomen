@@ -27,7 +27,7 @@ public class UserDto {
     @JsonSerialize
     public Set<Authority> authorities;
 
-    public UserDto(ProfileDto profileDto, String username, String password, boolean enabled, String apikey, String email, String name, String gender, LocalDate dob, String autismDiagnoses, Integer autismDiagnosesYear, String profilePictureUrl, Set<Authority> authorities) {
+    public UserDto(String username, String password, boolean enabled, String apikey, String email, String name, String gender, LocalDate dob, String autismDiagnoses, Integer autismDiagnosesYear, String profilePictureUrl, ProfileDto profileDto, Set<Authority> authorities) {
         this.username = username;
         this.password = password;
         this.enabled = enabled;
@@ -39,8 +39,8 @@ public class UserDto {
         this.autismDiagnoses = autismDiagnoses;
         this.autismDiagnosesYear = autismDiagnosesYear;
         this.profilePictureUrl = profilePictureUrl;
-        this.authorities = authorities;
         this.profileDto = profileDto;
+        this.authorities = authorities;
     }
 
     public UserDto() {

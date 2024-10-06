@@ -1,10 +1,12 @@
 package com.autiwomen.auti_women.security.dtos.user;
 
+import com.autiwomen.auti_women.security.models.Authority;
 import jakarta.validation.constraints.*;
 import org.hibernate.validator.constraints.UniqueElements;
 
 import java.time.LocalDate;
 import java.time.Year;
+import java.util.Set;
 
 public class UserInputDto {
 //    public static final int MAX_YEAR = Year.now().getValue() - 18;
@@ -40,7 +42,9 @@ public class UserInputDto {
 
     public String profilePictureUrl;
 
-    public UserInputDto(String username, String password, String email, String apikey, boolean enabled, String name, String gender, LocalDate dob, String autismDiagnoses, Integer autismDiagnosesYear, String profilePictureUrl) {
+    private Set<Authority> authorities;
+
+    public UserInputDto(String username, String password, String email, String apikey, boolean enabled, String name, String gender, LocalDate dob, String autismDiagnoses, Integer autismDiagnosesYear, String profilePictureUrl, Set<Authority> authorities) {
         this.username = username;
         this.password = password;
         this.email = email;
@@ -52,6 +56,7 @@ public class UserInputDto {
         this.autismDiagnoses = autismDiagnoses;
         this.autismDiagnosesYear = autismDiagnosesYear;
         this.profilePictureUrl = profilePictureUrl;
+        this.authorities = authorities;
     }
 
     public UserInputDto(String email, String password) {
@@ -161,5 +166,13 @@ public class UserInputDto {
 
     public void setProfilePictureUrl(String profilePictureUrl) {
         this.profilePictureUrl = profilePictureUrl;
+    }
+
+    public Set<Authority> getAuthorities() {
+        return authorities;
+    }
+
+    public void setAuthorities(Set<Authority> authorities) {
+        this.authorities = authorities;
     }
 }

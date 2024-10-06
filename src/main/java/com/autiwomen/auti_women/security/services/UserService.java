@@ -2,9 +2,8 @@ package com.autiwomen.auti_women.security.services;
 
 
 import com.autiwomen.auti_women.exceptions.RecordNotFoundException;
-import com.autiwomen.auti_women.models.Profile;
-import com.autiwomen.auti_women.repositories.ProfileRepository;
-import com.autiwomen.auti_women.security.UserRepository;
+import com.autiwomen.auti_women.security.repositories.AuthorityRepository;
+import com.autiwomen.auti_women.security.repositories.UserRepository;
 import com.autiwomen.auti_women.security.dtos.user.UserDto;
 import com.autiwomen.auti_women.security.dtos.user.UserInputDto;
 import com.autiwomen.auti_women.security.dtos.user.UserOutputDto;
@@ -33,12 +32,14 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final ProfileService profileService;
+    private final AuthorityRepository authorityRepository;
 
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public UserService(UserRepository userRepository, ProfileService profileService) {
+    public UserService(UserRepository userRepository, ProfileService profileService, AuthorityRepository authorityRepository) {
         this.userRepository = userRepository;
         this.profileService = profileService;
+        this.authorityRepository = authorityRepository;
     }
 
     public List<UserOutputDto> getUsers() {
@@ -172,6 +173,9 @@ public class UserService {
         User newUser = toUser(userInputDto);
         newUser.setPassword(passwordEncoder.encode(userInputDto.getPassword()));
 
+        Authority authority = new Authority(newUser.getUsername(), "ROLE_USER");
+        newUser.getAuthorities().add(authority);
+
         if (file != null && !file.isEmpty()) {
             String fileName = saveImage(file, newUser.getUsername());
             String imageUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
@@ -182,6 +186,7 @@ public class UserService {
         }
 
         userRepository.save(newUser);
+        authorityRepository.save(authority);
         return newUser.getUsername();
     }
 
@@ -237,6 +242,7 @@ public class UserService {
         dto.setAutismDiagnoses(user.getAutismDiagnoses());
         dto.setAutismDiagnosesYear(user.getAutismDiagnosesYear());
         dto.setProfilePictureUrl(user.getProfilePictureUrl());
+        dto.setAuthorities(user.getAuthorities());
 
 //        if(user.getProfile() != null){
 //            dto.setProfileDto(profileService.fromProfile(user.getProfile()));

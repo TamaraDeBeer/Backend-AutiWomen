@@ -1,8 +1,10 @@
 package com.autiwomen.auti_women.security.dtos.user;
 
 import com.autiwomen.auti_women.dtos.profiles.ProfileDto;
+import com.autiwomen.auti_women.security.models.Authority;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 public class UserOutputDto {
 
@@ -16,9 +18,8 @@ public class UserOutputDto {
     private String profilePictureUrl;
 
     private ProfileDto profileDto;
+    private Set<Authority> authorities;
 
-//    moet authority ook hier als output dto? Heb ik deze in de Front nodig?
-    // en forums?
 
     public UserOutputDto() {
     }
@@ -28,7 +29,7 @@ public class UserOutputDto {
         this.email = email;
     }
 
-    public UserOutputDto(ProfileDto profileDto, String username, String email, String name, String gender, LocalDate dob, String autismDiagnoses, Integer autismDiagnosesYear, String profilePictureUrl) {
+    public UserOutputDto(String username, String email, String name, String gender, LocalDate dob, String autismDiagnoses, Integer autismDiagnosesYear, String profilePictureUrl, ProfileDto profileDto, Set<Authority> authorities) {
         this.username = username;
         this.email = email;
         this.name = name;
@@ -38,6 +39,7 @@ public class UserOutputDto {
         this.autismDiagnosesYear = autismDiagnosesYear;
         this.profilePictureUrl = profilePictureUrl;
         this.profileDto = profileDto;
+        this.authorities = authorities;
     }
 
     public String getUsername() {
@@ -112,4 +114,11 @@ public class UserOutputDto {
         this.profileDto = profileDto;
     }
 
+    public Set<Authority> getAuthorities() {
+        return authorities;
+    }
+
+    public void setAuthorities(Set<Authority> authorities) {
+        this.authorities = authorities;
+    }
 }
