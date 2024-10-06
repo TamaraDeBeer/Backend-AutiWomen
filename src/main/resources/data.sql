@@ -13,7 +13,7 @@ ALTER TABLE forums ALTER COLUMN views_count SET DEFAULT 0;
 
 -- Insert a new user
 INSERT INTO users (username, password, email, apikey, enabled, name, gender, dob, autism_diagnoses, autism_diagnoses_year, profile_picture_url)
-VALUES ('testuser', 'encoded_password', 'testuser@example.com', 'random_user_api_key', true, 'Test User', 'Female', '1990-01-01', 'Ja', 2005, 'http://example.com/images/profile.jpg'),
+VALUES ('testuser', '$2a$10$7QJ8h6Q8Q8Q8Q8Q8Q8Q8Q8Q8Q8Q8Q8Q8Q8Q8Q8Q8Q8Q8Q8Q8Q8Q8Q8Q8Q8Q8Q8', 'testuser@example.com', 'random_user_api_key', true, 'Test User', 'Female', '1990-01-01', 'Ja', 2005, 'http://example.com/images/profile.jpg'),
 ('testadmin', 'encoded_password', 'testadmin@example.com', 'random_admin_api_key', true, 'Test Admin', 'Female', '1990-01-01', 'Ja', 2005, 'http://example.com/images/profile.jpg');
 
 -- Insert the corresponding authority for the user
