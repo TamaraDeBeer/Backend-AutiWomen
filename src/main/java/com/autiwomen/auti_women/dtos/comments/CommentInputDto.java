@@ -8,7 +8,6 @@ public class CommentInputDto {
 
     public String name;
 
-    @NotEmpty
     @Size(min = 1, max = 2000)
     public String text;
 
