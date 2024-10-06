@@ -244,9 +244,9 @@ public class UserService {
         dto.setProfilePictureUrl(user.getProfilePictureUrl());
         dto.setAuthorities(user.getAuthorities());
 
-//        if(user.getProfile() != null){
-//            dto.setProfileDto(profileService.fromProfile(user.getProfile()));
-//        }
+        if(user.getProfile() != null){
+            dto.setProfileDto(profileService.fromProfile(user.getProfile()));
+        }
 
         return dto;
     }
