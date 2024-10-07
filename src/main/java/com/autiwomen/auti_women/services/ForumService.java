@@ -268,6 +268,18 @@ public class ForumService {
                 .collect(LinkedHashMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), LinkedHashMap::putAll);
     }
 
+    public List<ForumDto> getForumsSortedByLikes() {
+        List<Forum> forums = forumRepository.findAll();
+        forums.forEach(forum -> {
+            int likeCount = likeRepository.getLikeCountByForumId(forum.getId());
+            forum.setLikesCount(likeCount);
+        });
+        return forums.stream()
+                .sorted(Comparator.comparingInt(Forum::getLikesCount).reversed())
+                .map(this::fromForum)
+                .collect(Collectors.toList());
+    }
+
     public ForumDto fromForum(Forum forum) {
         var forumDto = new ForumDto();
         forumDto.id = forum.getId();

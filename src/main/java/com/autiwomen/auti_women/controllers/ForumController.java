@@ -14,6 +14,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @CrossOrigin
 @RestController
@@ -103,5 +104,14 @@ public class ForumController {
     public ResponseEntity<Map<String, Integer>> getTopicFrequency() {
         return ResponseEntity.ok(forumService.getTopicFrequency());
     }
+
+    @GetMapping("forums/sorted-by-likes")
+    public ResponseEntity<List<ForumDto>> getForumsSortedByLikes() {
+        List<ForumDto> sortedForums = forumService.getForumsSortedByLikes();
+        return ResponseEntity.ok(sortedForums);
+    }
+
+
+
 
 }
