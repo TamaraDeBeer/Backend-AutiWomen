@@ -42,9 +42,30 @@ public class UserController {
         return ResponseEntity.ok().body(optionalUser);
     }
 
+//    @PostMapping(value = "/register")
+//    public ResponseEntity<UserOutputDto> createUser(@Valid @RequestPart("user") UserInputDto userInputDto,
+//                                                    @RequestPart(value = "file", required = false) MultipartFile file) throws IOException {
+//        String newUsername = userService.createUserWithImage(userInputDto, file);
+//
+//        UserOutputDto outputDto = new UserOutputDto();
+//        outputDto.setUsername(newUsername);
+//        outputDto.setEmail(userInputDto.getEmail());
+//
+//        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{username}")
+//                .buildAndExpand(newUsername).toUri();
+//
+//        return ResponseEntity.created(location).body(outputDto);
+//    }
+
     @PostMapping(value = "/register")
     public ResponseEntity<UserOutputDto> createUser(@Valid @RequestPart("user") UserInputDto userInputDto,
                                                     @RequestPart(value = "file", required = false) MultipartFile file) throws IOException {
+        if (file != null) {
+            System.out.println("Received file: " + file.getOriginalFilename());
+        } else {
+            System.out.println("No file received");
+        }
+
         String newUsername = userService.createUserWithImage(userInputDto, file);
 
         UserOutputDto outputDto = new UserOutputDto();
@@ -102,6 +123,12 @@ public class UserController {
     public ResponseEntity<Object> deleteUserAuthority(@PathVariable("username") String username, @PathVariable("authority") String authority) {
         userService.removeUserAuthority(username, authority);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping(value = "/users/{username}/image")
+    public ResponseEntity<UserOutputDto> getUserImage(@PathVariable("username") String username) {
+        UserOutputDto userImageDto = userService.getUserImage(username);
+        return ResponseEntity.ok().body(userImageDto);
     }
 }
 

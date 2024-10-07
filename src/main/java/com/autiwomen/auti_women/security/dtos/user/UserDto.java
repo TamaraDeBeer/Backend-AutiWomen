@@ -4,6 +4,7 @@ import com.autiwomen.auti_women.dtos.profiles.ProfileDto;
 import com.autiwomen.auti_women.security.models.Authority;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.validation.Valid;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -21,8 +22,9 @@ public class UserDto {
     public LocalDate dob;
     public String autismDiagnoses;
     public Integer autismDiagnosesYear;
-    private String profilePictureUrl;
-    private ProfileDto profileDto;
+    public String profilePictureUrl;
+    public MultipartFile photo;
+    public ProfileDto profileDto;
 
     @JsonSerialize
     public Set<Authority> authorities;

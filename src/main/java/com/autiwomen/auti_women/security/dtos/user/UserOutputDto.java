@@ -5,6 +5,7 @@ import com.autiwomen.auti_women.security.models.Authority;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -22,6 +23,7 @@ public class UserOutputDto {
     private String autismDiagnoses;
     private Integer autismDiagnosesYear;
     private String profilePictureUrl;
+    private MultipartFile photo;
 
     private ProfileDto profileDto;
     private Set<Authority> authorities;
