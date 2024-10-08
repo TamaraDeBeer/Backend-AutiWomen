@@ -53,10 +53,34 @@ public class ForumService {
             int commentCount = commentRepository.getCommentCountByForumId(forum.getId());
             forum.setCommentsCount(commentCount);
 
+            forum.setLastReaction(getLastReaction(forum.getId()));
+
             forumDtoList.add(fromForum(forum));
         }
 
         return forumDtoList;
+    }
+
+    public ForumDto getForumById(Long id) {
+        Optional<Forum> forumId = forumRepository.findById(id);
+        if (forumId.isPresent()) {
+            Forum forum = forumId.get();
+
+            int likeCount = likeRepository.getLikeCountByForumId(forum.getId());
+            forum.setLikesCount(likeCount);
+
+            int viewCount = viewRepository.getViewCountByForumId(forum.getId());
+            forum.setViewsCount(viewCount);
+
+            int commentCount = commentRepository.getCommentCountByForumId(forum.getId());
+            forum.setCommentsCount(commentCount);
+
+            forum.setLastReaction(getLastReaction(forum.getId()));
+
+            return fromForum(forum);
+        } else {
+            throw new RecordNotFoundException("Er is geen forum gevonden met id: " + id);
+        }
     }
 
     public ForumDto createForum(ForumInputDto forumInputDto, String username) {
@@ -94,24 +118,9 @@ public class ForumService {
         }
     }
 
-    public ForumDto getForumById(Long id) {
-        Optional<Forum> forumId = forumRepository.findById(id);
-        if (forumId.isPresent()) {
-            Forum forum = forumId.get();
-
-            int likeCount = likeRepository.getLikeCountByForumId(forum.getId());
-            forum.setLikesCount(likeCount);
-
-            int viewCount = viewRepository.getViewCountByForumId(forum.getId());
-            forum.setViewsCount(viewCount);
-
-            int commentCount = commentRepository.getCommentCountByForumId(forum.getId());
-            forum.setCommentsCount(commentCount);
-
-            return fromForum(forum);
-        } else {
-            throw new RecordNotFoundException("Er is geen forum gevonden met id: " + id);
-        }
+    public String getLastReaction(Long forumId) {
+        Optional<Comment> lastComment = commentRepository.findTopByForumIdOrderByDateDesc(forumId);
+        return lastComment.map(comment -> comment.getDate()).orElse(null);
     }
 
     public ForumDto updateForum(@PathVariable Long id, @RequestBody ForumDto updateForum) {
