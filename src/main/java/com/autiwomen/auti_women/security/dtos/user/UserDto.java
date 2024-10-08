@@ -45,6 +45,11 @@ public class UserDto {
         this.authorities = authorities;
     }
 
+    public UserDto(String username, String profilePictureUrl) {
+        this.username = username;
+        this.profilePictureUrl = profilePictureUrl;
+    }
+
     public UserDto() {
     }
 

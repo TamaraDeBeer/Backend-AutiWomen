@@ -36,9 +36,9 @@ public class Forum {
     @JsonIgnore
     private List<Comment> commentsList = new ArrayList<>();
 
-    @ManyToOne
+    @ManyToOne (fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", referencedColumnName = "username")
-    @JsonBackReference
+//    @JsonBackReference
     private User user;
 
     @OneToMany(mappedBy = "forum",

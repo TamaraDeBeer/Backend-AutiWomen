@@ -13,8 +13,8 @@ ALTER TABLE forums ALTER COLUMN views_count SET DEFAULT 0;
 
 -- Insert a new user
 INSERT INTO users (username, password, email, apikey, enabled, name, gender, dob, autism_diagnoses, autism_diagnoses_year, profile_picture_url)
-VALUES ('testuser', '$2a$10$7QJ8h6Q8Q8Q8Q8Q8Q8Q8Q8Q8Q8Q8Q8Q8Q8Q8Q8Q8Q8Q8Q8Q8Q8Q8Q8Q8Q8Q8Q8', 'testuser@example.com', 'random_user_api_key', true, 'Test User', 'Female', '1990-01-01', 'Ja', 2005, 'http://example.com/images/profile.jpg'),
-('testadmin', 'encoded_password', 'testadmin@example.com', 'random_admin_api_key', true, 'Test Admin', 'Female', '1990-01-01', 'Ja', 2005, 'http://example.com/images/profile.jpg');
+VALUES ('testuser', 'encoded-user-password', 'testuser@example.com', 'random_user_api_key', true, 'Test User', 'Female', '1990-01-01', 'Ja', 2005, 'http://localhost:1991/images/Tiana.jpg'),
+('testadmin', 'encoded-admin-password', 'testadmin@example.com', 'random_admin_api_key', true, 'Test Admin', 'Female', '1990-01-01', 'Ja', 2005, 'http://localhost:1991/images/Tiana.jpg');
 
 -- Insert the corresponding authority for the user
 INSERT INTO authorities (username, authority)
@@ -27,11 +27,11 @@ VALUES (5000, 'testuser', 'Ik ben een test user', 'test user', '2024-10-06'),
        (5001, 'testadmin', 'Ik ben een test admin', 'test admin', '2024-10-06');
 
 -- Insert a forum
-INSERT INTO forums (id, name, age, title, text, date, topic)
-VALUES (1000, 'testuser', '18', 'Dit is een test forum', 'banaan', '2024-09-06', 'test topic'),
-         (1001, 'testadmin', '18', 'Dit is een test forum', 'banaan', '2024-08-06', 'test topic'),
-            (1002, 'testuser', '18', 'Dit is een test forum', 'banaan', '2024-10-06', 'test topic'),
-            (1003, 'testadmin', '18', 'Dit is een test forum', 'banaan', '2024-07-06', 'test topic');
+INSERT INTO forums (id, name, age, title, text, date, topic, user_id)
+VALUES (1000, 'testuser', '18', 'Dit is een test forum', 'banaan', '2024-09-06', 'test topic', 'testuser'),
+         (1001, 'testadmin', '18', 'Dit is een test forum', 'banaan', '2024-08-06', 'test topic', 'testadmin'),
+            (1002, 'testuser', '18', 'Dit is een test forum', 'banaan', '2024-10-06', 'test topic', 'testuser'),
+            (1003, 'testadmin', '18', 'Dit is een test forum', 'banaan', '2024-07-06', 'test topic', 'testadmin');
 
 -- Insert a comment
 INSERT INTO comments (id, forum_id, name, text, date)

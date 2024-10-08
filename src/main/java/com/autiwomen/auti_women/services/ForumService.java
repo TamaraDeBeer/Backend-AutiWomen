@@ -1,5 +1,6 @@
 package com.autiwomen.auti_women.services;
 
+
 import com.autiwomen.auti_women.dtos.forums.ForumDto;
 import com.autiwomen.auti_women.dtos.forums.ForumInputDto;
 import com.autiwomen.auti_women.exceptions.RecordNotFoundException;
@@ -9,9 +10,12 @@ import com.autiwomen.auti_women.repositories.CommentRepository;
 import com.autiwomen.auti_women.repositories.ForumRepository;
 import com.autiwomen.auti_women.repositories.LikeRepository;
 import com.autiwomen.auti_women.repositories.ViewRepository;
+import com.autiwomen.auti_women.security.dtos.user.UserDto;
 import com.autiwomen.auti_women.security.repositories.UserRepository;
 import com.autiwomen.auti_women.security.models.User;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,6 +27,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class ForumService {
+
+    private static final Logger logger = LoggerFactory.getLogger(ForumService.class);
 
     private final ForumRepository forumRepository;
     private final UserRepository userRepository;
@@ -310,6 +316,14 @@ public class ForumService {
         forumDto.likesCount = forum.getLikesCount();
         forumDto.viewsCount = forum.getViewsCount();
         forumDto.commentsCount = forum.getCommentsCount();
+
+        User user = forum.getUser();
+        if (user != null) {
+            forumDto.userDto = new UserDto(user.getUsername(), user.getProfilePictureUrl());
+        } else {
+            forumDto.userDto = null;
+            logger.warn("User is null for forum with id: " + forum.getId());
+        }
 
         return forumDto;
     }
