@@ -280,6 +280,14 @@ public class ForumService {
                 .collect(Collectors.toList());
     }
 
+    public List<ForumDto> getForumsSortedByDate() {
+        List<Forum> forums = forumRepository.findAll();
+        return forums.stream()
+                .sorted(Comparator.comparing(Forum::getDate).reversed())
+                .map(this::fromForum)
+                .collect(Collectors.toList());
+    }
+
     public ForumDto fromForum(Forum forum) {
         var forumDto = new ForumDto();
         forumDto.id = forum.getId();

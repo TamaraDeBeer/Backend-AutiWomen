@@ -28,10 +28,10 @@ VALUES (5000, 'testuser', 'Ik ben een test user', 'test user', '2024-10-06'),
 
 -- Insert a forum
 INSERT INTO forums (id, name, age, title, text, date, topic)
-VALUES (1000, 'testuser', '18', 'Dit is een test forum', 'banaan', '2024-10-06', 'test topic'),
-         (1001, 'testadmin', '18', 'Dit is een test forum', 'banaan', '2024-10-06', 'test topic'),
+VALUES (1000, 'testuser', '18', 'Dit is een test forum', 'banaan', '2024-09-06', 'test topic'),
+         (1001, 'testadmin', '18', 'Dit is een test forum', 'banaan', '2024-08-06', 'test topic'),
             (1002, 'testuser', '18', 'Dit is een test forum', 'banaan', '2024-10-06', 'test topic'),
-            (1003, 'testadmin', '18', 'Dit is een test forum', 'banaan', '2024-10-06', 'test topic');
+            (1003, 'testadmin', '18', 'Dit is een test forum', 'banaan', '2024-07-06', 'test topic');
 
 -- Insert a comment
 INSERT INTO comments (id, forum_id, name, text, date)

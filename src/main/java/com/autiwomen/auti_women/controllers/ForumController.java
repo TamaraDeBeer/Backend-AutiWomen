@@ -111,7 +111,11 @@ public class ForumController {
         return ResponseEntity.ok(sortedForums);
     }
 
-
+    @GetMapping("forums/sorted-by-date")
+    public ResponseEntity<List<ForumDto>> getForumsSortedByDate() {
+        List<ForumDto> sortedForums = forumService.getForumsSortedByDate();
+        return ResponseEntity.ok(sortedForums);
+    }
 
 
 }
