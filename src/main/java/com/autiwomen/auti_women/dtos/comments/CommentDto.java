@@ -11,17 +11,15 @@ public class CommentDto {
     public String name;
     public String text;
     public String date;
-    public String age;
 
     public ForumDto forumDto;
     public UserDto userDto;
 
-    public CommentDto(String date, Long id, String name, String text, String age, ForumDto forumDto, UserDto userDto) {
+    public CommentDto(String date, Long id, String name, String text, ForumDto forumDto, UserDto userDto) {
         this.date = date;
         this.id = id;
         this.name = name;
         this.text = text;
-        this.age = age;
         this.forumDto = forumDto;
         this.userDto = userDto;
     }
@@ -67,14 +65,6 @@ public class CommentDto {
 
     public void setForumDto(ForumDto forumDto) {
         this.forumDto = forumDto;
-    }
-
-    public String getAge() {
-        return age;
-    }
-
-    public void setAge(String age) {
-        this.age = age;
     }
 
     public UserDto getUserDto() {

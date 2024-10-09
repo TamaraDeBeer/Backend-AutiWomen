@@ -322,7 +322,6 @@ public class ForumService {
             forumDto.userDto = new UserDto(user.getUsername(), user.getProfilePictureUrl());
         } else {
             forumDto.userDto = null;
-            logger.warn("User is null for forum with id: " + forum.getId());
         }
 
         return forumDto;

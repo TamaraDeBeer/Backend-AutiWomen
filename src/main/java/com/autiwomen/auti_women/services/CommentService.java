@@ -1,12 +1,13 @@
 package com.autiwomen.auti_women.services;
 
+import com.autiwomen.auti_women.models.Forum;
 import com.autiwomen.auti_women.dtos.comments.CommentDto;
 import com.autiwomen.auti_women.dtos.comments.CommentInputDto;
 import com.autiwomen.auti_women.exceptions.RecordNotFoundException;
 import com.autiwomen.auti_women.models.Comment;
-import com.autiwomen.auti_women.models.Forum;
 import com.autiwomen.auti_women.repositories.CommentRepository;
 import com.autiwomen.auti_women.repositories.ForumRepository;
+import com.autiwomen.auti_women.security.dtos.user.UserDto;
 import com.autiwomen.auti_women.security.repositories.UserRepository;
 import com.autiwomen.auti_women.security.models.User;
 import org.springframework.stereotype.Service;
@@ -125,6 +126,13 @@ public class CommentService {
 
         if (comment.getForum() != null) {
             commentDto.setForumDto(forumService.fromForum(comment.getForum()));
+
+            User user = comment.getUser();
+            if (user != null) {
+                commentDto.userDto = new UserDto(user.getUsername(), user.getProfilePictureUrl());
+            } else {
+                commentDto.userDto = null;
+            }
         }
         return commentDto;
     }
