@@ -289,6 +289,7 @@ public class ForumService {
             int likeCount = likeRepository.getLikeCountByForumId(forum.getId());
             int viewCount = viewRepository.getViewCountByForumId(forum.getId());
             int commentCount = commentRepository.getCommentCountByForumId(forum.getId());
+            forum.setLastReaction(getLastReaction(forum.getId()));
             forum.setCommentsCount(commentCount);
             forum.setViewsCount(viewCount);
             forum.setLikesCount(likeCount);
@@ -305,6 +306,7 @@ public class ForumService {
             int likeCount = likeRepository.getLikeCountByForumId(forum.getId());
             int viewCount = viewRepository.getViewCountByForumId(forum.getId());
             int commentCount = commentRepository.getCommentCountByForumId(forum.getId());
+            forum.setLastReaction(getLastReaction(forum.getId()));
             forum.setCommentsCount(commentCount);
             forum.setViewsCount(viewCount);
             forum.setLikesCount(likeCount);

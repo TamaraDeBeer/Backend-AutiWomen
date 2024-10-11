@@ -35,7 +35,6 @@ public class LikeService {
         if (existingLike.isPresent()) {
             throw new IllegalStateException("User has already liked this forum");
         }
-
         Like like = new Like(user, forum);
         likeRepository.save(like);
     }

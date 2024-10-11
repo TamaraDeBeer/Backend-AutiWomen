@@ -84,7 +84,6 @@ public class CommentService {
         return comments.stream().map(comment -> {
             User user = comment.getUser();
             if (user != null) {
-                comment.setDate(String.valueOf(LocalDate.now()));
                 comment.setName(user.getUsername());
                 comment.setAge(user.getDob().toString());
             }

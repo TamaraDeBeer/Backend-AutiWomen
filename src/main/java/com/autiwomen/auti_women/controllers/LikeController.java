@@ -24,9 +24,10 @@ public class LikeController {
         likeService.removeLikeFromForum(forumId, username);
     }
 
-    @GetMapping("likes/count")
+    @GetMapping("/likes/count")
     public ResponseEntity<Integer> getLikeCountByForumId(@PathVariable("forumId") Long forumId) {
-        return ResponseEntity.ok(likeService.getLikeCountByForumId(forumId));
+        int likeCount = likeService.getLikeCountByForumId(forumId);
+        return ResponseEntity.ok(likeCount);
     }
 
     @GetMapping("users/{username}/likes/check")
@@ -34,4 +35,6 @@ public class LikeController {
         boolean hasLiked = likeService.hasUserLikedPost(username, forumId);
         return ResponseEntity.ok(hasLiked);
     }
+
+
 }
