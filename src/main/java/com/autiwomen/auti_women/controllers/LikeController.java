@@ -22,11 +22,16 @@ public class LikeController {
     @DeleteMapping("/users/{username}/likes/remove")
     public void removeLikeFromForum(@PathVariable Long forumId, @PathVariable String username) {
         likeService.removeLikeFromForum(forumId, username);
-
     }
 
     @GetMapping("likes/count")
     public ResponseEntity<Integer> getLikeCountByForumId(@PathVariable("forumId") Long forumId) {
         return ResponseEntity.ok(likeService.getLikeCountByForumId(forumId));
+    }
+
+    @GetMapping("users/{username}/likes/check")
+    public ResponseEntity<Boolean> checkUserLike(@PathVariable Long forumId, @PathVariable String username) {
+        boolean hasLiked = likeService.hasUserLikedPost(username, forumId);
+        return ResponseEntity.ok(hasLiked);
     }
 }

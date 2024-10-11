@@ -16,8 +16,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CommentService {
@@ -44,6 +46,10 @@ public class CommentService {
         comment.setDate(String.valueOf(LocalDate.now()));
         commentRepository.save(comment);
         return fromComment(comment);
+    }
+
+    public List<Comment> getAllComments() {
+        return commentRepository.findAll();
     }
 
     public void assignCommentToForum(Long commentId, Long forumId) {
@@ -73,9 +79,17 @@ public class CommentService {
         }
     }
 
-    public List<Comment> getCommentsByForumId(Long forumId) {
-        Forum forum = forumRepository.findById(forumId).orElseThrow(() -> new RecordNotFoundException("Forum not found"));
-        return forum.getCommentsList();
+    public List<CommentDto> getCommentsByForumId(Long forumId) {
+        List<Comment> comments = commentRepository.findByForumId(forumId);
+        return comments.stream().map(comment -> {
+            User user = comment.getUser();
+            if (user != null) {
+                comment.setDate(String.valueOf(LocalDate.now()));
+                comment.setName(user.getUsername());
+                comment.setAge(user.getDob().toString());
+            }
+            return toCommentDto(comment);
+        }).collect(Collectors.toList());
     }
 
     public List<Comment> getCommentsByUsername(String username) {
@@ -145,5 +159,23 @@ public class CommentService {
 
         return comment;
     }
+
+    private CommentDto toCommentDto(Comment comment) {
+        CommentDto dto = new CommentDto();
+        dto.setId(comment.getId());
+        dto.setName(comment.getName());
+        dto.setText(comment.getText());
+        dto.setDate(comment.getDate());
+        dto.setAge(comment.getAge());
+
+        if (comment.getUser() != null) {
+            User user = comment.getUser();
+            UserDto userDto = new UserDto(user.getUsername(), user.getProfilePictureUrl());
+            dto.setUserDto(userDto);
+        }
+
+        return dto;
+    }
+
 
 }

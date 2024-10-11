@@ -40,7 +40,7 @@ public class Forum {
 
     @ManyToOne (fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", referencedColumnName = "username")
-//    @JsonBackReference
+//    @JsonIgnore
     private User user;
 
     @OneToMany(mappedBy = "forum",

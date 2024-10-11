@@ -100,8 +100,8 @@ VALUES (1000, 'Tamara', '1991-07-06', 'Verdriet',
         '06-08-2024', 'School', 'Elsa'),
        (1010, 'Moana', '1980-05-28', 'Waarom kan ik niet stoppen met TV kijken?',
         'Ik kijk veel TV. Ik HOUD van series kijken, al heb ik ze al eerder gezien. Ik heb Game of Thrones al wel 10 keer gekeken! En nog blijf ik kijken en ontdek ik nieuwe dingen en wil ik blijven kijken. Ik kijk uit naar mijn favoriete afleveringen! De meeste mensen om me heen vinden 1x kijken genoeg. Hoe staan jullie hierin?',
-        '06-07-2024', 'test topic', 'Moana'),
-       (1011, 'Ariel', '1958-10-25', 'Dit is een test forum', 'banaan', '06-06-2024', 'test topic', 'Ariel');
+        '06-07-2024', 'Overige', 'Moana'),
+       (1011, 'Ariel', '1958-10-25', 'Dit is een test forum', 'banaan', '06-06-2024', 'Werk', 'Ariel');
 
 -- Insert a comment
 INSERT INTO comments (id, forum_id, name, text, date, user_id)

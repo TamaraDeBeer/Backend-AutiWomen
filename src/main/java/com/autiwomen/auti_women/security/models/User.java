@@ -69,7 +69,7 @@ public class User {
 //    private Set<Like> likes = new HashSet<>();
 
     @OneToMany(mappedBy = "user")
-    @JsonManagedReference
+    @JsonIgnore
     private Set<Forum> forums;
 
     @OneToMany(mappedBy = "user")

@@ -57,4 +57,15 @@ public class LikeService {
         int likeCount = likes.size();
         return likeCount;
     }
+
+    public boolean hasUserLikedPost(String username, Long forumId) {
+        User user = userRepository.findById(username)
+                .orElseThrow(() -> new RecordNotFoundException("User not found"));
+        Forum forum = forumRepository.findById(forumId)
+                .orElseThrow(() -> new RecordNotFoundException("Forum not found"));
+
+        return likeRepository.findLikeByUserAndForum(user, forum).isPresent();
+    }
+
+
 }

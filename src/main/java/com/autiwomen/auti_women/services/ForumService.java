@@ -287,6 +287,10 @@ public class ForumService {
         List<Forum> forums = forumRepository.findAll();
         forums.forEach(forum -> {
             int likeCount = likeRepository.getLikeCountByForumId(forum.getId());
+            int viewCount = viewRepository.getViewCountByForumId(forum.getId());
+            int commentCount = commentRepository.getCommentCountByForumId(forum.getId());
+            forum.setCommentsCount(commentCount);
+            forum.setViewsCount(viewCount);
             forum.setLikesCount(likeCount);
         });
         return forums.stream()
@@ -297,6 +301,14 @@ public class ForumService {
 
     public List<ForumDto> getForumsSortedByDate() {
         List<Forum> forums = forumRepository.findAll();
+        forums.forEach(forum -> {
+            int likeCount = likeRepository.getLikeCountByForumId(forum.getId());
+            int viewCount = viewRepository.getViewCountByForumId(forum.getId());
+            int commentCount = commentRepository.getCommentCountByForumId(forum.getId());
+            forum.setCommentsCount(commentCount);
+            forum.setViewsCount(viewCount);
+            forum.setLikesCount(likeCount);
+        });
         return forums.stream()
                 .sorted(Comparator.comparing(Forum::getDate).reversed())
                 .map(this::fromForum)
