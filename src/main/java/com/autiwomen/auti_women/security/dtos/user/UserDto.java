@@ -35,4 +35,9 @@ public class UserDto {
 
     @JsonSerialize
     public Set<Authority> authorities;
+
+    public UserDto(String username, String profilePictureUrl) {
+        this.username = username;
+        this.profilePictureUrl = profilePictureUrl;
+    }
 }
