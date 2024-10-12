@@ -59,9 +59,10 @@ public class ForumController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/users/{username}/forums")
-    public ResponseEntity<Set<Forum>> getForumsByUsername(@PathVariable("username") String username) {
-        return ResponseEntity.ok(forumService.getForumsByUsername(username));
+    @GetMapping("users/{username}/forums")
+    public ResponseEntity<Set<ForumDto>> getForumsByUsername(@PathVariable("username") String username) {
+        Set<ForumDto> forums = forumService.getForumsByUsername(username);
+        return ResponseEntity.ok(forums);
     }
 
     @GetMapping("/users/{username}/liked-forums")

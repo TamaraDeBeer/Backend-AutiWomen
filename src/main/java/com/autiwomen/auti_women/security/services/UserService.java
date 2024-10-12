@@ -86,18 +86,6 @@ public class UserService {
 //        return userRepository.existsById(username);
 //    }
 
-//    public UserDto updatePasswordUser(String username, UserDto updateUser) {
-//        Optional<User> userOptional = userRepository.findById(username);
-//        if (userOptional.isPresent()) {
-//            User user = userOptional.get();
-//            user.setPassword(passwordEncoder.encode(updateUser.getPassword()));
-//            userRepository.save(user);
-//            return fromUser(user);
-//        } else {
-//            throw new RecordNotFoundException("Er is geen user gevonden met username: " + username);
-//        }
-//    }
-
     public UserDto updatePasswordUser(String username, UserDto updateUser) {
         Optional<User> userOptional = userRepository.findById(username);
         if (userOptional.isPresent()) {

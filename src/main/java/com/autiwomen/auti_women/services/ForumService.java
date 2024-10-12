@@ -162,9 +162,28 @@ public class ForumService {
         }
     }
 
-    public Set<Forum> getForumsByUsername(String username) {
+    public Set<ForumDto> getForumsByUsername(String username) {
         User user = userRepository.findById(username).orElseThrow(() -> new RecordNotFoundException("User not found"));
-        return new HashSet<>(forumRepository.findByUser(user));
+        Set<Forum> forums = new HashSet<>(forumRepository.findByUser(user));
+        return forums.stream().map(forum -> {
+            if (forum.getUser() != null) {
+                forum.setName(forum.getUser().getUsername());
+                forum.setAge(forum.getUser().getDob().toString());
+            }
+
+            int likeCount = likeRepository.getLikeCountByForumId(forum.getId());
+            forum.setLikesCount(likeCount);
+
+            int viewCount = viewRepository.getViewCountByForumId(forum.getId());
+            forum.setViewsCount(viewCount);
+
+            int commentCount = commentRepository.getCommentCountByForumId(forum.getId());
+            forum.setCommentsCount(commentCount);
+
+            forum.setLastReaction(getLastReaction(forum.getId()));
+
+            return fromForum(forum);
+        }).collect(Collectors.toSet());
     }
 
 
