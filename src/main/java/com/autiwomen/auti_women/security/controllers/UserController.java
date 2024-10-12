@@ -4,6 +4,7 @@ import com.autiwomen.auti_women.exceptions.BadRequestException;
 import com.autiwomen.auti_women.security.dtos.user.UserDto;
 import com.autiwomen.auti_women.security.dtos.user.UserInputDto;
 import com.autiwomen.auti_women.security.dtos.user.UserOutputDto;
+import com.autiwomen.auti_women.security.dtos.user.UserUpdateDto;
 import com.autiwomen.auti_women.security.models.Authority;
 import com.autiwomen.auti_women.security.models.User;
 import com.autiwomen.auti_women.security.services.UserService;
@@ -78,7 +79,7 @@ public class UserController {
         return ResponseEntity.created(location).body(outputDto);
     }
 
-    @PutMapping(value = "/{username}")
+    @PutMapping(value = "users/{username}/password")
     public ResponseEntity<UserDto> updatePasswordUser(@PathVariable("username") String username, @RequestBody UserDto dto) {
         userService.updatePasswordUser(username, dto);
         return ResponseEntity.noContent().build();
@@ -88,6 +89,13 @@ public class UserController {
     public ResponseEntity<Void> updateProfilePicture(@PathVariable("username") String username,
                                                      @RequestPart("file") MultipartFile file) throws IOException {
         userService.updateProfilePicture(username, file);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping(value = "/users/{username}/profile-data")
+    public ResponseEntity<Void> updateUserData(@PathVariable("username") String username,
+                                               @RequestBody @Valid UserUpdateDto userUpdateDto) {
+        userService.updateUserData(username, userUpdateDto);
         return ResponseEntity.noContent().build();
     }
 

@@ -2,6 +2,7 @@ package com.autiwomen.auti_women.security.services;
 
 
 import com.autiwomen.auti_women.exceptions.RecordNotFoundException;
+import com.autiwomen.auti_women.security.dtos.user.UserUpdateDto;
 import com.autiwomen.auti_women.security.repositories.AuthorityRepository;
 import com.autiwomen.auti_women.security.repositories.UserRepository;
 import com.autiwomen.auti_women.security.dtos.user.UserDto;
@@ -217,6 +218,34 @@ public class UserService {
             dto.setUsername(user.getUsername());
             dto.setProfilePictureUrl(user.getProfilePictureUrl());
             return dto;
+        } else {
+            throw new UsernameNotFoundException(username);
+        }
+    }
+
+    public void updateUserData(String username, UserUpdateDto userUpdateDto) {
+        Optional<User> userOptional = userRepository.findById(username);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            if (userUpdateDto.getEmail() != null) {
+                user.setEmail(userUpdateDto.getEmail());
+            }
+            if (userUpdateDto.getName() != null) {
+                user.setName(userUpdateDto.getName());
+            }
+            if (userUpdateDto.getDob() != null) {
+                user.setDob(userUpdateDto.getDob());
+            }
+            if (userUpdateDto.getAutismDiagnoses() != null) {
+                user.setAutismDiagnoses(userUpdateDto.getAutismDiagnoses());
+            }
+            if (userUpdateDto.getAutismDiagnosesYear() != null) {
+                user.setAutismDiagnosesYear(userUpdateDto.getAutismDiagnosesYear());
+            }
+            if (userUpdateDto.getGender() != null) {
+                user.setGender(userUpdateDto.getGender());
+            }
+            userRepository.save(user);
         } else {
             throw new UsernameNotFoundException(username);
         }
