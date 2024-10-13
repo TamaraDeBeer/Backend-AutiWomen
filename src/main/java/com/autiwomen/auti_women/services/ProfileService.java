@@ -58,16 +58,6 @@ public class ProfileService {
         return fromProfile(profile);
     }
 
-//    public void deleteProfile(@RequestParam String username) {
-//        Optional<User> optionalUser = userRepository.findById(username);
-//        Optional<Profile> optionalProfile = profileRepository.findByUser(optionalUser.orElseThrow(() -> new RecordNotFoundException("User not found")));
-//        if (optionalProfile.isEmpty()) {
-//            throw new RecordNotFoundException("Profile not found");
-//        } else {
-//            profileRepository.delete(optionalProfile.get());
-//        }
-//    }
-
     public ProfileDto fromProfile(Profile profile) {
         var profileDto = new ProfileDto();
         profileDto.id = profile.getId();

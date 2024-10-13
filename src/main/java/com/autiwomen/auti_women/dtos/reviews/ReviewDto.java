@@ -10,6 +10,9 @@ public class ReviewDto {
     public String review;
     public UserDto userdto;
 
+    public ReviewDto() {
+    }
+
     public ReviewDto(Long id, String review, UserDto userdto) {
         this.id = id;
         this.review = review;
