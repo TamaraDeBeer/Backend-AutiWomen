@@ -138,6 +138,7 @@ public class ForumService {
 //            forum1.setName(updateForum.getName());
             forum1.setTitle(updateForum.getTitle());
             forum1.setText(updateForum.getText());
+            forum1.setTopic(updateForum.getTopic());
             Forum forum2 = forumRepository.save(forum1);
 
             return fromForum(forum2);

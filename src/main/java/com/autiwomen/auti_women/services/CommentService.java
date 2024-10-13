@@ -11,6 +11,7 @@ import com.autiwomen.auti_women.security.dtos.user.UserDto;
 import com.autiwomen.auti_women.security.repositories.UserRepository;
 import com.autiwomen.auti_women.security.models.User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -107,16 +108,20 @@ public class CommentService {
         return commentCount;
     }
 
-    public void deleteComment(@RequestParam Long commentId) {
+    @Transactional
+    public void deleteComment(Long commentId) {
         Optional<Comment> optionalComment = commentRepository.findById(commentId);
         if (optionalComment.isEmpty()) {
             throw new RecordNotFoundException("Comment not found");
         }
         Comment comment = optionalComment.get();
+        comment.setForum(null);
+        comment.setUser(null);
+        commentRepository.save(comment);
         commentRepository.delete(comment);
     }
 
-    public CommentDto updateComment (@PathVariable Long commentId, @RequestBody CommentDto updateComment) {
+    public CommentDto updateComment (Long commentId, CommentDto updateComment) {
         Optional<Comment> comment = commentRepository.findById(commentId);
         if (comment.isEmpty()) {
             throw new RecordNotFoundException("Comment not found");
