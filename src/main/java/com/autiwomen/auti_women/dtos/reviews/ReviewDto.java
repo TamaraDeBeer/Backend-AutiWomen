@@ -8,15 +8,15 @@ public class ReviewDto {
 
     public Long id;
     public String review;
-    public UserDto userdto;
+    public UserDto user;
 
     public ReviewDto() {
     }
 
-    public ReviewDto(Long id, String review, UserDto userdto) {
+    public ReviewDto(Long id, String review, UserDto user) {
         this.id = id;
         this.review = review;
-        this.userdto = userdto;
+        this.user = user;
     }
 
     public Long getId() {
@@ -36,10 +36,14 @@ public class ReviewDto {
     }
 
     public UserDto getUserdto() {
-        return userdto;
+        return user;
     }
 
     public void setUserdto(UserDto userdto) {
-        this.userdto = userdto;
+        this.user = userdto;
+    }
+
+    public void setUser(UserDto userDto) {
+
     }
 }

@@ -5,6 +5,7 @@ import com.autiwomen.auti_women.dtos.reviews.ReviewInputDto;
 import com.autiwomen.auti_women.exceptions.RecordNotFoundException;
 import com.autiwomen.auti_women.models.Review;
 import com.autiwomen.auti_women.repositories.ReviewRepository;
+import com.autiwomen.auti_women.security.dtos.user.UserDto;
 import com.autiwomen.auti_women.security.models.User;
 import com.autiwomen.auti_women.security.repositories.UserRepository;
 import org.springframework.stereotype.Service;
@@ -24,11 +25,12 @@ public class ReviewService {
     }
 
     public ReviewDto createReview(String username, ReviewInputDto reviewInputDto) {
-        User user = userRepository.findById(username).orElseThrow(() -> new RecordNotFoundException("User not found"));
+        User user = userRepository.findById(username).orElseThrow(() -> new RuntimeException("User not found"));
 
         Review review = toReview(reviewInputDto);
-        review.setUser(user);
+        review.setReview(review.getReview());
         reviewRepository.save(review);
+
         return fromReview(review);
     }
 

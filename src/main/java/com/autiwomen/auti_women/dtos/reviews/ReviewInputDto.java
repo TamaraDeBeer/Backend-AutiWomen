@@ -13,6 +13,9 @@ public class ReviewInputDto {
         this.review = review;
     }
 
+    public ReviewInputDto() {
+    }
+
     public @NotEmpty @Size String getReview() {
         return review;
     }
@@ -20,4 +23,6 @@ public class ReviewInputDto {
     public void setReview(@NotEmpty @Size String review) {
         this.review = review;
     }
+
+
 }
