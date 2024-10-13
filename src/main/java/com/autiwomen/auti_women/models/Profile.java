@@ -4,6 +4,7 @@ import com.autiwomen.auti_women.security.models.User;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "profiles")
 public class Profile {
 
     @Id

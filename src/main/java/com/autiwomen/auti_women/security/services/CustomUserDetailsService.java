@@ -1,7 +1,6 @@
 package com.autiwomen.auti_women.security.services;
 
-import com.autiwomen.auti_women.security.UserRepository;
-import com.autiwomen.auti_women.security.dtos.user.UserDto;
+import com.autiwomen.auti_women.security.repositories.UserRepository;
 import com.autiwomen.auti_women.security.models.Authority;
 import com.autiwomen.auti_women.security.models.User;
 import org.springframework.security.core.GrantedAuthority;
@@ -15,8 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {

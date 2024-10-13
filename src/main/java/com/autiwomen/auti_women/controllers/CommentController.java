@@ -38,9 +38,16 @@ public class CommentController {
         return ResponseEntity.created(uri).body(commentDto);
     }
 
+    @GetMapping("/comments")
+    public ResponseEntity<List<Comment>> getAllComments() {
+        List<Comment> comments = commentService.getAllComments();
+        return ResponseEntity.ok(comments);
+    }
+
     @GetMapping("/{forumId}/comments")
-    public ResponseEntity<List<Comment>> getCommentsByForumId(@PathVariable("forumId") Long forumId) {
-        return ResponseEntity.ok(commentService.getCommentsByForumId(forumId));
+    public ResponseEntity<List<CommentDto>> getCommentsByForumId(@PathVariable("forumId") Long forumId) {
+        List<CommentDto> comments = commentService.getCommentsByForumId(forumId);
+        return ResponseEntity.ok(comments);
     }
 
     @GetMapping("/users/{username}/comments")

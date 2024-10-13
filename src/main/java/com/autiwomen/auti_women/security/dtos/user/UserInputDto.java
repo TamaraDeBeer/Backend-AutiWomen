@@ -1,10 +1,13 @@
 package com.autiwomen.auti_women.security.dtos.user;
 
+import com.autiwomen.auti_women.security.models.Authority;
 import jakarta.validation.constraints.*;
 import org.hibernate.validator.constraints.UniqueElements;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.Year;
+import java.util.Set;
 
 public class UserInputDto {
 //    public static final int MAX_YEAR = Year.now().getValue() - 18;
@@ -38,9 +41,12 @@ public class UserInputDto {
     @Digits(integer = 4, fraction = 0)
     public Integer autismDiagnosesYear;
 
+    public MultipartFile photo;
     public String profilePictureUrl;
 
-    public UserInputDto(String username, String password, String email, String apikey, boolean enabled, String name, String gender, LocalDate dob, String autismDiagnoses, Integer autismDiagnosesYear, String profilePictureUrl) {
+    private Set<Authority> authorities;
+
+    public UserInputDto(String username, String password, String email, String apikey, boolean enabled, String name, String gender, LocalDate dob, String autismDiagnoses, Integer autismDiagnosesYear, MultipartFile photo, String profilePictureUrl, Set<Authority> authorities) {
         this.username = username;
         this.password = password;
         this.email = email;
@@ -51,7 +57,9 @@ public class UserInputDto {
         this.dob = dob;
         this.autismDiagnoses = autismDiagnoses;
         this.autismDiagnosesYear = autismDiagnosesYear;
+        this.photo = photo;
         this.profilePictureUrl = profilePictureUrl;
+        this.authorities = authorities;
     }
 
     public UserInputDto(String email, String password) {
@@ -153,6 +161,21 @@ public class UserInputDto {
 
     public void setAutismDiagnosesYear(Integer autismDiagnosesYear) {
         this.autismDiagnosesYear = autismDiagnosesYear;
+    }
+
+    public MultipartFile getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(MultipartFile photo) {
+        this.photo = photo;
+    }
+    public Set<Authority> getAuthorities() {
+        return authorities;
+    }
+
+    public void setAuthorities(Set<Authority> authorities) {
+        this.authorities = authorities;
     }
 
     public String getProfilePictureUrl() {

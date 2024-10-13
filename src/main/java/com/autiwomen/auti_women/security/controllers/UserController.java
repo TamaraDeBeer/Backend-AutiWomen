@@ -4,6 +4,7 @@ import com.autiwomen.auti_women.exceptions.BadRequestException;
 import com.autiwomen.auti_women.security.dtos.user.UserDto;
 import com.autiwomen.auti_women.security.dtos.user.UserInputDto;
 import com.autiwomen.auti_women.security.dtos.user.UserOutputDto;
+import com.autiwomen.auti_women.security.dtos.user.UserUpdateDto;
 import com.autiwomen.auti_women.security.models.Authority;
 import com.autiwomen.auti_women.security.models.User;
 import com.autiwomen.auti_women.security.services.UserService;
@@ -42,9 +43,30 @@ public class UserController {
         return ResponseEntity.ok().body(optionalUser);
     }
 
+//    @PostMapping(value = "/register")
+//    public ResponseEntity<UserOutputDto> createUser(@Valid @RequestPart("user") UserInputDto userInputDto,
+//                                                    @RequestPart(value = "file", required = false) MultipartFile file) throws IOException {
+//        String newUsername = userService.createUserWithImage(userInputDto, file);
+//
+//        UserOutputDto outputDto = new UserOutputDto();
+//        outputDto.setUsername(newUsername);
+//        outputDto.setEmail(userInputDto.getEmail());
+//
+//        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{username}")
+//                .buildAndExpand(newUsername).toUri();
+//
+//        return ResponseEntity.created(location).body(outputDto);
+//    }
+
     @PostMapping(value = "/register")
     public ResponseEntity<UserOutputDto> createUser(@Valid @RequestPart("user") UserInputDto userInputDto,
                                                     @RequestPart(value = "file", required = false) MultipartFile file) throws IOException {
+        if (file != null) {
+            System.out.println("Received file: " + file.getOriginalFilename());
+        } else {
+            System.out.println("No file received");
+        }
+
         String newUsername = userService.createUserWithImage(userInputDto, file);
 
         UserOutputDto outputDto = new UserOutputDto();
@@ -57,7 +79,7 @@ public class UserController {
         return ResponseEntity.created(location).body(outputDto);
     }
 
-    @PutMapping(value = "/{username}")
+    @PutMapping(value = "users/{username}/password")
     public ResponseEntity<UserDto> updatePasswordUser(@PathVariable("username") String username, @RequestBody UserDto dto) {
         userService.updatePasswordUser(username, dto);
         return ResponseEntity.noContent().build();
@@ -67,6 +89,13 @@ public class UserController {
     public ResponseEntity<Void> updateProfilePicture(@PathVariable("username") String username,
                                                      @RequestPart("file") MultipartFile file) throws IOException {
         userService.updateProfilePicture(username, file);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping(value = "/users/{username}/profile-data")
+    public ResponseEntity<Void> updateUserData(@PathVariable("username") String username,
+                                               @RequestBody @Valid UserUpdateDto userUpdateDto) {
+        userService.updateUserData(username, userUpdateDto);
         return ResponseEntity.noContent().build();
     }
 
@@ -102,6 +131,12 @@ public class UserController {
     public ResponseEntity<Object> deleteUserAuthority(@PathVariable("username") String username, @PathVariable("authority") String authority) {
         userService.removeUserAuthority(username, authority);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping(value = "/users/{username}/image")
+    public ResponseEntity<UserOutputDto> getUserImage(@PathVariable("username") String username) {
+        UserOutputDto userImageDto = userService.getUserImage(username);
+        return ResponseEntity.ok().body(userImageDto);
     }
 }
 

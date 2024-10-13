@@ -4,6 +4,7 @@ import com.autiwomen.auti_women.models.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -68,7 +69,7 @@ public class User {
 //    private Set<Like> likes = new HashSet<>();
 
     @OneToMany(mappedBy = "user")
-    @JsonManagedReference
+    @JsonIgnore
     private Set<Forum> forums;
 
     @OneToMany(mappedBy = "user")
@@ -80,7 +81,7 @@ public class User {
     @OneToOne (mappedBy = "user", cascade = CascadeType.ALL)
     private Profile profile;
 
-    public User(Profile profile, String username, String password, boolean enabled, String apikey, String email, String name, String gender, LocalDate dob, String autismDiagnoses, Integer autismDiagnosesYear, String profilePictureUrl, Set<Authority> authorities, List<Comment> commentsList, Set<Forum> forums, Set<Like> likes, Set<View> views) {
+    public User(String username, String password, boolean enabled, String apikey, String email, String name, String gender, LocalDate dob, String autismDiagnoses, Integer autismDiagnosesYear, String profilePictureUrl, Set<Authority> authorities, List<Comment> commentsList, Set<Forum> forums, Set<Like> likes, Set<View> views, Profile profile) {
         this.username = username;
         this.password = password;
         this.enabled = enabled;

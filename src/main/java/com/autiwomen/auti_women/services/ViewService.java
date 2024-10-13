@@ -5,10 +5,11 @@ import com.autiwomen.auti_women.models.Forum;
 import com.autiwomen.auti_women.models.View;
 import com.autiwomen.auti_women.repositories.ForumRepository;
 import com.autiwomen.auti_women.repositories.ViewRepository;
-import com.autiwomen.auti_women.security.UserRepository;
+import com.autiwomen.auti_women.security.repositories.UserRepository;
 import com.autiwomen.auti_women.security.models.User;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -47,5 +48,15 @@ public class ViewService {
         int viewCount = views.size();
         return viewCount;
     }
+
+    public boolean hasUserViewedPost(String username, Long forumId) {
+        User user = userRepository.findById(username)
+                .orElseThrow(() -> new RecordNotFoundException("User not found"));
+        Forum forum = forumRepository.findById(forumId)
+                .orElseThrow(() -> new RecordNotFoundException("Forum not found"));
+
+        return viewRepository.findViewByUserAndForum(user, forum).isPresent();
+    }
+
 
 }

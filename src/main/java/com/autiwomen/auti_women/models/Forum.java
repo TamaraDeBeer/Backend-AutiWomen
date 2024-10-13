@@ -3,6 +3,7 @@ package com.autiwomen.auti_women.models;
 import com.autiwomen.auti_women.security.models.User;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -31,14 +32,15 @@ public class Forum {
 
     @OneToMany(
             mappedBy = "forum",
+            fetch = FetchType.EAGER,
             cascade = CascadeType.ALL,
             orphanRemoval = true)
     @JsonIgnore
     private List<Comment> commentsList = new ArrayList<>();
 
-    @ManyToOne
+    @ManyToOne (fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", referencedColumnName = "username")
-    @JsonBackReference
+//    @JsonIgnore
     private User user;
 
     @OneToMany(mappedBy = "forum",
@@ -92,6 +94,8 @@ public class Forum {
         this.viewsCount = viewsCount;
         this.commentsCount = commentsCount;
     }
+
+
 
     public Forum() {
     }

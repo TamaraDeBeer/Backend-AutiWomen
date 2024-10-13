@@ -2,9 +2,9 @@ package com.autiwomen.auti_women.security.services;
 
 
 import com.autiwomen.auti_women.exceptions.RecordNotFoundException;
-import com.autiwomen.auti_women.models.Profile;
-import com.autiwomen.auti_women.repositories.ProfileRepository;
-import com.autiwomen.auti_women.security.UserRepository;
+import com.autiwomen.auti_women.security.dtos.user.UserUpdateDto;
+import com.autiwomen.auti_women.security.repositories.AuthorityRepository;
+import com.autiwomen.auti_women.security.repositories.UserRepository;
 import com.autiwomen.auti_women.security.dtos.user.UserDto;
 import com.autiwomen.auti_women.security.dtos.user.UserInputDto;
 import com.autiwomen.auti_women.security.dtos.user.UserOutputDto;
@@ -12,6 +12,7 @@ import com.autiwomen.auti_women.security.models.Authority;
 import com.autiwomen.auti_women.security.models.User;
 import com.autiwomen.auti_women.security.utils.RandomStringGenerator;
 import com.autiwomen.auti_women.services.ProfileService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -27,18 +28,28 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
     private final ProfileService profileService;
+    private final AuthorityRepository authorityRepository;
+
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public UserService(UserRepository userRepository, ProfileService profileService) {
+    @Value("${my.upload_location}")
+    private String uploadLocation;
+
+    public UserService(UserRepository userRepository, ProfileService profileService, AuthorityRepository authorityRepository) {
         this.userRepository = userRepository;
         this.profileService = profileService;
+        this.authorityRepository = authorityRepository;
     }
 
     public List<UserOutputDto> getUsers() {
@@ -79,11 +90,15 @@ public class UserService {
         Optional<User> userOptional = userRepository.findById(username);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-            user.setPassword(passwordEncoder.encode(updateUser.getPassword()));
-            userRepository.save(user);
-            return fromUser(user);
+            if (passwordEncoder.matches(updateUser.getOldPassword(), user.getPassword())) {
+                user.setPassword(passwordEncoder.encode(updateUser.getPassword()));
+                userRepository.save(user);
+                return fromUser(user);
+            } else {
+                throw new IllegalArgumentException("Old password is incorrect");
+            }
         } else {
-            throw new RecordNotFoundException("Er is geen user gevonden met username: " + username);
+            throw new RecordNotFoundException("No user found with username: " + username);
         }
     }
 
@@ -172,6 +187,9 @@ public class UserService {
         User newUser = toUser(userInputDto);
         newUser.setPassword(passwordEncoder.encode(userInputDto.getPassword()));
 
+        Authority authority = new Authority(newUser.getUsername(), "ROLE_USER");
+        newUser.getAuthorities().add(authority);
+
         if (file != null && !file.isEmpty()) {
             String fileName = saveImage(file, newUser.getUsername());
             String imageUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
@@ -182,15 +200,59 @@ public class UserService {
         }
 
         userRepository.save(newUser);
+        authorityRepository.save(authority);
         return newUser.getUsername();
     }
 
     private String saveImage(MultipartFile file, String username) throws IOException {
         String fileName = file.getOriginalFilename();
-        Path path = Paths.get("images/" + fileName);
+        Path path = Paths.get(uploadLocation, fileName);
+        logger.info("Saving image to path: " + path.toString());
         Files.createDirectories(path.getParent());
         Files.write(path, file.getBytes());
+        logger.info("Image saved successfully: " + fileName);
         return fileName;
+    }
+
+    public UserOutputDto getUserImage(String username) {
+        Optional<User> userOptional = userRepository.findById(username);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            UserOutputDto dto = new UserOutputDto();
+            dto.setUsername(user.getUsername());
+            dto.setProfilePictureUrl(user.getProfilePictureUrl());
+            return dto;
+        } else {
+            throw new UsernameNotFoundException(username);
+        }
+    }
+
+    public void updateUserData(String username, UserUpdateDto userUpdateDto) {
+        Optional<User> userOptional = userRepository.findById(username);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            if (userUpdateDto.getEmail() != null) {
+                user.setEmail(userUpdateDto.getEmail());
+            }
+            if (userUpdateDto.getName() != null) {
+                user.setName(userUpdateDto.getName());
+            }
+            if (userUpdateDto.getDob() != null) {
+                user.setDob(userUpdateDto.getDob());
+            }
+            if (userUpdateDto.getAutismDiagnoses() != null) {
+                user.setAutismDiagnoses(userUpdateDto.getAutismDiagnoses());
+            }
+            if (userUpdateDto.getAutismDiagnosesYear() != null) {
+                user.setAutismDiagnosesYear(userUpdateDto.getAutismDiagnosesYear());
+            }
+            if (userUpdateDto.getGender() != null) {
+                user.setGender(userUpdateDto.getGender());
+            }
+            userRepository.save(user);
+        } else {
+            throw new UsernameNotFoundException(username);
+        }
     }
 
     public static UserDto fromUser(User user) {
@@ -206,6 +268,7 @@ public class UserService {
         dto.dob = user.getDob();
         dto.autismDiagnoses = user.getAutismDiagnoses();
         dto.autismDiagnosesYear = user.getAutismDiagnosesYear();
+        dto.profilePictureUrl = user.getProfilePictureUrl();
 
         return dto;
     }
@@ -222,7 +285,7 @@ public class UserService {
         user.setDob(userInputDto.getDob());
         user.setAutismDiagnoses(userInputDto.getAutismDiagnoses());
         user.setAutismDiagnosesYear(userInputDto.getAutismDiagnosesYear());
-
+        user.setProfilePictureUrl(userInputDto.getProfilePictureUrl());
 
         return user;
     }
@@ -237,10 +300,12 @@ public class UserService {
         dto.setAutismDiagnoses(user.getAutismDiagnoses());
         dto.setAutismDiagnosesYear(user.getAutismDiagnosesYear());
         dto.setProfilePictureUrl(user.getProfilePictureUrl());
+        dto.setAuthorities(user.getAuthorities());
+        dto.setProfilePictureUrl(user.getProfilePictureUrl());
 
-//        if(user.getProfile() != null){
-//            dto.setProfileDto(profileService.fromProfile(user.getProfile()));
-//        }
+        if(user.getProfile() != null){
+            dto.setProfileDto(profileService.fromProfile(user.getProfile()));
+        }
 
         return dto;
     }

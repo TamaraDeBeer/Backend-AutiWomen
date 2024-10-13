@@ -4,7 +4,7 @@ import com.autiwomen.auti_women.AutiWomenApplication;
 import com.autiwomen.auti_women.dtos.profiles.ProfileInputDto;
 import com.autiwomen.auti_women.models.Profile;
 import com.autiwomen.auti_women.repositories.ProfileRepository;
-import com.autiwomen.auti_women.security.UserRepository;
+import com.autiwomen.auti_women.security.repositories.UserRepository;
 import com.autiwomen.auti_women.security.dtos.user.UserInputDto;
 import com.autiwomen.auti_women.security.models.User;
 import com.fasterxml.jackson.core.JsonProcessingException;

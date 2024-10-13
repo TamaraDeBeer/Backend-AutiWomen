@@ -4,17 +4,13 @@ import com.autiwomen.auti_women.dtos.profiles.ProfileDto;
 import com.autiwomen.auti_women.dtos.profiles.ProfileInputDto;
 import com.autiwomen.auti_women.exceptions.RecordNotFoundException;
 import com.autiwomen.auti_women.repositories.ProfileRepository;
-import com.autiwomen.auti_women.security.UserRepository;
+import com.autiwomen.auti_women.security.repositories.UserRepository;
 import com.autiwomen.auti_women.security.models.User;
 import com.autiwomen.auti_women.models.Profile;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service

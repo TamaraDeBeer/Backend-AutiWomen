@@ -1,22 +1,26 @@
 package com.autiwomen.auti_women.services;
 
+import com.autiwomen.auti_women.models.Forum;
 import com.autiwomen.auti_women.dtos.comments.CommentDto;
 import com.autiwomen.auti_women.dtos.comments.CommentInputDto;
 import com.autiwomen.auti_women.exceptions.RecordNotFoundException;
 import com.autiwomen.auti_women.models.Comment;
-import com.autiwomen.auti_women.models.Forum;
 import com.autiwomen.auti_women.repositories.CommentRepository;
 import com.autiwomen.auti_women.repositories.ForumRepository;
-import com.autiwomen.auti_women.security.UserRepository;
+import com.autiwomen.auti_women.security.dtos.user.UserDto;
+import com.autiwomen.auti_women.security.repositories.UserRepository;
 import com.autiwomen.auti_women.security.models.User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CommentService {
@@ -43,6 +47,10 @@ public class CommentService {
         comment.setDate(String.valueOf(LocalDate.now()));
         commentRepository.save(comment);
         return fromComment(comment);
+    }
+
+    public List<Comment> getAllComments() {
+        return commentRepository.findAll();
     }
 
     public void assignCommentToForum(Long commentId, Long forumId) {
@@ -72,9 +80,16 @@ public class CommentService {
         }
     }
 
-    public List<Comment> getCommentsByForumId(Long forumId) {
-        Forum forum = forumRepository.findById(forumId).orElseThrow(() -> new RecordNotFoundException("Forum not found"));
-        return forum.getCommentsList();
+    public List<CommentDto> getCommentsByForumId(Long forumId) {
+        List<Comment> comments = commentRepository.findByForumId(forumId);
+        return comments.stream().map(comment -> {
+            User user = comment.getUser();
+            if (user != null) {
+                comment.setName(user.getUsername());
+                comment.setAge(user.getDob().toString());
+            }
+            return toCommentDto(comment);
+        }).collect(Collectors.toList());
     }
 
     public List<Comment> getCommentsByUsername(String username) {
@@ -93,16 +108,20 @@ public class CommentService {
         return commentCount;
     }
 
-    public void deleteComment(@RequestParam Long commentId) {
+    @Transactional
+    public void deleteComment(Long commentId) {
         Optional<Comment> optionalComment = commentRepository.findById(commentId);
         if (optionalComment.isEmpty()) {
             throw new RecordNotFoundException("Comment not found");
         }
         Comment comment = optionalComment.get();
+        comment.setForum(null);
+        comment.setUser(null);
+        commentRepository.save(comment);
         commentRepository.delete(comment);
     }
 
-    public CommentDto updateComment (@PathVariable Long commentId, @RequestBody CommentDto updateComment) {
+    public CommentDto updateComment (Long commentId, CommentDto updateComment) {
         Optional<Comment> comment = commentRepository.findById(commentId);
         if (comment.isEmpty()) {
             throw new RecordNotFoundException("Comment not found");
@@ -125,6 +144,13 @@ public class CommentService {
 
         if (comment.getForum() != null) {
             commentDto.setForumDto(forumService.fromForum(comment.getForum()));
+
+            User user = comment.getUser();
+            if (user != null) {
+                commentDto.userDto = new UserDto(user.getUsername(), user.getProfilePictureUrl());
+            } else {
+                commentDto.userDto = null;
+            }
         }
         return commentDto;
     }
@@ -137,5 +163,23 @@ public class CommentService {
 
         return comment;
     }
+
+    private CommentDto toCommentDto(Comment comment) {
+        CommentDto dto = new CommentDto();
+        dto.setId(comment.getId());
+        dto.setName(comment.getName());
+        dto.setText(comment.getText());
+        dto.setDate(comment.getDate());
+        dto.setAge(comment.getAge());
+
+        if (comment.getUser() != null) {
+            User user = comment.getUser();
+            UserDto userDto = new UserDto(user.getUsername(), user.getProfilePictureUrl());
+            dto.setUserDto(userDto);
+        }
+
+        return dto;
+    }
+
 
 }

@@ -1,0 +1,69 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+skinparam sequence {
+    ParticipantBackgroundColor #lightblue
+    ParticipantBorderColor #000000
+}
+
+actor User #lightblue
+activate User #lightblue
+
+User -> LikeController : process add like to forum
+activate LikeController #lightblue
+
+LikeController -> LikeService : addLikeToForum(forumId, username)
+activate LikeService #lightblue
+
+LikeService -> UserRepository : findById(username)
+activate UserRepository #lightblue
+
+alt User not found
+    UserRepository -> LikeService : null
+    LikeService -> LikeController : throw RecordNotFoundException("User not found")
+    LikeController -> User : ResponseEntity(HttpStatus.NOT_FOUND)
+end
+
+UserRepository -> LikeService : User
+deactivate UserRepository
+
+LikeService -> ForumRepository : findById(forumId)
+activate ForumRepository #lightblue
+
+alt Forum not found
+    ForumRepository -> LikeService : null
+    LikeService -> LikeController : throw RecordNotFoundException("Forum not found")
+    LikeController -> User : ResponseEntity(HttpStatus.NOT_FOUND)
+end
+
+ForumRepository -> LikeService : Forum
+deactivate ForumRepository
+
+LikeService -> LikeRepository : findLikeByUserAndForum(user, forum)
+activate LikeRepository #lightblue
+
+alt UserLike already exists
+    LikeRepository -> LikeService : Like
+    LikeService -> LikeController : throw IllegalStateException("Like already exists")
+    LikeController -> User : ResponseEntity(HttpStatus.CONFLICT)
+end
+
+LikeRepository -> LikeService : new Like (user, forum)
+deactivate LikeRepository
+
+LikeService -> LikeRepository : save(Like)
+activate LikeRepository #lightblue
+
+LikeRepository -> LikeService : Like
+deactivate LikeRepository
+
+LikeService -> LikeController : LikeDto
+deactivate LikeService
+
+LikeController -> User : ResponseEntity(HttpStatus.OK)
+deactivate LikeController
+
+deactivate User
+@enduml

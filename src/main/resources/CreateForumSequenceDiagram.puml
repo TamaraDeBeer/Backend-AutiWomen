@@ -1,0 +1,65 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+skinparam sequence {
+    ParticipantBackgroundColor #lightblue
+    ParticipantBorderColor #000000
+}
+
+actor User #lightblue
+activate User #lightblue
+
+User -> ForumController : process create forum
+activate ForumController #lightblue
+
+ForumController -> ForumService : createForum(forumInputDto, username)
+activate ForumService #lightblue
+
+ForumService -> UserRepository : findById(username)
+activate UserRepository #lightblue
+
+alt User not found
+    UserRepository -> ForumService : null
+    ForumService -> ForumController : throw RecordNotFoundException("User not found")
+    ForumController -> User : ResponseEntity(HttpStatus.NOT_FOUND)
+end
+
+UserRepository -> ForumService : User
+deactivate UserRepository
+
+ForumService -> ForumRepository : save(forum)
+activate ForumRepository #lightblue
+
+ForumRepository -> ForumService : Forum
+deactivate ForumRepository
+
+ForumService -> ForumService : assignForumToUser(forumDto.getId(), username)
+activate UserRepository #lightblue
+activate ForumRepository #lightblue
+
+alt Forum or User not found
+    UserRepository -> ForumService : null
+    ForumRepository -> ForumService : null
+    ForumService -> ForumController : throw RecordNotFoundException("Forum or User not found")
+    ForumController -> User : ResponseEntity(HttpStatus.NOT_FOUND)
+end
+
+UserRepository -> ForumService : User
+ForumRepository -> ForumService : Forum
+deactivate UserRepository
+deactivate ForumRepository
+
+ForumService -> ForumRepository : save(forum)
+activate ForumRepository #lightblue
+ForumRepository -> ForumService : Forum
+deactivate ForumRepository
+
+ForumService -> ForumController : ForumDto
+deactivate ForumService
+
+ForumController -> User : ResponseEntity(HttpStatus.CREATED)
+deactivate ForumController
+
+@enduml

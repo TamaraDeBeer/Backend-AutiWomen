@@ -14,6 +14,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @CrossOrigin
 @RestController
@@ -58,9 +59,10 @@ public class ForumController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/users/{username}/forums")
-    public ResponseEntity<Set<Forum>> getForumsByUsername(@PathVariable("username") String username) {
-        return ResponseEntity.ok(forumService.getForumsByUsername(username));
+    @GetMapping("users/{username}/forums")
+    public ResponseEntity<Set<ForumDto>> getForumsByUsername(@PathVariable("username") String username) {
+        Set<ForumDto> forums = forumService.getForumsByUsername(username);
+        return ResponseEntity.ok(forums);
     }
 
     @GetMapping("/users/{username}/liked-forums")
@@ -103,5 +105,18 @@ public class ForumController {
     public ResponseEntity<Map<String, Integer>> getTopicFrequency() {
         return ResponseEntity.ok(forumService.getTopicFrequency());
     }
+
+    @GetMapping("forums/sorted-by-likes")
+    public ResponseEntity<List<ForumDto>> getForumsSortedByLikes() {
+        List<ForumDto> sortedForums = forumService.getForumsSortedByLikes();
+        return ResponseEntity.ok(sortedForums);
+    }
+
+    @GetMapping("forums/sorted-by-date")
+    public ResponseEntity<List<ForumDto>> getForumsSortedByDate() {
+        List<ForumDto> sortedForums = forumService.getForumsSortedByDate();
+        return ResponseEntity.ok(sortedForums);
+    }
+
 
 }
