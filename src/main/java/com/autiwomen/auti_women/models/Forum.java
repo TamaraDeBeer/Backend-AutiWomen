@@ -30,12 +30,15 @@ public class Forum {
     private int viewsCount;
     private int commentsCount;
 
-    @OneToMany(
-            mappedBy = "forum",
-            fetch = FetchType.EAGER,
-            cascade = CascadeType.ALL,
-            orphanRemoval = true)
-    @JsonIgnore
+//    @OneToMany(
+//            mappedBy = "forum",
+//            fetch = FetchType.EAGER,
+//            cascade = CascadeType.ALL,
+//            orphanRemoval = true)
+//    @JsonIgnore
+//    private List<Comment> commentsList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "forum", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> commentsList = new ArrayList<>();
 
     @ManyToOne (fetch = FetchType.EAGER)
