@@ -66,6 +66,16 @@ VALUES (5000, 'Tamara', 'Ik ben Tamara en ik hou van mijn huisdieren.', 'Tamara'
        (5008, 'Nala', 'Ik ben Nala en ik hou ben onafhankelijk', 'Nala', '2024-09-01'),
        (5009, 'Moana', 'Ik ben Moana en ik hou van de zee', 'Moana', '2024-10-01');
 
+-- Insert a Review
+INSERT INTO reviews (id, username, review, name, dob, autism_diagnoses_year, profile_picture_url, date)
+VALUES (6000, 'Moana', 'Dankzij de forums ontdek ik dat er veel meer van wie ik ben gerelateerd is aan autisme. Dit was best shocking maar heel fijn om er in de forums over te praten..', 'Moana', '1980-05-28', 2020 , 'http://localhost:1991/images/Moana.jpg', '2024-06-01'),
+       (6001, 'Aurora', 'Ik ben blij dat ik deze website heb gevonden. Ik heb al veel geleerd en ik voel me minder alleen.', 'Aurora', '1945-12-06', 1936, 'http://localhost:1991/images/Aurora.jpg', '2024-06-01'),
+       (6002, 'Belle', 'Wow, dit is echt uniek want een website als deze bestond nog niet. Ik heb er heel erg veel aan.', 'Belle', '1995-12-06', 2020 ,'http://localhost:1991/images/Belle.jpg', '2024-10-01' ),
+       (6003, 'Ariel', 'Elke dag, of nou een paar keer per dag, open ik de website om te zien of er weer nieuwe forums zijn. Het geeft me zoveel herkenning om te lezen hoe andere autis struggelen.', 'Ariel', '2004-08-23',  2010, 'http://localhost:1991/images/Ariel.jpg', '2024-10-03'),
+       (6004, 'Nala', 'Een heerlijk, gebruiksvriendelijke website waar ik mijn ei kwijt kan. Ik ben heel blij dat ik deze website heb gevonden.', 'Nala', '1993-11-11', 2022, 'http://localhost:1991/images/Nala.jpg', '2024-10-05'),
+       (6005, 'Sarabi', 'Heel fijn om te kunnen delen en van mede-autis hun inzichten te krijgen. Ik heb al veel tips gekregen waar ik iets mee kan.', 'Sarabi', '1988-02-09', 2019, 'http://localhost:1991/images/Sarabi.jpg', '2024-10-07'),
+       (6006, 'Tiana', 'Ik vind het zo een fijne website, naast wat je ermee kan is het zo mooi gemaakt en groen is ook mijn favoriete kleur!', 'Tiana', '1955-09-15', 1980, 'http://localhost:1991/images/Tiana.jpg', '2024-10-09');
+
 -- Insert a forum
 INSERT INTO forums (id, name, age, title, text, date, topic, user_id)
 VALUES (1000, 'Tamara', '1991-07-06', 'Verdriet',
