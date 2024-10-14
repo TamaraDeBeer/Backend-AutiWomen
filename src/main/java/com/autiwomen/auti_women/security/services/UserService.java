@@ -28,10 +28,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 @Service
 public class UserService {
@@ -41,7 +39,6 @@ public class UserService {
     private final AuthorityRepository authorityRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
-
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Value("${my.upload_location}")
@@ -148,6 +145,10 @@ public class UserService {
         }
     }
 
+    public List<Authority> getAllAuthorities() {
+        return authorityRepository.findAll();
+    }
+
     public UserDto addUserAuthority(String username, String authority) {
         Optional<User> userOptional = userRepository.findById(username);
         if (userOptional.isPresent()) {
@@ -155,6 +156,34 @@ public class UserService {
             user.addAuthority(new Authority(username, authority));
             userRepository.save(user);
             return fromUser(user);
+        } else {
+            throw new UsernameNotFoundException(username);
+        }
+    }
+
+
+    public void updateUserAuthority(String username, String oldAuthority, String newAuthority) {
+        Optional<User> userOptional = userRepository.findById(username);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            Authority newAuth = new Authority(username, newAuthority);
+
+            Set<Authority> authorities = user.getAuthorities();
+
+            Optional<Authority> oldAuthOptional = authorities.stream()
+                    .filter(a -> a.getAuthority().equals(oldAuthority))
+                    .findFirst();
+
+            if (oldAuthOptional.isPresent()) {
+                Authority oldAuth = oldAuthOptional.get();
+                authorities.remove(oldAuth);
+                authorities.add(newAuth);
+                userRepository.save(user);
+                authorityRepository.delete(oldAuth);
+                authorityRepository.save(newAuth);
+            } else {
+                throw new RecordNotFoundException("Authority not found: " + oldAuthority);
+            }
         } else {
             throw new UsernameNotFoundException(username);
         }

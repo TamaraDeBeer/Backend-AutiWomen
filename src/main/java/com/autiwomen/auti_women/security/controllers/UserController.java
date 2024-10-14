@@ -127,10 +127,22 @@ public class UserController {
         }
     }
 
+    @PutMapping(value = "/{username}/authorities")
+    public ResponseEntity<Void> updateUserAuthority(@PathVariable("username") String username, @RequestBody UserDto userDto) {
+        userService.updateUserAuthority(username, userDto.getOldAuthority(), userDto.getNewAuthority());
+        return ResponseEntity.noContent().build();
+    }
+
     @DeleteMapping(value = "/{username}/authorities/{authority}")
     public ResponseEntity<Object> deleteUserAuthority(@PathVariable("username") String username, @PathVariable("authority") String authority) {
         userService.removeUserAuthority(username, authority);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/authorities")
+    public ResponseEntity<List<Authority>> getAllAuthorities() {
+        List<Authority> authorities = userService.getAllAuthorities();
+        return ResponseEntity.ok().body(authorities);
     }
 
     @GetMapping(value = "/users/{username}/image")
