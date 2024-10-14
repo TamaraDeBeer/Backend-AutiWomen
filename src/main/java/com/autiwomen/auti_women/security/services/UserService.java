@@ -301,7 +301,6 @@ public class UserService {
         dto.setAutismDiagnosesYear(user.getAutismDiagnosesYear());
         dto.setProfilePictureUrl(user.getProfilePictureUrl());
         dto.setAuthorities(user.getAuthorities());
-        dto.setProfilePictureUrl(user.getProfilePictureUrl());
 
         if(user.getProfile() != null){
             dto.setProfileDto(profileService.fromProfile(user.getProfile()));

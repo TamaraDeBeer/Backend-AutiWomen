@@ -207,7 +207,6 @@ public class ForumService {
         return likedForumDtos;
     }
 
-
     public Set<ForumDto> getViewedForumsByUsername(String username) {
         User user = userRepository.findById(username)
                 .orElseThrow(() -> new RecordNotFoundException("User not found"));
