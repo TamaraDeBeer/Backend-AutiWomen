@@ -2,7 +2,9 @@ package com.autiwomen.auti_women.services;
 
 import com.autiwomen.auti_women.dtos.profiles.ProfileDto;
 import com.autiwomen.auti_women.dtos.profiles.ProfileInputDto;
+import com.autiwomen.auti_women.dtos.reviews.ReviewDto;
 import com.autiwomen.auti_women.exceptions.RecordNotFoundException;
+import com.autiwomen.auti_women.models.Review;
 import com.autiwomen.auti_women.repositories.ProfileRepository;
 import com.autiwomen.auti_women.security.repositories.UserRepository;
 import com.autiwomen.auti_women.security.models.User;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,7 +40,11 @@ public class ProfileService {
 
     public ProfileDto getProfileByUsername(String username) {
         User user = userRepository.findById(username).orElseThrow(() -> new RecordNotFoundException("User not found"));
-        Profile profile = profileRepository.findByUser(user).orElseThrow(() -> new RecordNotFoundException("Profile not found"));
+        Optional<Profile> optionalProfile = profileRepository.findByUser(user);
+        if (optionalProfile.isEmpty()) {
+            return new ProfileDto();
+        }
+        Profile profile = optionalProfile.get();
         return fromProfile(profile);
     }
 
@@ -58,16 +65,6 @@ public class ProfileService {
         return fromProfile(profile);
     }
 
-//    public void deleteProfile(@RequestParam String username) {
-//        Optional<User> optionalUser = userRepository.findById(username);
-//        Optional<Profile> optionalProfile = profileRepository.findByUser(optionalUser.orElseThrow(() -> new RecordNotFoundException("User not found")));
-//        if (optionalProfile.isEmpty()) {
-//            throw new RecordNotFoundException("Profile not found");
-//        } else {
-//            profileRepository.delete(optionalProfile.get());
-//        }
-//    }
-
     public ProfileDto fromProfile(Profile profile) {
         var profileDto = new ProfileDto();
         profileDto.id = profile.getId();
@@ -84,6 +81,4 @@ public class ProfileService {
         profile.setBio(profileInputDto.getBio());
         return profile;
     }
-
-
 }

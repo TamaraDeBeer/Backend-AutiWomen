@@ -78,10 +78,13 @@ public class User {
     @OneToMany(mappedBy = "user")
     private Set<View> views;
 
-    @OneToOne (mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Profile profile;
 
-    public User(String username, String password, boolean enabled, String apikey, String email, String name, String gender, LocalDate dob, String autismDiagnoses, Integer autismDiagnosesYear, String profilePictureUrl, Set<Authority> authorities, List<Comment> commentsList, Set<Forum> forums, Set<Like> likes, Set<View> views, Profile profile) {
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private Review review;
+
+    public User(String username, String password, boolean enabled, String apikey, String email, String name, String gender, LocalDate dob, String autismDiagnoses, Integer autismDiagnosesYear, String profilePictureUrl, Set<Authority> authorities, List<Comment> commentsList, Set<Forum> forums, Set<Like> likes, Set<View> views, Profile profile, Review review) {
         this.username = username;
         this.password = password;
         this.enabled = enabled;
@@ -99,6 +102,7 @@ public class User {
         this.likes = likes;
         this.views = views;
         this.profile = profile;
+        this.review = review;
     }
 
     public User(String username) {
@@ -257,4 +261,11 @@ public class User {
         this.profile = profile;
     }
 
+    public Review getReview() {
+        return review;
+    }
+
+    public void setReview(Review review) {
+        this.review = review;
+    }
 }

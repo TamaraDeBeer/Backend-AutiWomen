@@ -40,4 +40,12 @@ public class UserDto {
         this.username = username;
         this.profilePictureUrl = profilePictureUrl;
     }
+
+    public UserDto(String username, LocalDate dob, Integer autismDiagnosesYear, String profilePictureUrl) {
+        this.username = username;
+        this.dob = dob;
+        this.autismDiagnosesYear = autismDiagnosesYear;
+        this.profilePictureUrl = profilePictureUrl;
+
+    }
 }

@@ -45,9 +45,4 @@ public class ProfileController {
         return ResponseEntity.ok(profiles);
     }
 
-//    @DeleteMapping("/{username}")
-//    public ResponseEntity<Void> deleteProfile(@PathVariable("username") String username) {
-//        profileService.deleteProfile(username);
-//        return ResponseEntity.noContent().build();
-//    }
 }
