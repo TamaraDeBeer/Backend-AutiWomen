@@ -12,6 +12,7 @@ import com.autiwomen.auti_women.security.models.Authority;
 import com.autiwomen.auti_women.security.models.User;
 import com.autiwomen.auti_women.security.utils.RandomStringGenerator;
 import com.autiwomen.auti_women.services.ProfileService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -131,6 +132,7 @@ public class UserService {
         }
     }
 
+    @Transactional
     public void deleteUser(String username) {
         userRepository.deleteById(username);
     }
