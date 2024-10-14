@@ -8,6 +8,7 @@ import com.autiwomen.auti_women.repositories.ReviewRepository;
 import com.autiwomen.auti_women.security.models.User;
 import com.autiwomen.auti_women.security.repositories.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -65,6 +66,12 @@ public class ReviewService {
         reviewRepository.save(review);
 
         return fromReview(review);
+    }
+
+    @Transactional
+    public void deleteReviewById(Long id) {
+        Review review = reviewRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("Review not found with id: " + id));
+        reviewRepository.delete(review);
     }
 
     public ReviewDto fromReview(Review review) {
