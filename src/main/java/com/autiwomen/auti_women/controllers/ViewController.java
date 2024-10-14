@@ -19,7 +19,7 @@ public class ViewController {
         viewService.addViewToForum(forumId, username);
     }
 
-    @GetMapping("views/count")
+    @GetMapping("/views/count")
     public ResponseEntity<Integer> getViewCountByForumId(@PathVariable("forumId") Long forumId) {
         return ResponseEntity.ok(viewService.getViewCountByForumId(forumId));
     }

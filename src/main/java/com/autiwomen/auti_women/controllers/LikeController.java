@@ -30,7 +30,7 @@ public class LikeController {
         return ResponseEntity.ok(likeCount);
     }
 
-    @GetMapping("users/{username}/likes/check")
+    @GetMapping("/users/{username}/likes/check")
     public ResponseEntity<Boolean> checkUserLike(@PathVariable Long forumId, @PathVariable String username) {
         boolean hasLiked = likeService.hasUserLikedPost(username, forumId);
         return ResponseEntity.ok(hasLiked);
