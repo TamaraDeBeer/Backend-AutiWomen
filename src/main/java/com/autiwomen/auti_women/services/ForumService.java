@@ -171,7 +171,6 @@ public class ForumService {
                 forum.setName(forum.getUser().getUsername());
                 forum.setAge(forum.getUser().getDob().toString());
             }
-
             int likeCount = likeRepository.getLikeCountByForumId(forum.getId());
             forum.setLikesCount(likeCount);
 
