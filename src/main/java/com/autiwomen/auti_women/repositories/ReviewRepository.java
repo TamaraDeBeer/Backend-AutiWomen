@@ -1,6 +1,5 @@
 package com.autiwomen.auti_women.repositories;
 
-import com.autiwomen.auti_women.models.Profile;
 import com.autiwomen.auti_women.models.Review;
 import com.autiwomen.auti_women.security.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;

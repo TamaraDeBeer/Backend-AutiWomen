@@ -161,7 +161,6 @@ public class UserService {
         }
     }
 
-
     public void updateUserAuthority(String username, String oldAuthority, String newAuthority) {
         Optional<User> userOptional = userRepository.findById(username);
         if (userOptional.isPresent()) {
