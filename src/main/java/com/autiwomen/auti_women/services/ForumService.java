@@ -327,6 +327,15 @@ public class ForumService {
                 .collect(Collectors.toList());
     }
 
+    public List<ForumDto> searchForums(String title) {
+        logger.info("Searching forums with title containing: {}", title);
+        List<Forum> forums = forumRepository.findAllByTitleContainingIgnoreCase(title);
+        logger.info("Found {} forums", forums.size());
+        return forums.stream()
+                .map(this::fromForum)
+                .collect(Collectors.toList());
+    }
+
     public ForumDto fromForum(Forum forum) {
         var forumDto = new ForumDto();
         forumDto.id = forum.getId();

@@ -118,5 +118,11 @@ public class ForumController {
         return ResponseEntity.ok(sortedForums);
     }
 
+    @GetMapping("/forums/search/{title}")
+    public ResponseEntity<List<ForumDto>> searchForums(@PathVariable("title") String name) {
+        List<ForumDto> forumDtos = forumService.searchForums(name);
+        return ResponseEntity.ok(forumDtos);
+    }
+
 
 }
