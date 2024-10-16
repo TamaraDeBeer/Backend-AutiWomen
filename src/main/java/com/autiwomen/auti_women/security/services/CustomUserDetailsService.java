@@ -44,27 +44,4 @@ public class CustomUserDetailsService implements UserDetailsService {
         }
     }
 
-//    private final UserService userService;
-//    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-//
-//    public CustomUserDetailsService(UserService userService) {
-//        this.userService = userService;
-//    }
-//
-//        @Override
-//    public UserDetails loadUserByUsername(String username) {
-//        UserDto userDto = userService.getUserEntity(username);
-//
-//
-//        String password = passwordEncoder.encode(userDto.getPassword());
-//
-//        Set<Authority> authorities = userDto.getAuthorities();
-//        List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-//        for (Authority authority : authorities) {
-//            grantedAuthorities.add(new SimpleGrantedAuthority(authority.getAuthority()));
-//        }
-//
-//        return new org.springframework.security.core.userdetails.User(username, password, grantedAuthorities);
-//    }
-
 }

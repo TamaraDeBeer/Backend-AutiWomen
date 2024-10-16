@@ -1,6 +1,5 @@
 package com.autiwomen.auti_women.security.services;
 
-
 import com.autiwomen.auti_women.exceptions.RecordNotFoundException;
 import com.autiwomen.auti_women.security.dtos.user.UserUpdateDto;
 import com.autiwomen.auti_women.security.repositories.AuthorityRepository;
@@ -227,8 +226,13 @@ public class UserService {
                     .path(fileName)
                     .toUriString();
             newUser.setProfilePictureUrl(imageUrl);
+        } else {
+            String defaultImageUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
+                    .path("/images/")
+                    .path("DefaultProfileImage.png")
+                    .toUriString();
+            newUser.setProfilePictureUrl(defaultImageUrl);
         }
-
         userRepository.save(newUser);
         authorityRepository.save(authority);
         return newUser.getUsername();
