@@ -1,6 +1,7 @@
 package com.autiwomen.auti_women.security.services;
 
 import com.autiwomen.auti_women.exceptions.RecordNotFoundException;
+import com.autiwomen.auti_women.repositories.ReviewRepository;
 import com.autiwomen.auti_women.security.dtos.user.UserUpdateDto;
 import com.autiwomen.auti_women.security.repositories.AuthorityRepository;
 import com.autiwomen.auti_women.security.repositories.UserRepository;
@@ -36,6 +37,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final ProfileService profileService;
     private final AuthorityRepository authorityRepository;
+    private final ReviewRepository reviewRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -43,10 +45,11 @@ public class UserService {
     @Value("${my.upload_location}")
     private String uploadLocation;
 
-    public UserService(UserRepository userRepository, ProfileService profileService, AuthorityRepository authorityRepository) {
+    public UserService(UserRepository userRepository, ProfileService profileService, AuthorityRepository authorityRepository, ReviewRepository reviewRepository) {
         this.userRepository = userRepository;
         this.profileService = profileService;
         this.authorityRepository = authorityRepository;
+        this.reviewRepository = reviewRepository;
     }
 
     public List<UserOutputDto> getUsers() {
@@ -130,7 +133,15 @@ public class UserService {
 
     @Transactional
     public void deleteUser(String username) {
-        userRepository.deleteById(username);
+        Optional<User> userOptional = userRepository.findById(username);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            reviewRepository.deleteByUser(user);
+            authorityRepository.deleteAll(user.getAuthorities());
+            userRepository.delete(user);
+        } else {
+            throw new UsernameNotFoundException(username);
+        }
     }
 
     public Set<Authority> getUserAuthorities(String username) {
@@ -187,6 +198,7 @@ public class UserService {
         }
     }
 
+    @Transactional
     public void removeUserAuthority(String username, String authority) {
         Optional<User> userOptional = userRepository.findById(username);
         if (userOptional.isPresent()) {

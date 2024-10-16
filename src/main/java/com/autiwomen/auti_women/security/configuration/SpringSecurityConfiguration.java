@@ -63,7 +63,7 @@ public class SpringSecurityConfiguration {
                         .requestMatchers(HttpMethod.GET, "/forums/frequency").permitAll()
                         .requestMatchers(HttpMethod.GET, "/forums/sorted-by-likes").permitAll()
                         .requestMatchers(HttpMethod.GET, "/forums/sorted-by-date").permitAll()
-                        .requestMatchers(HttpMethod.GET, "users/{username}/forums").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/users/{username}/forums").permitAll()
                         .requestMatchers(HttpMethod.GET, "/forums/{forumId}/comments").permitAll()
                         .requestMatchers(HttpMethod.GET, "/forums/{forumId}/comments/count").permitAll()
                         .requestMatchers(HttpMethod.GET, "/forums/{forumId}/likes/count").permitAll()
@@ -98,15 +98,15 @@ public class SpringSecurityConfiguration {
                         .requestMatchers(HttpMethod.PUT, "/forums/{forumId}/comments/{commentId}").hasAnyRole("ADMIN", "USER")
                         .requestMatchers(HttpMethod.DELETE, "/forums/{forumId}/comments/{commentId}").hasAnyRole("ADMIN", "USER")
 
-                        .requestMatchers(HttpMethod.GET, "/forums/{forumId}/users/{username}/likes/check").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.GET, "/forums/{forumId}/users/{username}/likes/check").permitAll()
                         .requestMatchers(HttpMethod.POST, "/forums/{forumId}/users/{username}/likes/add").hasAnyRole("ADMIN", "USER")
                         .requestMatchers(HttpMethod.DELETE, "/forums/{forumId}/users/{username}/likes/remove").hasAnyRole("ADMIN", "USER")
 
-                        .requestMatchers(HttpMethod.GET, "/forums/{forumId}/users/{username}/views/check").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.GET, "/forums/{forumId}/users/{username}/views/check").permitAll()
                         .requestMatchers(HttpMethod.POST, "/forums/{forumId}/users/{username}/views/add").hasAnyRole("ADMIN", "USER")
 
                         .requestMatchers(HttpMethod.GET, "/users").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "users/{username}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/users/{username}").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/{username}/authorities").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/{username}/authorities").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/{username}/authorities").hasRole("ADMIN")

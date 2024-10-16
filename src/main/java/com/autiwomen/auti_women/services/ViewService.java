@@ -32,8 +32,8 @@ public class ViewService {
         Forum forum = forumRepository.findById(forumId)
                 .orElseThrow(() -> new RecordNotFoundException("Forum not found"));
 
-        Optional<View> existingView = viewRepository.findViewByUserAndForum(user, forum);
-        if (existingView.isPresent()) {
+        List<View> existingViews = viewRepository.findViewByUserAndForum(user, forum);
+        if (!existingViews.isEmpty()) {
             return;
         }
 
@@ -45,8 +45,7 @@ public class ViewService {
         Forum forum = forumRepository.findById(forumId)
                 .orElseThrow(() -> new RecordNotFoundException("Forum not found"));
         Set<View> views = forum.getViews();
-        int viewCount = views.size();
-        return viewCount;
+        return views.size();
     }
 
     public boolean hasUserViewedPost(String username, Long forumId) {
@@ -55,7 +54,8 @@ public class ViewService {
         Forum forum = forumRepository.findById(forumId)
                 .orElseThrow(() -> new RecordNotFoundException("Forum not found"));
 
-        return viewRepository.findViewByUserAndForum(user, forum).isPresent();
+        List<View> views = viewRepository.findViewByUserAndForum(user, forum);
+        return !views.isEmpty();
     }
 
 
