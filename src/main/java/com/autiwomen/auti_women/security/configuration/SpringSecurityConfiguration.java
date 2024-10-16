@@ -98,11 +98,11 @@ public class SpringSecurityConfiguration {
                         .requestMatchers(HttpMethod.PUT, "/forums/{forumId}/comments/{commentId}").hasAnyRole("ADMIN", "USER")
                         .requestMatchers(HttpMethod.DELETE, "/forums/{forumId}/comments/{commentId}").hasAnyRole("ADMIN", "USER")
 
-                        .requestMatchers(HttpMethod.GET, "/forums/{forumId}/users/{username}/likes/check").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/forums/{forumId}/users/{username}/likes/check").hasAnyRole("ADMIN", "USER")
                         .requestMatchers(HttpMethod.POST, "/forums/{forumId}/users/{username}/likes/add").hasAnyRole("ADMIN", "USER")
                         .requestMatchers(HttpMethod.DELETE, "/forums/{forumId}/users/{username}/likes/remove").hasAnyRole("ADMIN", "USER")
 
-                        .requestMatchers(HttpMethod.GET, "/forums/{forumId}/users/{username}/views/check").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/forums/{forumId}/users/{username}/views/check").hasAnyRole("ADMIN", "USER")
                         .requestMatchers(HttpMethod.POST, "/forums/{forumId}/users/{username}/views/add").hasAnyRole("ADMIN", "USER")
 
                         .requestMatchers(HttpMethod.GET, "/users").hasRole("ADMIN")

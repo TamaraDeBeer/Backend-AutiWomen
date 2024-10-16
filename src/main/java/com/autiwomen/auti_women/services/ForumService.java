@@ -155,7 +155,7 @@ public class ForumService {
             throw new RecordNotFoundException("Forum not found with id: " + id);
         }}
 
-            public Set<ForumDto> getForumsByUsername(String username) {
+        public Set<ForumDto> getForumsByUsername(String username) {
         User user = userRepository.findById(username).orElseThrow(() -> new RecordNotFoundException("User not found"));
         Set<Forum> forums = new HashSet<>(forumRepository.findByUser(user));
         return forums.stream().map(forum -> {

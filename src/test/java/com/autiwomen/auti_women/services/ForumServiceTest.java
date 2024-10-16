@@ -70,17 +70,15 @@ class ForumServiceTest {
         LocalDate dob = LocalDate.of(1990, 5, 15);
         user1 = new User("user1", dob);
         user2 = new User("user2", dob);
-        String currentDate = String.valueOf(LocalDate.now());
-        forum1 = new Forum(1L, "user1", "1990-05-15", "title1", "text1", currentDate, null, "topic1", 0, 0, 0);
-        forum2 = new Forum(2L, "user2", "1990-05-15", "title2", "text2", currentDate, null, "topic2", 0, 0, 0);
-        comment1 = new Comment(1L, "user1", "comment1", currentDate, "1990-05-15");
-        comment2 = new Comment(2L, "user2", "comment2", currentDate, "1990-05-15");
+        forum1 = new Forum(1L, "user1", "1990-05-15", "title1", "text1", "2023-10-01", null, "topic1", 0, 0, 0);
+        forum2 = new Forum(2L, "user2", "1990-05-15", "title2", "text2", "2023-10-02", null, "topic2", 0, 0, 0);
+        comment1 = new Comment(1L, "user1", "comment1", "2023-10-01", "1990-05-15");
+        comment2 = new Comment(2L, "user2", "comment2", "2023-10-02", "1990-05-15");
         like1 = new Like(user1, forum1);
         like2 = new Like(user2, forum2);
         view1 = new View(user1, forum1);
         view2 = new View(user2, forum2);
     }
-
     @AfterEach
     void tearDown() {
     }
@@ -261,7 +259,6 @@ class ForumServiceTest {
     void updateForum() {
         Long forumId = 1L;
         ForumDto updateForumDto = new ForumDto();
-//        updateForumDto.setName("Updated Name");
         updateForumDto.setTitle("Updated Title");
         updateForumDto.setText("Updated Text");
 
@@ -271,7 +268,6 @@ class ForumServiceTest {
         ForumDto updatedForumDto = forumService.updateForum(forumId, updateForumDto);
 
         assertNotNull(updatedForumDto);
-//        assertEquals(updateForumDto.getName(), updatedForumDto.getName());
         assertEquals(updateForumDto.getTitle(), updatedForumDto.getTitle());
         assertEquals(updateForumDto.getText(), updatedForumDto.getText());
     }
@@ -294,26 +290,11 @@ class ForumServiceTest {
         Long forumId = 1L;
 
         when(forumRepository.findById(forumId)).thenReturn(Optional.of(forum1));
-        when(commentRepository.findAllByForumId(forumId)).thenReturn(Arrays.asList(comment1, comment2));
 
         forumService.deleteForum(forumId);
 
-        verify(commentRepository, times(1)).findAllByForumId(forumId);
-        verify(commentRepository, times(1)).save(comment1);
-        verify(commentRepository, times(1)).save(comment2);
         verify(commentRepository, times(1)).deleteAllByForumId(forumId);
         verify(forumRepository, times(1)).deleteById(forumId);
-
-        for (Comment comment : Arrays.asList(comment1, comment2)) {
-            comment.setForum(null);
-            comment.setUser(null);
-            commentRepository.save(comment);
-        }
-
-        assertNull(comment1.getForum());
-        assertNull(comment1.getUser());
-        assertNull(comment2.getForum());
-        assertNull(comment2.getUser());
     }
 
     @Test
@@ -324,8 +305,6 @@ class ForumServiceTest {
 
         assertThrows(RecordNotFoundException.class, () -> forumService.deleteForum(forumId));
 
-        verify(commentRepository, never()).findAllByForumId(anyLong());
-        verify(commentRepository, never()).save(any(Comment.class));
         verify(commentRepository, never()).deleteAllByForumId(anyLong());
         verify(forumRepository, never()).deleteById(anyLong());
     }
@@ -336,16 +315,36 @@ class ForumServiceTest {
 
         when(userRepository.findById(username)).thenReturn(Optional.of(user1));
         when(forumRepository.findByUser(user1)).thenReturn(new HashSet<>(Arrays.asList(forum1, forum2)));
+        when(likeRepository.getLikeCountByForumId(forum1.getId())).thenReturn(10);
+        when(likeRepository.getLikeCountByForumId(forum2.getId())).thenReturn(20);
+        when(viewRepository.getViewCountByForumId(forum1.getId())).thenReturn(100);
+        when(viewRepository.getViewCountByForumId(forum2.getId())).thenReturn(200);
+        when(commentRepository.getCommentCountByForumId(forum1.getId())).thenReturn(5);
+        when(commentRepository.getCommentCountByForumId(forum2.getId())).thenReturn(15);
 
-        Set<Forum> forums = forumService.getForumsByUsername(username);
+        Set<ForumDto> forumDtos = forumService.getForumsByUsername(username);
 
-        assertNotNull(forums);
-        assertEquals(2, forums.size());
-        assertTrue(forums.contains(forum1));
-        assertTrue(forums.contains(forum2));
+        assertNotNull(forumDtos);
+        assertEquals(2, forumDtos.size());
+
+        for (ForumDto forumDto : forumDtos) {
+            if (forumDto.getId().equals(forum1.getId())) {
+                assertEquals(user1.getUsername(), forumDto.getName());
+                assertEquals(user1.getDob().toString(), forumDto.getAge());
+            } else if (forumDto.getId().equals(forum2.getId())) {
+                assertEquals(user2.getUsername(), forumDto.getName());
+                assertEquals(user2.getDob().toString(), forumDto.getAge());
+            }
+        }
 
         verify(userRepository, times(1)).findById(username);
         verify(forumRepository, times(1)).findByUser(user1);
+        verify(likeRepository, times(1)).getLikeCountByForumId(forum1.getId());
+        verify(likeRepository, times(1)).getLikeCountByForumId(forum2.getId());
+        verify(viewRepository, times(1)).getViewCountByForumId(forum1.getId());
+        verify(viewRepository, times(1)).getViewCountByForumId(forum2.getId());
+        verify(commentRepository, times(1)).getCommentCountByForumId(forum1.getId());
+        verify(commentRepository, times(1)).getCommentCountByForumId(forum2.getId());
     }
 
     @Test
@@ -358,6 +357,35 @@ class ForumServiceTest {
 
         verify(userRepository, times(1)).findById(username);
         verify(forumRepository, never()).findByUser(any(User.class));
+    }
+
+    @Test
+    void getForumsByUsername_SetsNameAndAge() {
+        String username = "user1";
+
+        forum1.setUser(user1);
+        forum2.setUser(user2);
+
+        when(userRepository.findById(username)).thenReturn(Optional.of(user1));
+        when(forumRepository.findByUser(user1)).thenReturn(new HashSet<>(Arrays.asList(forum1, forum2)));
+
+        Set<ForumDto> forumDtos = forumService.getForumsByUsername(username);
+
+        assertNotNull(forumDtos);
+        assertEquals(2, forumDtos.size());
+
+        for (ForumDto forumDto : forumDtos) {
+            if (forumDto.getId().equals(forum1.getId())) {
+                assertEquals(user1.getUsername(), forumDto.getName());
+                assertEquals(user1.getDob().toString(), forumDto.getAge());
+            } else if (forumDto.getId().equals(forum2.getId())) {
+                assertEquals(user2.getUsername(), forumDto.getName());
+                assertEquals(user2.getDob().toString(), forumDto.getAge());
+            }
+        }
+
+        verify(userRepository, times(1)).findById(username);
+        verify(forumRepository, times(1)).findByUser(user1);
     }
 
     @Test
@@ -624,6 +652,104 @@ class ForumServiceTest {
         assertEquals(1, result.get("topic2").intValue());
 
         verify(forumRepository, times(1)).findAll();
+    }
+
+    @Test
+    void getForumsSortedByLikes() {
+        List<Forum> forums = Arrays.asList(forum1, forum2);
+
+        when(forumRepository.findAll()).thenReturn(forums);
+        when(likeRepository.getLikeCountByForumId(forum1.getId())).thenReturn(10);
+        when(likeRepository.getLikeCountByForumId(forum2.getId())).thenReturn(20);
+        when(viewRepository.getViewCountByForumId(forum1.getId())).thenReturn(100);
+        when(viewRepository.getViewCountByForumId(forum2.getId())).thenReturn(200);
+        when(commentRepository.getCommentCountByForumId(forum1.getId())).thenReturn(5);
+        when(commentRepository.getCommentCountByForumId(forum2.getId())).thenReturn(15);
+        when(commentRepository.findTopByForumIdOrderByDateDesc(forum1.getId())).thenReturn(Optional.of(comment1));
+        when(commentRepository.findTopByForumIdOrderByDateDesc(forum2.getId())).thenReturn(Optional.of(comment2));
+
+        List<ForumDto> sortedForums = forumService.getForumsSortedByLikes();
+
+        assertNotNull(sortedForums);
+        assertEquals(2, sortedForums.size());
+
+        ForumDto firstForum = sortedForums.get(0);
+        ForumDto secondForum = sortedForums.get(1);
+
+        assertEquals(forum2.getId(), firstForum.getId());
+        assertEquals(20, firstForum.getLikesCount());
+        assertEquals(forum1.getId(), secondForum.getId());
+        assertEquals(10, secondForum.getLikesCount());
+
+        verify(forumRepository, times(1)).findAll();
+        verify(likeRepository, times(1)).getLikeCountByForumId(forum1.getId());
+        verify(likeRepository, times(1)).getLikeCountByForumId(forum2.getId());
+        verify(viewRepository, times(1)).getViewCountByForumId(forum1.getId());
+        verify(viewRepository, times(1)).getViewCountByForumId(forum2.getId());
+        verify(commentRepository, times(1)).getCommentCountByForumId(forum1.getId());
+        verify(commentRepository, times(1)).getCommentCountByForumId(forum2.getId());
+    }
+
+    @Test
+    void getForumsSortedByDate() {
+        forum1.setDate("2023-10-01");
+        forum2.setDate("2023-10-02");
+
+        List<Forum> forums = Arrays.asList(forum1, forum2);
+
+        when(forumRepository.findAll()).thenReturn(forums);
+        when(likeRepository.getLikeCountByForumId(forum1.getId())).thenReturn(10);
+        when(likeRepository.getLikeCountByForumId(forum2.getId())).thenReturn(20);
+        when(viewRepository.getViewCountByForumId(forum1.getId())).thenReturn(100);
+        when(viewRepository.getViewCountByForumId(forum2.getId())).thenReturn(200);
+        when(commentRepository.getCommentCountByForumId(forum1.getId())).thenReturn(5);
+        when(commentRepository.getCommentCountByForumId(forum2.getId())).thenReturn(15);
+        when(commentRepository.findTopByForumIdOrderByDateDesc(forum1.getId())).thenReturn(Optional.of(comment1));
+        when(commentRepository.findTopByForumIdOrderByDateDesc(forum2.getId())).thenReturn(Optional.of(comment2));
+
+        List<ForumDto> sortedForums = forumService.getForumsSortedByDate();
+
+        assertNotNull(sortedForums);
+        assertEquals(2, sortedForums.size());
+
+        ForumDto firstForum = sortedForums.get(0);
+        ForumDto secondForum = sortedForums.get(1);
+
+        assertEquals(forum2.getId(), firstForum.getId());
+        assertEquals(forum2.getDate(), firstForum.getDate());
+        assertEquals(forum1.getId(), secondForum.getId());
+        assertEquals(forum1.getDate(), secondForum.getDate());
+
+        verify(forumRepository, times(1)).findAll();
+        verify(likeRepository, times(1)).getLikeCountByForumId(forum1.getId());
+        verify(likeRepository, times(1)).getLikeCountByForumId(forum2.getId());
+        verify(viewRepository, times(1)).getViewCountByForumId(forum1.getId());
+        verify(viewRepository, times(1)).getViewCountByForumId(forum2.getId());
+        verify(commentRepository, times(1)).getCommentCountByForumId(forum1.getId());
+        verify(commentRepository, times(1)).getCommentCountByForumId(forum2.getId());
+    }
+
+    @Test
+    void searchForums() {
+        String title = "Test Title";
+        List<Forum> forums = Arrays.asList(forum1, forum2);
+
+        when(forumRepository.findAllByTitleContainingIgnoreCase(title)).thenReturn(forums);
+
+        List<ForumDto> result = forumService.searchForums(title);
+
+        assertNotNull(result);
+        assertEquals(2, result.size());
+
+        ForumDto forumDto1 = result.get(0);
+        assertEquals(forum1.getId(), forumDto1.getId());
+        assertEquals(forum1.getTitle(), forumDto1.getTitle());
+
+        ForumDto forumDto2 = result.get(1);
+        assertEquals(forum2.getId(), forumDto2.getId());
+        assertEquals(forum2.getTitle(), forumDto2.getTitle());
+
+        verify(forumRepository, times(1)).findAllByTitleContainingIgnoreCase(title);
     }
 
     @Test

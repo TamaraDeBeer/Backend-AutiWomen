@@ -4,6 +4,7 @@ import com.autiwomen.auti_women.AutiWomenApplication;
 import com.autiwomen.auti_women.dtos.profiles.ProfileInputDto;
 import com.autiwomen.auti_women.models.Profile;
 import com.autiwomen.auti_women.repositories.ProfileRepository;
+import com.autiwomen.auti_women.security.models.Authority;
 import com.autiwomen.auti_women.security.repositories.UserRepository;
 import com.autiwomen.auti_women.security.dtos.user.UserInputDto;
 import com.autiwomen.auti_women.security.models.User;
@@ -22,6 +23,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -48,15 +51,35 @@ public class ProfileControllerIntegrationTest {
     @BeforeEach
     public void setUp() {
         LocalDate dob = LocalDate.of(1990, 5, 15);
+        Set<Authority> authorities = new HashSet<>();
+        authorities.add(new Authority("ROLE_USER"));
 
-        userInputDto = new UserInputDto("user1", "password1", "user1@example.com", "apikey1", true, "Name1", "Gender1", dob, "Diagnoses1", 2000, "profilePictureUrl1");
+        userInputDto = new UserInputDto(
+                "Gender1",
+                "user1",
+                "password1",
+                "user1@example.com",
+                "apikey1",
+                true,
+                "Name1",
+                dob,
+                "Diagnoses1",
+                2000,
+                null, // No MultipartFile, so set to null
+                "http://localhost:1991/images/DefaultProfileImage.png",
+                authorities
+        );
 
         User user1 = new User(userInputDto.getUsername(), userInputDto.getDob());
-        user1.setEmail(userInputDto.getEmail());
-        user1.setPassword(userInputDto.getPassword());
-        user1.setName(userInputDto.getName());
         user1.setGender(userInputDto.getGender());
+        user1.setPassword(userInputDto.getPassword());
+        user1.setEmail(userInputDto.getEmail());
+        user1.setApikey(userInputDto.getApikey());
+        user1.setEnabled(userInputDto.isEnabled());
+        user1.setName(userInputDto.getName());
         user1.setAutismDiagnoses(userInputDto.getAutismDiagnoses());
+        user1.setAutismDiagnosesYear(userInputDto.getAutismDiagnosesYear());
+        user1.setProfilePictureUrl(userInputDto.getProfilePictureUrl());
         userRepository.save(user1);
 
         Profile profile1 = new Profile(1L, user1, "bio1", "naam1", LocalDate.now().toString());

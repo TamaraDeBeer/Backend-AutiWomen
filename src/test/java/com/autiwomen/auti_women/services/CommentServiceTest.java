@@ -173,14 +173,20 @@ class CommentServiceTest {
     @Test
     void getCommentsByForumId() {
         Long forumId = 1L;
-        List<Comment> expectedComments = List.of(comment1);
-        forum1.setCommentsList(expectedComments);
+        List<Comment> comments = List.of(comment1);
+        forum1.setCommentsList(comments);
 
-        when(forumRepository.findById(forumId)).thenReturn(Optional.of(forum1));
+        when(commentRepository.findByForumId(forumId)).thenReturn(comments);
 
-        List<Comment> actualComments = commentService.getCommentsByForumId(forumId);
+        List<CommentDto> commentDtos = commentService.getCommentsByForumId(forumId);
 
-        assertEquals(expectedComments, actualComments);
+        assertNotNull(commentDtos);
+        assertEquals(1, commentDtos.size());
+        assertEquals(comment1.getId(), commentDtos.get(0).getId());
+        assertEquals(comment1.getName(), commentDtos.get(0).getName());
+        assertEquals(comment1.getText(), commentDtos.get(0).getText());
+        assertEquals(comment1.getDate(), commentDtos.get(0).getDate());
+        assertEquals(comment1.getAge(), commentDtos.get(0).getAge());
     }
 
     @Test
