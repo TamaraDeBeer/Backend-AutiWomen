@@ -112,6 +112,18 @@ class ForumControllerTest {
     }
 
     @Test
-    void getOneForum() {
+    public void testGetOneForum() throws Exception {
+        mockMvc.perform(get("/forums/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Name1"))
+                .andExpect(jsonPath("$.age").value("05-05-1990"))
+                .andExpect(jsonPath("$.title").value("title"))
+                .andExpect(jsonPath("$.text").value("text"))
+                .andExpect(jsonPath("$.date").value("06-07-2024"))
+                .andExpect(jsonPath("$.lastReaction").value(org.hamcrest.Matchers.nullValue()))
+                .andExpect(jsonPath("$.topic").value("topic"))
+                .andExpect(jsonPath("$.likesCount").value(0))
+                .andExpect(jsonPath("$.viewsCount").value(0))
+                .andExpect(jsonPath("$.commentsCount").value(0));
     }
 }
