@@ -95,6 +95,27 @@ class CommentServiceTest {
     }
 
     @Test
+    void getAllComments() {
+        List<Comment> comments = List.of(comment1, comment2);
+        when(commentRepository.findAll()).thenReturn(comments);
+
+        List<CommentDto> commentDtos = commentService.getAllComments();
+
+        assertNotNull(commentDtos);
+        assertEquals(2, commentDtos.size());
+        assertEquals(comment1.getId(), commentDtos.get(0).getId());
+        assertEquals(comment1.getName(), commentDtos.get(0).getName());
+        assertEquals(comment1.getText(), commentDtos.get(0).getText());
+        assertEquals(comment1.getDate(), commentDtos.get(0).getDate());
+        assertEquals(comment2.getId(), commentDtos.get(1).getId());
+        assertEquals(comment2.getName(), commentDtos.get(1).getName());
+        assertEquals(comment2.getText(), commentDtos.get(1).getText());
+        assertEquals(comment2.getDate(), commentDtos.get(1).getDate());
+
+        verify(commentRepository, times(1)).findAll();
+    }
+
+    @Test
     void assignCommentToForum() {
         Long commentId = 1L;
         Long forumId = 1L;
