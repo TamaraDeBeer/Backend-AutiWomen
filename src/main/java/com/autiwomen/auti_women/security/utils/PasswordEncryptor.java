@@ -17,7 +17,7 @@ public class PasswordEncryptor implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        String[] passwords = {"Tamara24!", "Ariel24!", "Elsa24!", "Jane24!", "Belle24!", "Aurora24!", "Tiana24!", "Sarabi24!", "Nala24!", "Moana24!"};
+        String[] passwords = {"Tamara24!", "Ariel24!", "Elsa2024!", "Jane2024!", "Belle24!", "Aurora24!", "Tiana24!", "Sarabi24!", "Nala2024!", "Moana24!"};
         String[] usernames = {"Tamara", "Ariel", "Elsa", "Jane", "Belle", "Aurora", "Tiana", "Sarabi", "Nala", "Moana"};
         String[] emails = {"Tamara.debeer@hotmail.com", "Ariel@ariel.nl", "Elsa@Elsa.nl", "Jane@Jane.nl", "Belle@belle.nl", "Aurora@aurora.nl", "Tiana@tiana.nl", "Sarabi@sarabi.nl", "Nala@nala.nl", "Moana@moana.nl"};
         String[] dobs = {"1991-07-06", "2004-08-23", "2002-06-20", "2000-02-05", "1995-12-06", "1945-12-06", "1955-09-15", "1988-02-09", "1993-11-11", "1980-05-28"};

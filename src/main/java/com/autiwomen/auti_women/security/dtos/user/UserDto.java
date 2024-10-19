@@ -51,4 +51,6 @@ public class UserDto {
         this.profilePictureUrl = profilePictureUrl;
 
     }
+
+
 }

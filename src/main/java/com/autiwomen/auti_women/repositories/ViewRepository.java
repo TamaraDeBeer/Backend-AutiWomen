@@ -23,5 +23,4 @@ List<View> findViewByUserAndForum(User user, Forum forum);
     @Query("SELECT v.forum FROM View v WHERE v.user = :user")
     Set<Forum> findViewedForumsByUser(@Param("user") User user);
 
-
 }

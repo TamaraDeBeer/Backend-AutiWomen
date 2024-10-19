@@ -39,7 +39,14 @@ class Profile {
     - String name
 }
 
+class Review {
+    - Long id
+    - String rewview
+    - String name
+}
+
 User "1" *--[#blue] "1" Profile
+User "1" *--[#blue] "1" Review
 User "1" *--[#blue] "0..*" Forum
 
 Forum "0..*" *--[#green] "1" Comment

@@ -10,7 +10,6 @@ import java.time.Year;
 import java.util.Set;
 
 public class UserInputDto {
-//    public static final int MAX_YEAR = Year.now().getValue() - 18;
 
     @NotEmpty
     public String username;

@@ -60,7 +60,7 @@ public class SpringSecurityConfiguration {
                         .requestMatchers(HttpMethod.GET, "/forums/topic/{topic}").permitAll()
                         .requestMatchers(HttpMethod.GET, "/forums/unique-topics").permitAll()
                         .requestMatchers(HttpMethod.GET, "/forums/sorted-unique-topics").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/forums/frequency").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/topics/frequency").permitAll()
                         .requestMatchers(HttpMethod.GET, "/forums/sorted-by-likes").permitAll()
                         .requestMatchers(HttpMethod.GET, "/forums/sorted-by-date").permitAll()
                         .requestMatchers(HttpMethod.GET, "/users/{username}/forums").permitAll()
