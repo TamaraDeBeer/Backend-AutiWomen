@@ -4,23 +4,28 @@
 autonumber
 
 skinparam sequence {
-    ParticipantBackgroundColor #lightblue
-    ParticipantBorderColor #000000
+    ParticipantBackgroundColor #F5C84C
+    ParticipantBorderColor #F7E19A
 }
 
-actor User #lightblue
-activate User #lightblue
+skinparam {
+    BackgroundColor #F8EAD9
+    BorderColor #F8EAD9
+}
+
+actor User #064D1A
+activate User #064D1A
 
 User -> LikeController : process add like to forum
-activate LikeController #lightblue
+activate LikeController #7AC37A
 
 LikeController -> LikeService : addLikeToForum(forumId, username)
-activate LikeService #lightblue
+activate LikeService #7AC37A
 
 LikeService -> UserRepository : findById(username)
-activate UserRepository #lightblue
+activate UserRepository #7AC37A
 
-alt User not found
+alt#F5C84C #F5C84C99 User not found
     UserRepository -> LikeService : null
     LikeService -> LikeController : throw RecordNotFoundException("User not found")
     LikeController -> User : ResponseEntity(HttpStatus.NOT_FOUND)
@@ -30,9 +35,9 @@ UserRepository -> LikeService : User
 deactivate UserRepository
 
 LikeService -> ForumRepository : findById(forumId)
-activate ForumRepository #lightblue
+activate ForumRepository #7AC37A
 
-alt Forum not found
+alt#F5C84C #F5C84C99 Forum not found
     ForumRepository -> LikeService : null
     LikeService -> LikeController : throw RecordNotFoundException("Forum not found")
     LikeController -> User : ResponseEntity(HttpStatus.NOT_FOUND)
@@ -42,9 +47,9 @@ ForumRepository -> LikeService : Forum
 deactivate ForumRepository
 
 LikeService -> LikeRepository : findLikeByUserAndForum(user, forum)
-activate LikeRepository #lightblue
+activate LikeRepository #7AC37A
 
-alt UserLike already exists
+alt#F5C84C #F5C84C99 UserLike already exists
     LikeRepository -> LikeService : Like
     LikeService -> LikeController : throw IllegalStateException("Like already exists")
     LikeController -> User : ResponseEntity(HttpStatus.CONFLICT)
@@ -54,7 +59,7 @@ LikeRepository -> LikeService : new Like (user, forum)
 deactivate LikeRepository
 
 LikeService -> LikeRepository : save(Like)
-activate LikeRepository #lightblue
+activate LikeRepository #7AC37A
 
 LikeRepository -> LikeService : Like
 deactivate LikeRepository
