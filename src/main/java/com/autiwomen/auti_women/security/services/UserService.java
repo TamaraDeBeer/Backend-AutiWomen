@@ -1,7 +1,7 @@
 package com.autiwomen.auti_women.security.services;
 
-
 import com.autiwomen.auti_women.exceptions.RecordNotFoundException;
+import com.autiwomen.auti_women.repositories.ReviewRepository;
 import com.autiwomen.auti_women.security.dtos.user.UserUpdateDto;
 import com.autiwomen.auti_women.security.repositories.AuthorityRepository;
 import com.autiwomen.auti_women.security.repositories.UserRepository;
@@ -12,6 +12,7 @@ import com.autiwomen.auti_women.security.models.Authority;
 import com.autiwomen.auti_women.security.models.User;
 import com.autiwomen.auti_women.security.utils.RandomStringGenerator;
 import com.autiwomen.auti_women.services.ProfileService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -27,10 +28,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 @Service
 public class UserService {
@@ -38,18 +37,19 @@ public class UserService {
     private final UserRepository userRepository;
     private final ProfileService profileService;
     private final AuthorityRepository authorityRepository;
+    private final ReviewRepository reviewRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
-
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Value("${my.upload_location}")
     private String uploadLocation;
 
-    public UserService(UserRepository userRepository, ProfileService profileService, AuthorityRepository authorityRepository) {
+    public UserService(UserRepository userRepository, ProfileService profileService, AuthorityRepository authorityRepository, ReviewRepository reviewRepository) {
         this.userRepository = userRepository;
         this.profileService = profileService;
         this.authorityRepository = authorityRepository;
+        this.reviewRepository = reviewRepository;
     }
 
     public List<UserOutputDto> getUsers() {
@@ -131,8 +131,17 @@ public class UserService {
         }
     }
 
+    @Transactional
     public void deleteUser(String username) {
-        userRepository.deleteById(username);
+        Optional<User> userOptional = userRepository.findById(username);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            reviewRepository.deleteByUser(user);
+            authorityRepository.deleteAll(user.getAuthorities());
+            userRepository.delete(user);
+        } else {
+            throw new UsernameNotFoundException(username);
+        }
     }
 
     public Set<Authority> getUserAuthorities(String username) {
@@ -144,6 +153,10 @@ public class UserService {
         } else {
             throw new UsernameNotFoundException(username);
         }
+    }
+
+    public List<Authority> getAllAuthorities() {
+        return authorityRepository.findAll();
     }
 
     public UserDto addUserAuthority(String username, String authority) {
@@ -158,6 +171,34 @@ public class UserService {
         }
     }
 
+    public void updateUserAuthority(String username, String oldAuthority, String newAuthority) {
+        Optional<User> userOptional = userRepository.findById(username);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            Authority newAuth = new Authority(username, newAuthority);
+
+            Set<Authority> authorities = user.getAuthorities();
+
+            Optional<Authority> oldAuthOptional = authorities.stream()
+                    .filter(a -> a.getAuthority().equals(oldAuthority))
+                    .findFirst();
+
+            if (oldAuthOptional.isPresent()) {
+                Authority oldAuth = oldAuthOptional.get();
+                authorities.remove(oldAuth);
+                authorities.add(newAuth);
+                userRepository.save(user);
+                authorityRepository.delete(oldAuth);
+                authorityRepository.save(newAuth);
+            } else {
+                throw new RecordNotFoundException("Authority not found: " + oldAuthority);
+            }
+        } else {
+            throw new UsernameNotFoundException(username);
+        }
+    }
+
+    @Transactional
     public void removeUserAuthority(String username, String authority) {
         Optional<User> userOptional = userRepository.findById(username);
         if (userOptional.isPresent()) {
@@ -197,8 +238,13 @@ public class UserService {
                     .path(fileName)
                     .toUriString();
             newUser.setProfilePictureUrl(imageUrl);
+        } else {
+            String defaultImageUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
+                    .path("/images/")
+                    .path("DefaultProfileImage.png")
+                    .toUriString();
+            newUser.setProfilePictureUrl(defaultImageUrl);
         }
-
         userRepository.save(newUser);
         authorityRepository.save(authority);
         return newUser.getUsername();
@@ -301,7 +347,6 @@ public class UserService {
         dto.setAutismDiagnosesYear(user.getAutismDiagnosesYear());
         dto.setProfilePictureUrl(user.getProfilePictureUrl());
         dto.setAuthorities(user.getAuthorities());
-        dto.setProfilePictureUrl(user.getProfilePictureUrl());
 
         if(user.getProfile() != null){
             dto.setProfileDto(profileService.fromProfile(user.getProfile()));

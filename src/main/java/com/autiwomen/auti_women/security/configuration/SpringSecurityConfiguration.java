@@ -51,38 +51,76 @@ public class SpringSecurityConfiguration {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
-                                .anyRequest().permitAll()
-//                        .requestMatchers(HttpMethod.GET, "/users").hasAuthority("ADMIN")
-//                        .requestMatchers(HttpMethod.GET, "/users").permitAll()
-//                        .requestMatchers(HttpMethod.GET, "/users/{username}").hasAuthority("ADMIN")
-//                        .requestMatchers(HttpMethod.POST, "/users").hasAuthority("ADMIN")
-//                        .requestMatchers(HttpMethod.DELETE,"/{username}").hasAuthority("ADMIN")
-//
-//                        .requestMatchers(HttpMethod.GET, "/{username}/authorities").hasAuthority("ADMIN")
-//                        .requestMatchers(HttpMethod.POST, "/{username}/authorities").hasAuthority("ADMIN")
-//                        .requestMatchers(HttpMethod.DELETE, "/{username}/authorities/{authority}").hasAuthority("ADMIN")
-//
-//                        .requestMatchers(HttpMethod.DELETE,"/forums/{id}").hasAuthority("ADMIN")
-//
-//
-//                        .requestMatchers(HttpMethod.GET, "/users/{username}").authenticated()
-//                        .requestMatchers(HttpMethod.PUT, "{username}").authenticated()
-//                        .requestMatchers(HttpMethod.DELETE,"/{username}").authenticated()
-//
-//                        .requestMatchers(HttpMethod.POST,"/forums").authenticated()
-//                        .requestMatchers(HttpMethod.PUT,"/forums/{id}").authenticated()
-//                        .requestMatchers(HttpMethod.DELETE,"/forums/{id}").authenticated()
-//                        .requestMatchers(HttpMethod.PUT,"/forums/{id}/like").authenticated()
-//                        .requestMatchers(HttpMethod.GET,"/forums/{id}").authenticated()
-//
-//                        .requestMatchers(HttpMethod.GET,"/forums").permitAll()
-//                        .requestMatchers(HttpMethod.POST, "/register").permitAll()
-//                        .requestMatchers(HttpMethod.POST, "/login").permitAll()
-//
-//                        .anyRequest().denyAll()
+                        .requestMatchers(HttpMethod.GET, "/images/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/register").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/login").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/reviews").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/forums").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/forums/{id}").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/forums/topic/{topic}").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/forums/unique-topics").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/forums/sorted-unique-topics").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/topics/frequency").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/forums/sorted-by-likes").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/forums/sorted-by-date").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/users/{username}/forums").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/forums/{forumId}/comments").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/forums/{forumId}/comments/count").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/forums/{forumId}/likes/count").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/forums/{forumId}/views/count").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/users/{username}/image").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/forums/search/${searchQuery}").permitAll()
+
+                        .requestMatchers(HttpMethod.GET, "/users/{username}").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.PUT, "/users/{username}/password").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.PUT, "/users/{username}/profile-picture").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.PUT, "/users/{username}/profile-data").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.DELETE, "/users/{username}/profile-picture").hasAnyRole("ADMIN", "USER")
+
+                        .requestMatchers(HttpMethod.POST, "/users/profiles/{username}").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.GET, "/users/profiles/{username}").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.PUT, "/users/profiles/{username}").hasAnyRole("ADMIN", "USER")
+
+                        .requestMatchers(HttpMethod.POST, "/reviews/{username}").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.GET, "/reviews/{username}").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.PUT, "/reviews/{username}").hasAnyRole("ADMIN", "USER")
+
+                        .requestMatchers(HttpMethod.POST, "/forums/{username}").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.PUT, "/forums/{id}").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.DELETE, "/forums/{id}").hasAnyRole("ADMIN", "USER")
+
+                        .requestMatchers(HttpMethod.GET, "/users/{username}/liked-forums").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.GET, "/users/{username}/viewed-forums").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.GET, "/users/{username}/commented-forums").hasAnyRole("ADMIN", "USER")
+
+                        .requestMatchers(HttpMethod.POST, "/forums/{forumId}/comments/{username}").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.GET, "/forums/users/{username}/comments").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.PUT, "/forums/{forumId}/comments/{commentId}").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.DELETE, "/forums/{forumId}/comments/{commentId}").hasAnyRole("ADMIN", "USER")
+
+                        .requestMatchers(HttpMethod.GET, "/forums/{forumId}/users/{username}/likes/check").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.POST, "/forums/{forumId}/users/{username}/likes/add").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.DELETE, "/forums/{forumId}/users/{username}/likes/remove").hasAnyRole("ADMIN", "USER")
+
+                        .requestMatchers(HttpMethod.GET, "/forums/{forumId}/users/{username}/views/check").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.POST, "/forums/{forumId}/users/{username}/views/add").hasAnyRole("ADMIN", "USER")
+
+                        .requestMatchers(HttpMethod.GET, "/users").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/users/{username}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/{username}/authorities").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/{username}/authorities").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/{username}/authorities").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/{username}/authorities/{authority}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/authorities").hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.GET, "/users/profiles").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/reviews/{id}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/forums/comments").hasRole("ADMIN")
+
+                        .anyRequest().denyAll()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-                http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

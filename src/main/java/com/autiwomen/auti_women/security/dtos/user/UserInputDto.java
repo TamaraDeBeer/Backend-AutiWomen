@@ -10,7 +10,6 @@ import java.time.Year;
 import java.util.Set;
 
 public class UserInputDto {
-//    public static final int MAX_YEAR = Year.now().getValue() - 18;
 
     @NotEmpty
     public String username;
@@ -67,18 +66,21 @@ public class UserInputDto {
         this.password = password;
     }
 
-    public UserInputDto(String username, String password, String email, String apikey, boolean enabled, String name, String gender, LocalDate dob, String autismDiagnoses, Integer autismDiagnosesYear) {
-        this.username = username;
-        this.password = password;
-        this.email = email;
-        this.apikey = apikey;
-        this.enabled = enabled;
-        this.name = name;
-        this.gender = gender;
-        this.dob = dob;
-        this.autismDiagnoses = autismDiagnoses;
-        this.autismDiagnosesYear = autismDiagnosesYear;
-    }
+        public UserInputDto(String gender, String username, String password, String email, String apikey, boolean enabled, String name, LocalDate dob, String autismDiagnoses, Integer autismDiagnosesYear, MultipartFile photo, String profilePictureUrl, Set<Authority> authorities) {
+            this.gender = gender;
+            this.username = username;
+            this.password = password;
+            this.email = email;
+            this.apikey = apikey;
+            this.enabled = enabled;
+            this.name = name;
+            this.dob = dob;
+            this.autismDiagnoses = autismDiagnoses;
+            this.autismDiagnosesYear = autismDiagnosesYear;
+            this.photo = photo;
+            this.profilePictureUrl = profilePictureUrl;
+            this.authorities = authorities;
+        }
 
     public UserInputDto() {
     }

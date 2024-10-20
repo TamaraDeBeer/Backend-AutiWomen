@@ -44,4 +44,10 @@ public class ReviewController {
         List<ReviewDto> reviews = reviewService.getAllReviews();
         return ResponseEntity.ok(reviews);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteReviewById(@PathVariable("id") Long id) {
+        reviewService.deleteReviewById(id);
+        return ResponseEntity.noContent().build();
+    }
 }

@@ -95,6 +95,27 @@ class CommentServiceTest {
     }
 
     @Test
+    void getAllComments() {
+        List<Comment> comments = List.of(comment1, comment2);
+        when(commentRepository.findAll()).thenReturn(comments);
+
+        List<CommentDto> commentDtos = commentService.getAllComments();
+
+        assertNotNull(commentDtos);
+        assertEquals(2, commentDtos.size());
+        assertEquals(comment1.getId(), commentDtos.get(0).getId());
+        assertEquals(comment1.getName(), commentDtos.get(0).getName());
+        assertEquals(comment1.getText(), commentDtos.get(0).getText());
+        assertEquals(comment1.getDate(), commentDtos.get(0).getDate());
+        assertEquals(comment2.getId(), commentDtos.get(1).getId());
+        assertEquals(comment2.getName(), commentDtos.get(1).getName());
+        assertEquals(comment2.getText(), commentDtos.get(1).getText());
+        assertEquals(comment2.getDate(), commentDtos.get(1).getDate());
+
+        verify(commentRepository, times(1)).findAll();
+    }
+
+    @Test
     void assignCommentToForum() {
         Long commentId = 1L;
         Long forumId = 1L;
@@ -173,14 +194,20 @@ class CommentServiceTest {
     @Test
     void getCommentsByForumId() {
         Long forumId = 1L;
-        List<Comment> expectedComments = List.of(comment1);
-        forum1.setCommentsList(expectedComments);
+        List<Comment> comments = List.of(comment1);
+        forum1.setCommentsList(comments);
 
-        when(forumRepository.findById(forumId)).thenReturn(Optional.of(forum1));
+        when(commentRepository.findByForumId(forumId)).thenReturn(comments);
 
-        List<Comment> actualComments = commentService.getCommentsByForumId(forumId);
+        List<CommentDto> commentDtos = commentService.getCommentsByForumId(forumId);
 
-        assertEquals(expectedComments, actualComments);
+        assertNotNull(commentDtos);
+        assertEquals(1, commentDtos.size());
+        assertEquals(comment1.getId(), commentDtos.get(0).getId());
+        assertEquals(comment1.getName(), commentDtos.get(0).getName());
+        assertEquals(comment1.getText(), commentDtos.get(0).getText());
+        assertEquals(comment1.getDate(), commentDtos.get(0).getDate());
+        assertEquals(comment1.getAge(), commentDtos.get(0).getAge());
     }
 
     @Test

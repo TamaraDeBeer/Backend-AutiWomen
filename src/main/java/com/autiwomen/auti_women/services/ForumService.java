@@ -149,21 +149,13 @@ public class ForumService {
     public void deleteForum(Long id) {
         Optional<Forum> optionalForum = forumRepository.findById(id);
         if (optionalForum.isPresent()) {
-            Forum forum = optionalForum.get();
-            List<Comment> comments = commentRepository.findAllByForumId(id);
-            for (Comment comment : comments) {
-                comment.setForum(null);
-                comment.setUser(null);
-                commentRepository.save(comment);
-            }
             commentRepository.deleteAllByForumId(id);
             forumRepository.deleteById(id);
         } else {
             throw new RecordNotFoundException("Forum not found with id: " + id);
-        }
-    }
+        }}
 
-    public Set<ForumDto> getForumsByUsername(String username) {
+        public Set<ForumDto> getForumsByUsername(String username) {
         User user = userRepository.findById(username).orElseThrow(() -> new RecordNotFoundException("User not found"));
         Set<Forum> forums = new HashSet<>(forumRepository.findByUser(user));
         return forums.stream().map(forum -> {
@@ -206,7 +198,6 @@ public class ForumService {
         }
         return likedForumDtos;
     }
-
 
     public Set<ForumDto> getViewedForumsByUsername(String username) {
         User user = userRepository.findById(username)
@@ -332,6 +323,15 @@ public class ForumService {
         });
         return forums.stream()
                 .sorted(Comparator.comparing(Forum::getDate).reversed())
+                .map(this::fromForum)
+                .collect(Collectors.toList());
+    }
+
+    public List<ForumDto> searchForums(String title) {
+        logger.info("Searching forums with title containing: {}", title);
+        List<Forum> forums = forumRepository.findAllByTitleContainingIgnoreCase(title);
+        logger.info("Found {} forums", forums.size());
+        return forums.stream()
                 .map(this::fromForum)
                 .collect(Collectors.toList());
     }

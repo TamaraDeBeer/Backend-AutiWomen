@@ -12,12 +12,8 @@ import com.autiwomen.auti_women.security.repositories.UserRepository;
 import com.autiwomen.auti_women.security.models.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -49,8 +45,11 @@ public class CommentService {
         return fromComment(comment);
     }
 
-    public List<Comment> getAllComments() {
-        return commentRepository.findAll();
+    public List<CommentDto> getAllComments() {
+        List<Comment> comments = commentRepository.findAll();
+        return comments.stream()
+                .map(this::toCommentDto)
+                .collect(Collectors.toList());
     }
 
     public void assignCommentToForum(Long commentId, Long forumId) {
@@ -176,6 +175,9 @@ public class CommentService {
             User user = comment.getUser();
             UserDto userDto = new UserDto(user.getUsername(), user.getProfilePictureUrl());
             dto.setUserDto(userDto);
+        }
+        if (comment.getForum() != null) {
+            dto.setForumDto(forumService.fromForum(comment.getForum()));
         }
 
         return dto;

@@ -103,6 +103,25 @@ class ProfileServiceTest {
     }
 
     @Test
+    void getProfileByUsername_ProfileNotFound() {
+        String username = "user1";
+
+        when(userRepository.findById(username)).thenReturn(Optional.of(user1));
+        when(profileRepository.findByUser(user1)).thenReturn(Optional.empty());
+
+        ProfileDto profileDto = profileService.getProfileByUsername(username);
+
+        assertNotNull(profileDto);
+        assertNull(profileDto.id);
+        assertNull(profileDto.name);
+        assertNull(profileDto.date);
+        assertNull(profileDto.bio);
+
+        verify(userRepository, times(1)).findById(username);
+        verify(profileRepository, times(1)).findByUser(user1);
+    }
+
+    @Test
     void fromProfile() {
         Profile profile = new Profile(1L, user1, "bio", "user1", String.valueOf(LocalDate.now()));
 

@@ -13,8 +13,8 @@ import java.util.Optional;
 import java.util.Set;
 
 public interface ViewRepository extends JpaRepository<View, Long> {
-    Optional<View> findViewByUserAndForum(User user, Forum forum);
-//List<View> findViewByUserAndForum(User user, Forum forum);
+//    Optional<View> findViewByUserAndForum(User user, Forum forum);
+List<View> findViewByUserAndForum(User user, Forum forum);
 
 
     @Query("SELECT COUNT(v) FROM View v WHERE v.forum.id = :forumId")
@@ -22,6 +22,5 @@ public interface ViewRepository extends JpaRepository<View, Long> {
 
     @Query("SELECT v.forum FROM View v WHERE v.user = :user")
     Set<Forum> findViewedForumsByUser(@Param("user") User user);
-
 
 }

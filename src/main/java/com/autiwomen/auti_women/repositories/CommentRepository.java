@@ -13,7 +13,6 @@ import java.util.Optional;
 import java.util.Set;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
-    Optional<Comment> findCommentsByUserAndForum(User user, Forum forum);
     Optional<Comment> findTopByForumIdOrderByDateDesc(Long forumId);
 
     @Query("SELECT COUNT(c) FROM Comment c WHERE c.forum.id = :forumId")
@@ -22,7 +21,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     @Query("SELECT c.forum FROM Comment c WHERE c.user = :user")
     Set<Forum> findCommentedForumsByUser(@Param("user") User user);
 
-    @Transactional
     void deleteAllByForumId(Long forumId);
 
     List<Comment> findAllByForumId(Long forumId);

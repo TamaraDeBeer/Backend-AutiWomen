@@ -30,17 +30,11 @@ public class Forum {
     private int viewsCount;
     private int commentsCount;
 
-    @OneToMany(
-            mappedBy = "forum",
-            fetch = FetchType.EAGER,
-            cascade = CascadeType.ALL,
-            orphanRemoval = true)
-    @JsonIgnore
+    @OneToMany(mappedBy = "forum", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> commentsList = new ArrayList<>();
 
     @ManyToOne (fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", referencedColumnName = "username")
-//    @JsonIgnore
     private User user;
 
     @OneToMany(mappedBy = "forum",

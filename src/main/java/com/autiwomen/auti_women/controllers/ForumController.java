@@ -59,7 +59,7 @@ public class ForumController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("users/{username}/forums")
+    @GetMapping("/users/{username}/forums")
     public ResponseEntity<Set<ForumDto>> getForumsByUsername(@PathVariable("username") String username) {
         Set<ForumDto> forums = forumService.getForumsByUsername(username);
         return ResponseEntity.ok(forums);
@@ -106,16 +106,22 @@ public class ForumController {
         return ResponseEntity.ok(forumService.getTopicFrequency());
     }
 
-    @GetMapping("forums/sorted-by-likes")
+    @GetMapping("/forums/sorted-by-likes")
     public ResponseEntity<List<ForumDto>> getForumsSortedByLikes() {
         List<ForumDto> sortedForums = forumService.getForumsSortedByLikes();
         return ResponseEntity.ok(sortedForums);
     }
 
-    @GetMapping("forums/sorted-by-date")
+    @GetMapping("/forums/sorted-by-date")
     public ResponseEntity<List<ForumDto>> getForumsSortedByDate() {
         List<ForumDto> sortedForums = forumService.getForumsSortedByDate();
         return ResponseEntity.ok(sortedForums);
+    }
+
+    @GetMapping("/forums/search/{title}")
+    public ResponseEntity<List<ForumDto>> searchForums(@PathVariable("title") String name) {
+        List<ForumDto> forumDtos = forumService.searchForums(name);
+        return ResponseEntity.ok(forumDtos);
     }
 
 

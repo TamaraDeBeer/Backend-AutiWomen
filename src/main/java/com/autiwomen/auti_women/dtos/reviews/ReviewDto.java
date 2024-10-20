@@ -31,6 +31,16 @@ public class ReviewDto {
         this.date = date;
     }
 
+    public ReviewDto(Long id, String review, String name, LocalDate dob, Integer autismDiagnosesYear, String profilePictureUrl, String date) {
+        this.id = id;
+        this.review = review;
+        this.name = name;
+        this.dob = dob;
+        this.autismDiagnosesYear = autismDiagnosesYear;
+        this.profilePictureUrl = profilePictureUrl;
+        this.date = date;
+    }
+
     public Long getId() {
         return id;
     }

@@ -20,9 +20,13 @@ public class Comment {
     private String date;
     private String age;
 
-    @ManyToOne (fetch = FetchType.EAGER)
+//    @ManyToOne (fetch = FetchType.EAGER)
+//    @JoinColumn(name = "forum_id")
+////    @JsonIgnore
+//    private Forum forum;
+
+    @ManyToOne
     @JoinColumn(name = "forum_id")
-//    @JsonIgnore
     private Forum forum;
 
     @ManyToOne (fetch = FetchType.EAGER)

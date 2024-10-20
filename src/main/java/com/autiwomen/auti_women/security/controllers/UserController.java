@@ -43,21 +43,6 @@ public class UserController {
         return ResponseEntity.ok().body(optionalUser);
     }
 
-//    @PostMapping(value = "/register")
-//    public ResponseEntity<UserOutputDto> createUser(@Valid @RequestPart("user") UserInputDto userInputDto,
-//                                                    @RequestPart(value = "file", required = false) MultipartFile file) throws IOException {
-//        String newUsername = userService.createUserWithImage(userInputDto, file);
-//
-//        UserOutputDto outputDto = new UserOutputDto();
-//        outputDto.setUsername(newUsername);
-//        outputDto.setEmail(userInputDto.getEmail());
-//
-//        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{username}")
-//                .buildAndExpand(newUsername).toUri();
-//
-//        return ResponseEntity.created(location).body(outputDto);
-//    }
-
     @PostMapping(value = "/register")
     public ResponseEntity<UserOutputDto> createUser(@Valid @RequestPart("user") UserInputDto userInputDto,
                                                     @RequestPart(value = "file", required = false) MultipartFile file) throws IOException {
@@ -79,24 +64,24 @@ public class UserController {
         return ResponseEntity.created(location).body(outputDto);
     }
 
-    @PutMapping(value = "users/{username}/password")
+    @PutMapping(value = "/users/{username}/password")
     public ResponseEntity<UserDto> updatePasswordUser(@PathVariable("username") String username, @RequestBody UserDto dto) {
         userService.updatePasswordUser(username, dto);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
 
     @PutMapping(value = "/users/{username}/profile-picture")
     public ResponseEntity<Void> updateProfilePicture(@PathVariable("username") String username,
                                                      @RequestPart("file") MultipartFile file) throws IOException {
         userService.updateProfilePicture(username, file);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
 
     @PutMapping(value = "/users/{username}/profile-data")
     public ResponseEntity<Void> updateUserData(@PathVariable("username") String username,
                                                @RequestBody @Valid UserUpdateDto userUpdateDto) {
         userService.updateUserData(username, userUpdateDto);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping(value = "/users/{username}/profile-picture")
@@ -127,10 +112,22 @@ public class UserController {
         }
     }
 
+    @PutMapping(value = "/{username}/authorities")
+    public ResponseEntity<Void> updateUserAuthority(@PathVariable("username") String username, @RequestBody UserDto userDto) {
+        userService.updateUserAuthority(username, userDto.getOldAuthority(), userDto.getNewAuthority());
+        return ResponseEntity.ok().build();
+    }
+
     @DeleteMapping(value = "/{username}/authorities/{authority}")
     public ResponseEntity<Object> deleteUserAuthority(@PathVariable("username") String username, @PathVariable("authority") String authority) {
         userService.removeUserAuthority(username, authority);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/authorities")
+    public ResponseEntity<List<Authority>> getAllAuthorities() {
+        List<Authority> authorities = userService.getAllAuthorities();
+        return ResponseEntity.ok().body(authorities);
     }
 
     @GetMapping(value = "/users/{username}/image")

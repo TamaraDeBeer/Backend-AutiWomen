@@ -1,7 +1,12 @@
 @startuml
 'https://plantuml.com/class-diagram
 
-class Forum {
+skinparam {
+    BackgroundColor #F8EAD9
+    BorderColor #F8EAD9
+}
+
+class Forum #F5C84C99 {
     - Long id
     - String name
     - String title
@@ -12,43 +17,50 @@ class Forum {
     - int commentsCount
     }
 
-class Comment{
+class Comment #F5C84C99 {
     - Long id
     - String name
     - String text
     }
 
-class Like {
+class Like #F5C84C99 {
     - Long id
     }
 
-class View {
+class View #F5C84C99 {
     - Long id
     }
 
-class User {
+class User #F5C84C99 {
     - String username
     - String password
     - LocalDDate dob
     - String profilePictureUrl
 }
 
-class Profile {
+class Profile #F5C84C99 {
     - Long id
     - String bio
     - String name
 }
 
-User "1" *--[#blue] "1" Profile
-User "1" *--[#blue] "0..*" Forum
+class Review #F5C84C99 {
+    - Long id
+    - String rewview
+    - String name
+}
 
-Forum "0..*" *--[#green] "1" Comment
-Forum "0..*" *--[#green] "1" Like
-Forum "0..*" *--[#green] "1" View
+User "1" *--[#064D1A] "1" Profile
+User "1" *--[#064D1A] "1" Review
+User "1" *--[#064D1A] "0..*" Forum
 
-User "0..*" --[#red] "0..*" Comment
-User "0..*" --[#red] "1" Like
-User "0..*" --[#red] "1" View
+Forum "0..*" *--[#7AC37A] "1" Comment
+Forum "0..*" *--[#7AC37A] "1" Like
+Forum "0..*" *--[#7AC37A] "1" View
+
+User "0..*" --[#F5C84C] "0..*" Comment
+User "0..*" --[#F5C84C] "1" Like
+User "0..*" --[#F5C84C] "1" View
 
 'Comment "1" *--[#purple] "1" User
 'Like "1" *--[#purple] "1" User

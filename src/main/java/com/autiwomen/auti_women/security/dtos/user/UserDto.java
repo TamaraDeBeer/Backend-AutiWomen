@@ -33,6 +33,9 @@ public class UserDto {
     public MultipartFile photo;
     public ProfileDto profileDto;
 
+    public String oldAuthority;
+    public String newAuthority;
+
     @JsonSerialize
     public Set<Authority> authorities;
 
@@ -48,4 +51,6 @@ public class UserDto {
         this.profilePictureUrl = profilePictureUrl;
 
     }
+
+
 }

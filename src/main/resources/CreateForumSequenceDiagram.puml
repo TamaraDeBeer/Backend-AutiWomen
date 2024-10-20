@@ -4,23 +4,28 @@
 autonumber
 
 skinparam sequence {
-    ParticipantBackgroundColor #lightblue
-    ParticipantBorderColor #000000
+    ParticipantBackgroundColor #F5C84C
+    ParticipantBorderColor #F7E19A
 }
 
-actor User #lightblue
-activate User #lightblue
+skinparam {
+    BackgroundColor #F8EAD9
+    BorderColor #F8EAD9
+}
+
+actor User #064D1A
+activate User #064D1A
 
 User -> ForumController : process create forum
-activate ForumController #lightblue
+activate ForumController #7AC37A
 
 ForumController -> ForumService : createForum(forumInputDto, username)
-activate ForumService #lightblue
+activate ForumService #7AC37A
 
 ForumService -> UserRepository : findById(username)
-activate UserRepository #lightblue
+activate UserRepository #7AC37A
 
-alt User not found
+alt#F5C84C #F5C84C99 User not found
     UserRepository -> ForumService : null
     ForumService -> ForumController : throw RecordNotFoundException("User not found")
     ForumController -> User : ResponseEntity(HttpStatus.NOT_FOUND)
@@ -39,7 +44,7 @@ ForumService -> ForumService : assignForumToUser(forumDto.getId(), username)
 activate UserRepository #lightblue
 activate ForumRepository #lightblue
 
-alt Forum or User not found
+alt#F5C84C #F5C84C99 Forum or User not found
     UserRepository -> ForumService : null
     ForumRepository -> ForumService : null
     ForumService -> ForumController : throw RecordNotFoundException("Forum or User not found")
