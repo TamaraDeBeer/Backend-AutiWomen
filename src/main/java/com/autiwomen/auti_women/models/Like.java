@@ -25,4 +25,6 @@ public class Like {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    public Like(User user, Forum forum) {
+    }
 }

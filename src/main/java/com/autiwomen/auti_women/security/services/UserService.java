@@ -82,10 +82,6 @@ public class UserService {
         }
     }
 
-//    public boolean userExists(String username) {
-//        return userRepository.existsById(username);
-//    }
-
     public UserDto updatePasswordUser(String username, UserDto updateUser) {
         Optional<User> userOptional = userRepository.findById(username);
         if (userOptional.isPresent()) {
@@ -139,77 +135,6 @@ public class UserService {
             reviewRepository.deleteByUser(user);
             authorityRepository.deleteAll(user.getAuthorities());
             userRepository.delete(user);
-        } else {
-            throw new UsernameNotFoundException(username);
-        }
-    }
-
-    public Set<Authority> getUserAuthorities(String username) {
-        Optional<User> userOptional = userRepository.findById(username);
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            UserDto userDto = fromUser(user);
-            return userDto.getAuthorities();
-        } else {
-            throw new UsernameNotFoundException(username);
-        }
-    }
-
-    public List<Authority> getAllAuthorities() {
-        return authorityRepository.findAll();
-    }
-
-    public UserDto addUserAuthority(String username, String authority) {
-        Optional<User> userOptional = userRepository.findById(username);
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            user.addAuthority(new Authority(username, authority));
-            userRepository.save(user);
-            return fromUser(user);
-        } else {
-            throw new UsernameNotFoundException(username);
-        }
-    }
-
-    public void updateUserAuthority(String username, String oldAuthority, String newAuthority) {
-        Optional<User> userOptional = userRepository.findById(username);
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            Authority newAuth = new Authority(username, newAuthority);
-
-            Set<Authority> authorities = user.getAuthorities();
-
-            Optional<Authority> oldAuthOptional = authorities.stream()
-                    .filter(a -> a.getAuthority().equals(oldAuthority))
-                    .findFirst();
-
-            if (oldAuthOptional.isPresent()) {
-                Authority oldAuth = oldAuthOptional.get();
-                authorities.remove(oldAuth);
-                authorities.add(newAuth);
-                userRepository.save(user);
-                authorityRepository.delete(oldAuth);
-                authorityRepository.save(newAuth);
-            } else {
-                throw new RecordNotFoundException("Authority not found: " + oldAuthority);
-            }
-        } else {
-            throw new UsernameNotFoundException(username);
-        }
-    }
-
-    @Transactional
-    public void removeUserAuthority(String username, String authority) {
-        Optional<User> userOptional = userRepository.findById(username);
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            Optional<Authority> authorityToRemove = user.getAuthorities().stream()
-                    .filter(a -> a.getAuthority().equalsIgnoreCase(authority))
-                    .findAny();
-            if (authorityToRemove.isPresent()) {
-                user.removeAuthority(authorityToRemove.get());
-                userRepository.save(user);
-            }
         } else {
             throw new UsernameNotFoundException(username);
         }
@@ -323,7 +248,6 @@ public class UserService {
         var user = new User();
         user.setUsername(userInputDto.getUsername());
         user.setPassword(userInputDto.getPassword());
-//        user.setEnabled(userInputDto.getEnabled());
         user.setApikey(userInputDto.getApikey());
         user.setEmail(userInputDto.getEmail());
         user.setName(userInputDto.getName());
@@ -351,7 +275,6 @@ public class UserService {
         if(user.getProfile() != null){
             dto.setProfileDto(profileService.fromProfile(user.getProfile()));
         }
-
         return dto;
     }
 

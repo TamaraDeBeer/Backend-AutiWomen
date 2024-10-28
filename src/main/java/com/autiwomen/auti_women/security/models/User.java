@@ -61,4 +61,12 @@ public class User {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Profile profile;
 
+    public void addAuthority(Authority authority) {
+        authorities.add(authority);
+    }
+
+    public void removeAuthority(Authority authority) {
+        authorities.remove(authority);
+    }
+
 }
