@@ -9,7 +9,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -96,7 +95,7 @@ public class SpringSecurityConfiguration {
                         .requestMatchers(HttpMethod.POST, "/forums/{forumId}/comments/{username}").hasAnyRole("ADMIN", "USER")
                         .requestMatchers(HttpMethod.GET, "/forums/users/{username}/comments").hasAnyRole("ADMIN", "USER")
                         .requestMatchers(HttpMethod.PUT, "/forums/{forumId}/comments/{commentId}").hasAnyRole("ADMIN", "USER")
-                        .requestMatchers(HttpMethod.DELETE, "/forums/{forumId}/comments/{commentId}").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.DELETE, "/forums/comments/{commentId}").hasAnyRole("ADMIN", "USER")
 
                         .requestMatchers(HttpMethod.GET, "/forums/{forumId}/users/{username}/likes/check").hasAnyRole("ADMIN", "USER")
                         .requestMatchers(HttpMethod.POST, "/forums/{forumId}/users/{username}/likes/add").hasAnyRole("ADMIN", "USER")

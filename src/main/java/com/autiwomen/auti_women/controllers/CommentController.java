@@ -12,7 +12,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/forums")
@@ -67,8 +66,8 @@ public class CommentController {
         return ResponseEntity.ok().body(commentDto);
     }
 
-    @DeleteMapping("/{forumId}/comments/{commentId}")
-    public ResponseEntity<Comment> deleteComment(@PathVariable("forumId") Long forumId, @PathVariable("commentId") Long commentId) {
+    @DeleteMapping("/comments/{commentId}")
+    public ResponseEntity<Comment> deleteComment(@PathVariable("commentId") Long commentId) {
         commentService.deleteComment(commentId);
         return ResponseEntity.noContent().build();
     }

@@ -29,4 +29,5 @@ public class ViewController {
         boolean hasViewed = viewService.hasUserViewedPost(username, forumId);
         return ResponseEntity.ok(hasViewed);
     }
+
 }

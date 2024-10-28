@@ -2,7 +2,6 @@ package com.autiwomen.auti_women.controllers;
 
 import com.autiwomen.auti_women.dtos.forums.ForumDto;
 import com.autiwomen.auti_women.dtos.forums.ForumInputDto;
-import com.autiwomen.auti_women.exceptions.RecordNotFoundException;
 import com.autiwomen.auti_women.models.Forum;
 import com.autiwomen.auti_women.services.ForumService;
 import jakarta.validation.Valid;
@@ -14,7 +13,6 @@ import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @CrossOrigin
 @RestController
@@ -89,23 +87,6 @@ public class ForumController {
         return ResponseEntity.ok(forumsByTopic);
     }
 
-    @GetMapping("/forums/unique-topics")
-    public ResponseEntity<Set<String>> getUniqueTopics() {
-        Set<String> uniqueTopics = forumService.getUniqueTopics();
-        return ResponseEntity.ok(uniqueTopics);
-    }
-
-    @GetMapping("/forums/sorted-unique-topics")
-    public ResponseEntity<List<String>> getSortedUniqueTopics() {
-        List<String> sortedUniqueTopics = forumService.getSortedUniqueTopics();
-        return ResponseEntity.ok(sortedUniqueTopics);
-    }
-
-    @GetMapping("/topics/frequency")
-    public ResponseEntity<Map<String, Integer>> getTopicFrequency() {
-        return ResponseEntity.ok(forumService.getTopicFrequency());
-    }
-
     @GetMapping("/forums/sorted-by-likes")
     public ResponseEntity<List<ForumDto>> getForumsSortedByLikes() {
         List<ForumDto> sortedForums = forumService.getForumsSortedByLikes();
@@ -124,5 +105,21 @@ public class ForumController {
         return ResponseEntity.ok(forumDtos);
     }
 
+    @GetMapping("/forums/unique-topics")
+    public ResponseEntity<Set<String>> getUniqueTopics() {
+        Set<String> uniqueTopics = forumService.getUniqueTopics();
+        return ResponseEntity.ok(uniqueTopics);
+    }
+
+    @GetMapping("/forums/sorted-unique-topics")
+    public ResponseEntity<List<String>> getSortedUniqueTopics() {
+        List<String> sortedUniqueTopics = forumService.getSortedUniqueTopics();
+        return ResponseEntity.ok(sortedUniqueTopics);
+    }
+
+    @GetMapping("/topics/frequency")
+    public ResponseEntity<Map<String, Integer>> getTopicFrequency() {
+        return ResponseEntity.ok(forumService.getTopicFrequency());
+    }
 
 }
