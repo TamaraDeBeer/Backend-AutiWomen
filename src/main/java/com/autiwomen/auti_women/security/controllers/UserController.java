@@ -1,12 +1,9 @@
 package com.autiwomen.auti_women.security.controllers;
 
-import com.autiwomen.auti_women.exceptions.BadRequestException;
 import com.autiwomen.auti_women.security.dtos.user.UserDto;
 import com.autiwomen.auti_women.security.dtos.user.UserInputDto;
 import com.autiwomen.auti_women.security.dtos.user.UserOutputDto;
 import com.autiwomen.auti_women.security.dtos.user.UserUpdateDto;
-import com.autiwomen.auti_women.security.models.Authority;
-import com.autiwomen.auti_women.security.models.User;
 import com.autiwomen.auti_women.security.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -17,15 +14,12 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
-import java.util.Map;
-
 
 @CrossOrigin
 @RestController
 public class UserController {
 
     private final UserService userService;
-
 
     public UserController(UserService userService) {
         this.userService = userService;
@@ -96,45 +90,12 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping(value = "/{username}/authorities")
-    public ResponseEntity<Object> getUserAuthorities(@PathVariable("username") String username) {
-        return ResponseEntity.ok().body(userService.getUserAuthorities(username));
-    }
-
-    @PostMapping(value = "/{username}/authorities")
-    public ResponseEntity<Object> addUserAuthority(@PathVariable("username") String username, @RequestBody Map<String, Object> fields) {
-        try {
-            String authorityName = (String) fields.get("authority");
-            userService.addUserAuthority(username, authorityName);
-            return ResponseEntity.noContent().build();
-        } catch (Exception ex) {
-            throw new BadRequestException();
-        }
-    }
-
-    @PutMapping(value = "/{username}/authorities")
-    public ResponseEntity<Void> updateUserAuthority(@PathVariable("username") String username, @RequestBody UserDto userDto) {
-        userService.updateUserAuthority(username, userDto.getOldAuthority(), userDto.getNewAuthority());
-        return ResponseEntity.ok().build();
-    }
-
-    @DeleteMapping(value = "/{username}/authorities/{authority}")
-    public ResponseEntity<Object> deleteUserAuthority(@PathVariable("username") String username, @PathVariable("authority") String authority) {
-        userService.removeUserAuthority(username, authority);
-        return ResponseEntity.noContent().build();
-    }
-
-    @GetMapping("/authorities")
-    public ResponseEntity<List<Authority>> getAllAuthorities() {
-        List<Authority> authorities = userService.getAllAuthorities();
-        return ResponseEntity.ok().body(authorities);
-    }
-
     @GetMapping(value = "/users/{username}/image")
     public ResponseEntity<UserOutputDto> getUserImage(@PathVariable("username") String username) {
         UserOutputDto userImageDto = userService.getUserImage(username);
         return ResponseEntity.ok().body(userImageDto);
     }
+
 }
 
 

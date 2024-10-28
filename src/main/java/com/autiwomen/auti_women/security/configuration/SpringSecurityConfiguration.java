@@ -106,11 +106,12 @@ public class SpringSecurityConfiguration {
 
                         .requestMatchers(HttpMethod.GET, "/users").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/users/{username}").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/{username}/authorities").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/{username}/authorities").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/{username}/authorities").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/{username}/authorities/{authority}").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/authorities").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/authorities/{username}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/authorities/{username}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/authorities/{username}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/authorities/{username}/{authority}").hasRole("ADMIN")
+
 
                         .requestMatchers(HttpMethod.GET, "/users/profiles").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/reviews/{id}").hasRole("ADMIN")
