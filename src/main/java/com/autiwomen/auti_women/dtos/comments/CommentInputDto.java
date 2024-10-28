@@ -1,9 +1,13 @@
 package com.autiwomen.auti_women.dtos.comments;
 
-import com.autiwomen.auti_women.dtos.forums.ForumDto;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class CommentInputDto {
 
     public String name;
@@ -12,49 +16,6 @@ public class CommentInputDto {
     public String text;
 
     public String date;
-
     public String age;
-
-    public CommentInputDto(String name, String text, String date, String age) {
-        this.name = name;
-        this.text = text;
-        this.date = date;
-        this.age = age;
-    }
-
-    public CommentInputDto() {
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
-
-    public String getAge() {
-        return age;
-    }
-
-    public void setAge(String age) {
-        this.age = age;
-    }
 
 }
