@@ -58,6 +58,6 @@ public class ViewService {
     }
 
     private View toView(User user, Forum forum) {
-        return new View(forum, user);
+        return new View(user, forum);
     }
 }

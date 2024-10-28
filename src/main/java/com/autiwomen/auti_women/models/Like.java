@@ -2,15 +2,9 @@ package com.autiwomen.auti_women.models;
 
 import com.autiwomen.auti_women.security.models.User;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "likes")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class Like {
 
     @Id
@@ -25,6 +19,36 @@ public class Like {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    public Like(User user, Forum forum) {
+    public Like() {
     }
+
+    public Like(User user, Forum forum) {
+        this.user = user;
+        this.forum = forum;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Forum getForum() {
+        return forum;
+    }
+
+    public void setForum(Forum forum) {
+        this.forum = forum;
+    }
+
 }

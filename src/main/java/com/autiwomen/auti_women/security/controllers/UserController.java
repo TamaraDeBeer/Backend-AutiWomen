@@ -64,7 +64,14 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping(value = "/users/{username}/profile-picture")
+//    @PutMapping(value = "/users/{username}/profile-picture")
+//    public ResponseEntity<Void> updateProfilePicture(@PathVariable("username") String username,
+//                                                     @RequestPart("file") MultipartFile file) throws IOException {
+//        userService.updateProfilePicture(username, file);
+//        return ResponseEntity.ok().build();
+//    }
+
+    @PutMapping(value = "/users/{username}/profile-picture", consumes = "multipart/form-data")
     public ResponseEntity<Void> updateProfilePicture(@PathVariable("username") String username,
                                                      @RequestPart("file") MultipartFile file) throws IOException {
         userService.updateProfilePicture(username, file);

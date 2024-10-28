@@ -27,9 +27,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Service
 public class UserService {
@@ -39,7 +36,6 @@ public class UserService {
     private final AuthorityRepository authorityRepository;
     private final ReviewRepository reviewRepository;
 
-    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Value("${my.upload_location}")
@@ -72,24 +68,14 @@ public class UserService {
         return dto;
     }
 
-    //    Deze methode is enkel voor de CustomUserDetailsService omdat we daar een wachtwoord nodig hebben en de UserOutputDto geen wachtwoord bevat
-    public UserDto getUserEntity(String username) {
-        Optional<User> user = userRepository.findById(username);
-        if (user.isPresent()) {
-            return fromUser(user.get());
-        } else {
-            throw new UsernameNotFoundException(username);
-        }
-    }
-
-    public UserDto updatePasswordUser(String username, UserDto updateUser) {
+    public void updatePasswordUser(String username, UserDto updateUser) {
         Optional<User> userOptional = userRepository.findById(username);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             if (passwordEncoder.matches(updateUser.getOldPassword(), user.getPassword())) {
                 user.setPassword(passwordEncoder.encode(updateUser.getPassword()));
                 userRepository.save(user);
-                return fromUser(user);
+                fromUser(user);
             } else {
                 throw new IllegalArgumentException("Old password is incorrect");
             }
@@ -178,10 +164,8 @@ public class UserService {
     private String saveImage(MultipartFile file, String username) throws IOException {
         String fileName = file.getOriginalFilename();
         Path path = Paths.get(uploadLocation, fileName);
-        logger.info("Saving image to path: " + path.toString());
         Files.createDirectories(path.getParent());
         Files.write(path, file.getBytes());
-        logger.info("Image saved successfully: " + fileName);
         return fileName;
     }
 
@@ -221,6 +205,16 @@ public class UserService {
                 user.setGender(userUpdateDto.getGender());
             }
             userRepository.save(user);
+        } else {
+            throw new UsernameNotFoundException(username);
+        }
+    }
+
+    //    Deze methode is enkel voor de CustomUserDetailsService omdat we daar een wachtwoord nodig hebben en de UserOutputDto geen wachtwoord bevat
+    public UserDto getUserEntity(String username) {
+        Optional<User> user = userRepository.findById(username);
+        if (user.isPresent()) {
+            return fromUser(user.get());
         } else {
             throw new UsernameNotFoundException(username);
         }
