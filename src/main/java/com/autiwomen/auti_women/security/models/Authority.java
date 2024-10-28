@@ -1,12 +1,18 @@
 package com.autiwomen.auti_women.security.models;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
 @Entity
 @IdClass(AuthorityKey.class)
 @Table(name = "authorities")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Authority implements Serializable {
     @Id
     @Column(nullable = false)
@@ -16,31 +22,4 @@ public class Authority implements Serializable {
     @Column(nullable = false)
     private String authority;
 
-    public Authority(String username, String authority) {
-        this.username = username;
-        this.authority = authority;
-    }
-
-    public Authority(String authority) {
-        this.authority = authority;
-    }
-
-    public Authority() {
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getAuthority() {
-        return authority;
-    }
-
-    public void setAuthority(String authority) {
-        this.authority = authority;
-    }
 }
