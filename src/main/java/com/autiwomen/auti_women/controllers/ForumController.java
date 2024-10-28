@@ -81,12 +81,6 @@ public class ForumController {
         return ResponseEntity.ok(commentedForums);
     }
 
-    @GetMapping("/forums/topic/{topic}")
-    public ResponseEntity<List<Forum>> getForumsByTopic(@PathVariable String topic) {
-        List<Forum> forumsByTopic = forumService.getForumsByTopic(topic);
-        return ResponseEntity.ok(forumsByTopic);
-    }
-
     @GetMapping("/forums/sorted-by-likes")
     public ResponseEntity<List<ForumDto>> getForumsSortedByLikes() {
         List<ForumDto> sortedForums = forumService.getForumsSortedByLikes();
@@ -105,21 +99,6 @@ public class ForumController {
         return ResponseEntity.ok(forumDtos);
     }
 
-    @GetMapping("/forums/unique-topics")
-    public ResponseEntity<Set<String>> getUniqueTopics() {
-        Set<String> uniqueTopics = forumService.getUniqueTopics();
-        return ResponseEntity.ok(uniqueTopics);
-    }
 
-    @GetMapping("/forums/sorted-unique-topics")
-    public ResponseEntity<List<String>> getSortedUniqueTopics() {
-        List<String> sortedUniqueTopics = forumService.getSortedUniqueTopics();
-        return ResponseEntity.ok(sortedUniqueTopics);
-    }
-
-    @GetMapping("/topics/frequency")
-    public ResponseEntity<Map<String, Integer>> getTopicFrequency() {
-        return ResponseEntity.ok(forumService.getTopicFrequency());
-    }
 
 }
