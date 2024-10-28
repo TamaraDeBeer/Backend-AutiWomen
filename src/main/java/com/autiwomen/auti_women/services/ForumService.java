@@ -126,7 +126,7 @@ public class ForumService {
 
     public String getLastReaction(Long forumId) {
         Optional<Comment> lastComment = commentRepository.findTopByForumIdOrderByDateDesc(forumId);
-        return lastComment.map(comment -> comment.getDate()).orElse(null);
+        return lastComment.map(Comment::getDate).orElse(null);
     }
 
     public ForumDto updateForum(@PathVariable Long id, @RequestBody ForumDto updateForum) {
@@ -135,7 +135,6 @@ public class ForumService {
             throw new RecordNotFoundException("Er is geen forum gevonden met id: " + id);
         } else {
             Forum forum1 = forum.get();
-//            forum1.setName(updateForum.getName());
             forum1.setTitle(updateForum.getTitle());
             forum1.setText(updateForum.getText());
             forum1.setTopic(updateForum.getTopic());
@@ -255,9 +254,7 @@ public class ForumService {
         List<Forum> forums = forumRepository.findAll();
         Set<String> uniqueTopics = new HashSet<>();
         for (Forum forum : forums) {
-            if (!uniqueTopics.contains(forum.getTopic())) {
-                uniqueTopics.add(forum.getTopic());
-            }
+            uniqueTopics.add(forum.getTopic());
         }
         return uniqueTopics;
     }
