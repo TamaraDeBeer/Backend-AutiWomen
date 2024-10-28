@@ -35,14 +35,14 @@ UserRepository -> ForumService : User
 deactivate UserRepository
 
 ForumService -> ForumRepository : save(forum)
-activate ForumRepository #lightblue
+activate ForumRepository #7AC37A
 
 ForumRepository -> ForumService : Forum
 deactivate ForumRepository
 
 ForumService -> ForumService : assignForumToUser(forumDto.getId(), username)
-activate UserRepository #lightblue
-activate ForumRepository #lightblue
+activate UserRepository #7AC37A
+activate ForumRepository #7AC37A
 
 alt#F5C84C #F5C84C99 Forum or User not found
     UserRepository -> ForumService : null
@@ -57,7 +57,7 @@ deactivate UserRepository
 deactivate ForumRepository
 
 ForumService -> ForumRepository : save(forum)
-activate ForumRepository #lightblue
+activate ForumRepository #7AC37A
 ForumRepository -> ForumService : Forum
 deactivate ForumRepository
 
