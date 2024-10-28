@@ -10,7 +10,6 @@ import com.autiwomen.auti_women.security.models.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -37,7 +36,7 @@ public class ViewService {
             return;
         }
 
-        View view = new View(user, forum);
+        View view = toView(user, forum);
         viewRepository.save(view);
     }
 
@@ -58,5 +57,7 @@ public class ViewService {
         return !views.isEmpty();
     }
 
-
+    private View toView(User user, Forum forum) {
+        return new View(forum, user);
+    }
 }

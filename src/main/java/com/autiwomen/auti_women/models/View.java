@@ -25,4 +25,9 @@ public class View {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    public View(Forum forum, User user) {
+        this.forum = forum;
+        this.user = user;
+    }
+
 }
