@@ -9,7 +9,7 @@ import com.autiwomen.auti_women.security.repositories.UserRepository;
 import com.autiwomen.auti_women.security.models.User;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -31,11 +31,10 @@ public class ViewService {
         Forum forum = forumRepository.findById(forumId)
                 .orElseThrow(() -> new RecordNotFoundException("Forum not found"));
 
-        List<View> existingViews = viewRepository.findViewByUserAndForum(user, forum);
-        if (!existingViews.isEmpty()) {
-            return;
+        Optional<View> existingView = viewRepository.findViewByUserAndForum(user, forum);
+        if (existingView.isPresent()) {
+            throw new IllegalStateException("User has already viewed this forum");
         }
-
         View view = toView(user, forum);
         viewRepository.save(view);
     }
@@ -53,8 +52,7 @@ public class ViewService {
         Forum forum = forumRepository.findById(forumId)
                 .orElseThrow(() -> new RecordNotFoundException("Forum not found"));
 
-        List<View> views = viewRepository.findViewByUserAndForum(user, forum);
-        return !views.isEmpty();
+        return viewRepository.findViewByUserAndForum(user, forum).isPresent();
     }
 
     private View toView(User user, Forum forum) {

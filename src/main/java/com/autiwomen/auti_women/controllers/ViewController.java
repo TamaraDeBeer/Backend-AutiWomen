@@ -15,19 +15,21 @@ public class ViewController {
     }
 
     @PostMapping("/users/{username}/views/add")
-    public void addViewToForum(@PathVariable Long forumId, @PathVariable String username) {
+    public ResponseEntity<Void> addViewToForum(@PathVariable Long forumId, @PathVariable String username) {
         viewService.addViewToForum(forumId, username);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/views/count")
     public ResponseEntity<Integer> getViewCountByForumId(@PathVariable("forumId") Long forumId) {
-        return ResponseEntity.ok(viewService.getViewCountByForumId(forumId));
+        int viewCount = viewService.getViewCountByForumId(forumId);
+        return ResponseEntity.ok().body(viewCount);
     }
 
     @GetMapping("/users/{username}/views/check")
     public ResponseEntity<Boolean> checkUserView(@PathVariable Long forumId, @PathVariable String username) {
         boolean hasViewed = viewService.hasUserViewedPost(username, forumId);
-        return ResponseEntity.ok(hasViewed);
+        return ResponseEntity.ok().body(hasViewed);
     }
 
 }

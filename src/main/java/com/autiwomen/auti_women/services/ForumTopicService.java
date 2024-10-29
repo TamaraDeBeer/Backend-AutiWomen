@@ -1,5 +1,6 @@
 package com.autiwomen.auti_women.services;
 
+import com.autiwomen.auti_women.exceptions.RecordNotFoundException;
 import com.autiwomen.auti_women.models.Forum;
 import com.autiwomen.auti_women.repositories.ForumRepository;
 import org.springframework.stereotype.Service;
@@ -16,7 +17,6 @@ public class ForumTopicService {
         this.forumRepository = forumRepository;
     }
 
-
     public List<Forum> getForumsByTopic(String topic) {
         List<Forum> forums = forumRepository.findAll();
         List<Forum> forumsByTopic = new ArrayList<>();
@@ -24,6 +24,9 @@ public class ForumTopicService {
             if (forum.getTopic().equals(topic)) {
                 forumsByTopic.add(forum);
             }
+        }
+        if (forumsByTopic.isEmpty()) {
+            throw new RecordNotFoundException("No forums found for this topic");
         }
         return forumsByTopic;
     }

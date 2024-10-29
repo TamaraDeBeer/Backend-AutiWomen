@@ -46,7 +46,11 @@ public class LikeService {
                 .orElseThrow(() -> new RecordNotFoundException("Forum not found"));
 
         Optional<Like> like = likeRepository.findLikeByUserAndForum(user, forum);
-        like.ifPresent(likeRepository::delete);
+        if (like.isPresent()) {
+            likeRepository.delete(like.get());
+        } else {
+            throw new RecordNotFoundException("Like not found for user and forum");
+        }
     }
 
     public int getLikeCountByForumId(Long forumId) {
@@ -64,6 +68,5 @@ public class LikeService {
 
         return likeRepository.findLikeByUserAndForum(user, forum).isPresent();
     }
-
 
 }

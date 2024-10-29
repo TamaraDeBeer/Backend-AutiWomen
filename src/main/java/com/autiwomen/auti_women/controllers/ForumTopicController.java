@@ -25,24 +25,24 @@ public class ForumTopicController {
     @GetMapping("/forums/topic/{topic}")
     public ResponseEntity<List<Forum>> getForumsByTopic(@PathVariable String topic) {
         List<Forum> forumsByTopic = forumTopicService.getForumsByTopic(topic);
-        return ResponseEntity.ok(forumsByTopic);
+        return ResponseEntity.ok().body(forumsByTopic);
     }
 
     @GetMapping("/forums/unique-topics")
     public ResponseEntity<Set<String>> getUniqueTopics() {
         Set<String> uniqueTopics = forumTopicService.getUniqueTopics();
-        return ResponseEntity.ok(uniqueTopics);
+        return ResponseEntity.ok().body(uniqueTopics);
     }
 
     @GetMapping("/forums/sorted-unique-topics")
     public ResponseEntity<List<String>> getSortedUniqueTopics() {
         List<String> sortedUniqueTopics = forumTopicService.getSortedUniqueTopics();
-        return ResponseEntity.ok(sortedUniqueTopics);
+        return ResponseEntity.ok().body(sortedUniqueTopics);
     }
 
     @GetMapping("/topics/frequency")
     public ResponseEntity<Map<String, Integer>> getTopicFrequency() {
-        return ResponseEntity.ok(forumTopicService.getTopicFrequency());
+        return ResponseEntity.ok().body(forumTopicService.getTopicFrequency());
     }
 
 }

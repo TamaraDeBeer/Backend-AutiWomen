@@ -15,25 +15,27 @@ public class LikeController {
     }
 
     @PostMapping("/users/{username}/likes/add")
-    public void addLikeToForum(@PathVariable Long forumId, @PathVariable String username) {
+    public ResponseEntity<Void> addLikeToForum(@PathVariable Long forumId, @PathVariable String username) {
         likeService.addLikeToForum(forumId, username);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/users/{username}/likes/remove")
-    public void removeLikeFromForum(@PathVariable Long forumId, @PathVariable String username) {
+    public ResponseEntity<Void> removeLikeFromForum(@PathVariable Long forumId, @PathVariable String username) {
         likeService.removeLikeFromForum(forumId, username);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/likes/count")
     public ResponseEntity<Integer> getLikeCountByForumId(@PathVariable("forumId") Long forumId) {
         int likeCount = likeService.getLikeCountByForumId(forumId);
-        return ResponseEntity.ok(likeCount);
+        return ResponseEntity.ok().body(likeCount);
     }
 
     @GetMapping("/users/{username}/likes/check")
     public ResponseEntity<Boolean> checkUserLike(@PathVariable Long forumId, @PathVariable String username) {
         boolean hasLiked = likeService.hasUserLikedPost(username, forumId);
-        return ResponseEntity.ok(hasLiked);
+        return ResponseEntity.ok().body(hasLiked);
     }
 
 }
