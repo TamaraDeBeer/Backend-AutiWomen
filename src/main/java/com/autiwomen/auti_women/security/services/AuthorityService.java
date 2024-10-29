@@ -32,7 +32,7 @@ public class AuthorityService {
             UserDto userDto = fromUser(user);
             return userDto.getAuthorities();
         } else {
-            throw new UsernameNotFoundException(username);
+            throw new UsernameNotFoundException("User not found"+ username);
         }
     }
 
@@ -60,7 +60,7 @@ public class AuthorityService {
             }
             fromUser(user);
         } else {
-            throw new UsernameNotFoundException(username);
+            throw new UsernameNotFoundException("User not found"+ username);
         }
     }
 
@@ -87,7 +87,7 @@ public class AuthorityService {
                 throw new RecordNotFoundException("Authority not found: " + oldAuthority);
             }
         } else {
-            throw new UsernameNotFoundException(username);
+            throw new UsernameNotFoundException("User not found"+ username);
         }
     }
 
@@ -102,9 +102,11 @@ public class AuthorityService {
             if (authorityToRemove.isPresent()) {
                 user.removeAuthority(authorityToRemove.get());
                 userRepository.save(user);
+            } else {
+                throw new RecordNotFoundException("Authority not found: " + authority);
             }
         } else {
-            throw new UsernameNotFoundException(username);
+            throw new UsernameNotFoundException("User not found"+ username);
         }
     }
 

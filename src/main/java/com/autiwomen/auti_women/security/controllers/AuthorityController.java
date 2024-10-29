@@ -34,13 +34,9 @@ public class AuthorityController {
 
     @PostMapping("/{username}")
     public ResponseEntity<Object> addUserAuthority(@PathVariable("username") String username, @RequestBody Map<String, Object> fields) {
-        try {
-            String authorityName = (String) fields.get("authority");
-            authorityService.addUserAuthority(username, authorityName);
-            return ResponseEntity.ok().body(authorityService.getUserAuthorities(username));
-        } catch (Exception ex) {
-            throw new BadRequestException("You cannot add multiple authorities to a user, first delete the current authority");
-        }
+        String authorityName = (String) fields.get("authority");
+        authorityService.addUserAuthority(username, authorityName);
+        return ResponseEntity.ok().body(authorityService.getUserAuthorities(username));
     }
 
     @PutMapping("/{username}")
