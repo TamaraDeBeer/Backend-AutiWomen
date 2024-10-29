@@ -1,6 +1,5 @@
 package com.autiwomen.auti_women.services;
 
-
 import com.autiwomen.auti_women.dtos.forums.ForumDto;
 import com.autiwomen.auti_women.dtos.forums.ForumInputDto;
 import com.autiwomen.auti_women.exceptions.RecordNotFoundException;
@@ -130,6 +129,18 @@ public class ForumService {
         }).collect(Collectors.toSet());
     }
 
+    private Set<ForumDto> convertForumsToDtos(Set<Forum> forums) {
+        Set<ForumDto> forumDtos = new HashSet<>();
+        for (Forum forum : forums) {
+            if (forum != null) {
+                updateForumCounts(forum);
+                ForumDto forumDto = fromForum(forum);
+                forumDtos.add(forumDto);
+            }
+        }
+        return forumDtos;
+    }
+
     public Set<ForumDto> getLikedForumsByUsername(String username) {
         User user = userRepository.findById(username)
                 .orElseThrow(() -> new RecordNotFoundException("User not found"));
@@ -137,15 +148,7 @@ public class ForumService {
         if (likedForums.isEmpty()) {
             throw new RecordNotFoundException("No liked forums found for user: " + username);
         }
-        Set<ForumDto> likedForumDtos = new HashSet<>();
-        for (Forum forum : likedForums) {
-            if (forum != null) {
-                updateForumCounts(forum);
-                ForumDto forumDto = fromForum(forum);
-                likedForumDtos.add(forumDto);
-            }
-        }
-        return likedForumDtos;
+        return convertForumsToDtos(likedForums);
     }
 
     public Set<ForumDto> getViewedForumsByUsername(String username) {
@@ -155,15 +158,7 @@ public class ForumService {
         if (viewedForums.isEmpty()) {
             throw new RecordNotFoundException("No viewed forums found for user: " + username);
         }
-        Set<ForumDto> viewedForumDtos = new HashSet<>();
-        for (Forum forum : viewedForums) {
-            if (forum != null) {
-                updateForumCounts(forum);
-                ForumDto forumDto = fromForum(forum);
-                viewedForumDtos.add(forumDto);
-            }
-        }
-        return viewedForumDtos;
+        return convertForumsToDtos(viewedForums);
     }
 
     public Set<ForumDto> getCommentedForumsByUsername(String username) {
@@ -173,15 +168,7 @@ public class ForumService {
         if (commentedForums.isEmpty()) {
             throw new RecordNotFoundException("No commented forums found for user: " + username);
         }
-        Set<ForumDto> commentedForumDtos = new HashSet<>();
-        for (Forum forum : commentedForums) {
-            if (forum != null) {
-                updateForumCounts(forum);
-                ForumDto forumDto = fromForum(forum);
-                commentedForumDtos.add(forumDto);
-            }
-        }
-        return commentedForumDtos;
+        return convertForumsToDtos(commentedForums);
     }
 
     public List<ForumDto> getForumsSortedByLikes() {
