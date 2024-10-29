@@ -40,23 +40,23 @@ public class CommentController {
     @GetMapping("/comments")
     public ResponseEntity<List<CommentDto>> getAllComments() {
         List<CommentDto> comments = commentService.getAllComments();
-        return ResponseEntity.ok(comments);
+        return ResponseEntity.ok().body(comments);
     }
 
     @GetMapping("/{forumId}/comments")
     public ResponseEntity<List<CommentDto>> getCommentsByForumId(@PathVariable("forumId") Long forumId) {
         List<CommentDto> comments = commentService.getCommentsByForumId(forumId);
-        return ResponseEntity.ok(comments);
+        return ResponseEntity.ok().body(comments);
     }
 
     @GetMapping("/users/{username}/comments")
     public ResponseEntity<List<Comment>> getCommentsByUser(@PathVariable("username") String username) {
-        return ResponseEntity.ok(commentService.getCommentsByUsername(username));
+        return ResponseEntity.ok().body(commentService.getCommentsByUsername(username));
     }
 
     @GetMapping("/{forumId}/comments/count")
     public ResponseEntity<Integer> getCommentCountByForumId(@PathVariable("forumId") Long forumId) {
-        return ResponseEntity.ok(commentService.getCommentCountByForumId(forumId));
+        return ResponseEntity.ok().body(commentService.getCommentCountByForumId(forumId));
     }
 
     @PutMapping("/{forumId}/comments/{commentId}")

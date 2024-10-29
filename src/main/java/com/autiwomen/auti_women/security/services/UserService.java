@@ -1,5 +1,6 @@
 package com.autiwomen.auti_women.security.services;
 
+import com.autiwomen.auti_women.exceptions.BadRequestException;
 import com.autiwomen.auti_women.exceptions.RecordNotFoundException;
 import com.autiwomen.auti_women.repositories.ReviewRepository;
 import com.autiwomen.auti_women.security.dtos.user.UserUpdateDto;
@@ -14,7 +15,6 @@ import com.autiwomen.auti_women.security.utils.RandomStringGenerator;
 import com.autiwomen.auti_women.services.ProfileService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
@@ -63,7 +63,7 @@ public class UserService {
         if (user.isPresent()) {
             dto = toUserOutputDto(user.get());
         } else {
-            throw new UsernameNotFoundException(username);
+            throw new RecordNotFoundException("User not found: "+ username);
         }
         return dto;
     }
@@ -77,10 +77,10 @@ public class UserService {
                 userRepository.save(user);
                 fromUser(user);
             } else {
-                throw new IllegalArgumentException("Old password is incorrect");
+                throw new BadRequestException("Old password is incorrect");
             }
         } else {
-            throw new RecordNotFoundException("No user found with username: " + username);
+            throw new RecordNotFoundException("User not found: " + username);
         }
     }
 
@@ -98,7 +98,7 @@ public class UserService {
                 userRepository.save(user);
             }
         } else {
-            throw new UsernameNotFoundException(username);
+            throw new RecordNotFoundException("User not found: "+ username);
         }
     }
 
@@ -109,7 +109,7 @@ public class UserService {
             user.setProfilePictureUrl(null);
             userRepository.save(user);
         } else {
-            throw new UsernameNotFoundException(username);
+            throw new RecordNotFoundException("User not found: "+ username);
         }
     }
 
@@ -122,13 +122,13 @@ public class UserService {
             authorityRepository.deleteAll(user.getAuthorities());
             userRepository.delete(user);
         } else {
-            throw new UsernameNotFoundException(username);
+            throw new RecordNotFoundException("User not found: "+ username);
         }
     }
 
     public String createUserWithImage(UserInputDto userInputDto, MultipartFile file) throws IOException {
         if (userInputDto.getPassword() == null || userInputDto.getPassword().isEmpty()) {
-            throw new IllegalArgumentException("Password cannot be null or empty");
+            throw new BadRequestException("Password cannot be null or empty");
         }
         if (userRepository.existsById(userInputDto.getUsername())) {
             throw new IllegalArgumentException("Username already exists");
@@ -178,7 +178,7 @@ public class UserService {
             dto.setProfilePictureUrl(user.getProfilePictureUrl());
             return dto;
         } else {
-            throw new UsernameNotFoundException(username);
+            throw new RecordNotFoundException("User not found: "+ username);
         }
     }
 
@@ -206,7 +206,7 @@ public class UserService {
             }
             userRepository.save(user);
         } else {
-            throw new UsernameNotFoundException(username);
+            throw new RecordNotFoundException("User not found: "+ username);
         }
     }
 
@@ -216,7 +216,7 @@ public class UserService {
         if (user.isPresent()) {
             return fromUser(user.get());
         } else {
-            throw new UsernameNotFoundException(username);
+            throw new RecordNotFoundException("User not found: "+ username);
         }
     }
 

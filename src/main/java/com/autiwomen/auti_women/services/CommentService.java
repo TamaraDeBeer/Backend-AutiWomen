@@ -81,6 +81,9 @@ public class CommentService {
 
     public List<CommentDto> getCommentsByForumId(Long forumId) {
         List<Comment> comments = commentRepository.findByForumId(forumId);
+        if (comments.isEmpty()) {
+            throw new RecordNotFoundException("No comments found for forum ID: " + forumId);
+        }
         return comments.stream().map(comment -> {
             User user = comment.getUser();
             if (user != null) {
@@ -103,8 +106,7 @@ public class CommentService {
     public int getCommentCountByForumId(Long forumId) {
         Forum forum = forumRepository.findById(forumId).orElseThrow(() -> new RecordNotFoundException("Forum not found"));
         List<Comment> comments = forum.getCommentsList();
-        int commentCount = comments.size();
-        return commentCount;
+        return comments.size();
     }
 
     @Transactional

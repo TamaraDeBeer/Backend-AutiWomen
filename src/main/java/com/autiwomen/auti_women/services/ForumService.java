@@ -14,8 +14,6 @@ import com.autiwomen.auti_women.security.dtos.user.UserDto;
 import com.autiwomen.auti_women.security.repositories.UserRepository;
 import com.autiwomen.auti_women.security.models.User;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,8 +25,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class ForumService {
-
-    private static final Logger logger = LoggerFactory.getLogger(ForumService.class);
 
     private final ForumRepository forumRepository;
     private final UserRepository userRepository;
@@ -62,13 +58,13 @@ public class ForumService {
             updateForumCounts(forum);
             return fromForum(forum);
         } else {
-            throw new RecordNotFoundException("Er is geen forum gevonden met id: " + id);
+            throw new RecordNotFoundException("No forum found with id: " + id);
         }
     }
 
     public ForumDto createForum(ForumInputDto forumInputDto, String username) {
         User user = userRepository.findById(username)
-                .orElseThrow(() -> new RecordNotFoundException("User not found"));
+                .orElseThrow(() -> new RecordNotFoundException("User not found: " + username));
 
         Forum forum = toForum(forumInputDto);
         forum.setDate(String.valueOf(LocalDate.now()));
@@ -95,7 +91,7 @@ public class ForumService {
     public ForumDto updateForum(@PathVariable Long id, @RequestBody ForumDto updateForum) {
         Optional<Forum> forum = forumRepository.findById(id);
         if (forum.isEmpty()) {
-            throw new RecordNotFoundException("Er is geen forum gevonden met id: " + id);
+            throw new RecordNotFoundException("No forum found with id: " + id);
         } else {
             Forum forum1 = forum.get();
             forum1.setTitle(updateForum.getTitle());
@@ -114,13 +110,16 @@ public class ForumService {
             commentRepository.deleteAllByForumId(id);
             forumRepository.deleteById(id);
         } else {
-            throw new RecordNotFoundException("Forum not found with id: " + id);
+            throw new RecordNotFoundException("No forum found with id: " + id);
         }
     }
 
     public Set<ForumDto> getForumsByUsername(String username) {
         User user = userRepository.findById(username).orElseThrow(() -> new RecordNotFoundException("User not found"));
         Set<Forum> forums = new HashSet<>(forumRepository.findByUser(user));
+        if (forums.isEmpty()) {
+            throw new RecordNotFoundException("No forums found for user: " + username);
+        }
         return forums.stream().map(forum -> {
             if (forum.getUser() != null) {
                 forum.setName(forum.getUser().getUsername());
@@ -131,11 +130,13 @@ public class ForumService {
         }).collect(Collectors.toSet());
     }
 
-
     public Set<ForumDto> getLikedForumsByUsername(String username) {
         User user = userRepository.findById(username)
                 .orElseThrow(() -> new RecordNotFoundException("User not found"));
         Set<Forum> likedForums = likeRepository.findLikedForumsByUser(user);
+        if (likedForums.isEmpty()) {
+            throw new RecordNotFoundException("No liked forums found for user: " + username);
+        }
         Set<ForumDto> likedForumDtos = new HashSet<>();
         for (Forum forum : likedForums) {
             if (forum != null) {
@@ -151,6 +152,9 @@ public class ForumService {
         User user = userRepository.findById(username)
                 .orElseThrow(() -> new RecordNotFoundException("User not found"));
         Set<Forum> viewedForums = viewRepository.findViewedForumsByUser(user);
+        if (viewedForums.isEmpty()) {
+            throw new RecordNotFoundException("No viewed forums found for user: " + username);
+        }
         Set<ForumDto> viewedForumDtos = new HashSet<>();
         for (Forum forum : viewedForums) {
             if (forum != null) {
@@ -166,8 +170,10 @@ public class ForumService {
         User user = userRepository.findById(username)
                 .orElseThrow(() -> new RecordNotFoundException("User not found"));
         Set<Forum> commentedForums = commentRepository.findCommentedForumsByUser(user);
+        if (commentedForums.isEmpty()) {
+            throw new RecordNotFoundException("No commented forums found for user: " + username);
+        }
         Set<ForumDto> commentedForumDtos = new HashSet<>();
-
         for (Forum forum : commentedForums) {
             if (forum != null) {
                 updateForumCounts(forum);
@@ -197,9 +203,7 @@ public class ForumService {
     }
 
     public List<ForumDto> searchForums(String title) {
-        logger.info("Searching forums with title containing: {}", title);
         List<Forum> forums = forumRepository.findAllByTitleContainingIgnoreCase(title);
-        logger.info("Found {} forums", forums.size());
         return forums.stream()
                 .map(this::fromForum)
                 .collect(Collectors.toList());

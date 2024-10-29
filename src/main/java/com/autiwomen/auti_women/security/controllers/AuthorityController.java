@@ -1,6 +1,5 @@
 package com.autiwomen.auti_women.security.controllers;
 
-import com.autiwomen.auti_women.exceptions.BadRequestException;
 import com.autiwomen.auti_women.security.dtos.user.UserDto;
 import com.autiwomen.auti_women.security.models.Authority;
 import com.autiwomen.auti_women.security.services.AuthorityService;
@@ -40,9 +39,9 @@ public class AuthorityController {
     }
 
     @PutMapping("/{username}")
-    public ResponseEntity<Void> updateUserAuthority(@PathVariable("username") String username, @RequestBody UserDto userDto) {
+    public ResponseEntity<Object> updateUserAuthority(@PathVariable("username") String username, @RequestBody UserDto userDto) {
         authorityService.updateUserAuthority(username, userDto.getOldAuthority(), userDto.getNewAuthority());
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(authorityService.getUserAuthorities(username));
     }
 
     @DeleteMapping("/{username}/{authority}")

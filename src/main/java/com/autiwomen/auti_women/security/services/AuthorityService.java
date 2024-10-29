@@ -1,5 +1,6 @@
 package com.autiwomen.auti_women.security.services;
 
+import com.autiwomen.auti_women.exceptions.BadRequestException;
 import com.autiwomen.auti_women.exceptions.RecordNotFoundException;
 import com.autiwomen.auti_women.security.dtos.user.UserDto;
 import com.autiwomen.auti_women.security.models.Authority;
@@ -7,7 +8,6 @@ import com.autiwomen.auti_women.security.models.User;
 import com.autiwomen.auti_women.security.repositories.AuthorityRepository;
 import com.autiwomen.auti_women.security.repositories.UserRepository;
 import jakarta.transaction.Transactional;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,7 +32,7 @@ public class AuthorityService {
             UserDto userDto = fromUser(user);
             return userDto.getAuthorities();
         } else {
-            throw new UsernameNotFoundException("User not found"+ username);
+            throw new RecordNotFoundException("User not found: "+ username);
         }
     }
 
@@ -56,11 +56,11 @@ public class AuthorityService {
                 user.addAuthority(new Authority(username, authority));
                 userRepository.save(user);
             } else {
-                throw new IllegalArgumentException("User already has this authority");
+                throw new BadRequestException("User already has this authority");
             }
             fromUser(user);
         } else {
-            throw new UsernameNotFoundException("User not found"+ username);
+            throw new RecordNotFoundException("User not found: "+ username);
         }
     }
 
@@ -87,7 +87,7 @@ public class AuthorityService {
                 throw new RecordNotFoundException("Authority not found: " + oldAuthority);
             }
         } else {
-            throw new UsernameNotFoundException("User not found"+ username);
+            throw new RecordNotFoundException("User not found: "+ username);
         }
     }
 
@@ -106,7 +106,7 @@ public class AuthorityService {
                 throw new RecordNotFoundException("Authority not found: " + authority);
             }
         } else {
-            throw new UsernameNotFoundException("User not found"+ username);
+            throw new RecordNotFoundException("User not found: "+ username);
         }
     }
 

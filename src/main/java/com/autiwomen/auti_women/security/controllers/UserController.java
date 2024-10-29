@@ -52,10 +52,10 @@ public class UserController {
         outputDto.setUsername(newUsername);
         outputDto.setEmail(userInputDto.getEmail());
 
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{username}")
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{username}")
                 .buildAndExpand(newUsername).toUri();
 
-        return ResponseEntity.created(location).body(outputDto);
+        return ResponseEntity.created(uri).body(outputDto);
     }
 
     @PutMapping(value = "/users/{username}/password")
