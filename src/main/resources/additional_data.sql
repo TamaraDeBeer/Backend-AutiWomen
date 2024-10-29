@@ -46,7 +46,7 @@ INSERT INTO reviews (id, username, review, name, dob, autism_diagnoses_year, pro
         (6005, 'Sarabi', 'Heel fijn om te kunnen delen en van mede-autis hun inzichten te krijgen. Ik heb al veel tips gekregen waar ik iets mee kan.', 'Sarabi', '1988-02-09', 2019, 'http://localhost:1991/images/Sarabi.jpg', '2024-10-07'),
         (6006, 'Tiana', 'Ik vind het zo een fijne website, naast wat je ermee kan is het zo mooi gemaakt en groen is ook mijn favoriete kleur!', 'Tiana', '1955-09-15', 1980, 'http://localhost:1991/images/Tiana.jpg', '2024-10-09');
 
--- -- Insert a forum
+-- Insert a forum
 INSERT INTO forums (id, name, age, title, text, date, topic, user_id)
  VALUES (1000, 'Tamara', '1991-07-06', 'Verdriet',
          'Ik ben in het afgelopen jaar mijn vader en opa verloren. Mijn vader kreeg 8 jaar geleden darmkanker. Opeens kon hij niet meer poepen en hij eindigde in het ziekenhuis, toch wisten ze niet wat er was. Ik was niet in het land, maar op aftand vrees ik de K al. En ja de K was waar: darmkanker. Hij was bijna overleden in het Gooi Moord maar gelukkig had mijn moeder ervaring (ze had zelf borstkanker met uitzaaiingen toen ze 37 jaar jong was) en eiste ze verplaatsing naar het AVL ziekenhuis. Ik was weer in het land en ging met ambulance met mijn vader naar het AVL. Daar werd hij vrij direct meegenomen naar de operatietafel (hij zou anders de nacht niet overleefd hebben). En daarna stoma, chemo, HiPec Operatie, Chemo en alles leek wel. Maar na een jaar was hij opeens terminaal. Iets meer dan 5 jaar streed hij en onderging chemo maar uiteindelijk verloor hij de strijd. De laatste paar maanden waren echt erg en er volgde zelfs een opluchting toen hij op 1 januari 2024 stierf. Pff het werd een zware tijd en toen op 29 februari kreeg mijn (gezonde) opa een zware CVA en herstelde niet meer en stierf op 17 maart. Toevallig was ik nog bij mijn opa & oma op 28 februari en dat was een hele gezellige avond. Ik had gewild dat hij met de CVA was overlijden. Ik kom het niet aan om hem daarna te zien, ik was er bijna elke dag maar ik kon alleen maar huilen. Het was mijn opa, maar het was mijn opa niet… Ik schrijf dit niet om advies te vragen, maar deel graag wat jullie meemaken omtrent rouw.',
@@ -83,7 +83,7 @@ INSERT INTO forums (id, name, age, title, text, date, topic, user_id)
          '06-07-2024', 'Overige', 'Moana'),
         (1011, 'Ariel', '1958-10-25', 'Dit is een test forum', 'banaan', '06-06-2024', 'Werk', 'Ariel');
 
--- -- Insert a comment
+-- Insert a comment
 INSERT INTO comments (id, forum_id, name, text, date, user_id)
  VALUES (2000, 1003, 'Moana',
          'Ik herken heel erg wat je zegt. Tegenwoordig beloon ik mezelf door mijn favoriete podcast op te zetten en gewoon gaan (soms wel met lang uitstelgedrag hoor maar anders mag ik van mezelf de podcast niet luisteren).',
@@ -129,7 +129,7 @@ INSERT INTO comments (id, forum_id, name, text, date, user_id)
          'Heb je wel eens mee gelopen op een basisschool? Ik zou je aanraden om een paar weekjes mee te lopen op verschillende basisscholen om te ontdekken hoe je met de prikkels omgaat.',
          '08-10-2024', 'Tiana');
 
--- -- Insert a like
+-- Insert a like
 INSERT INTO likes (forum_id, user_id)
  VALUES (1000, 'Ariel'),
         (1001, 'Ariel'),
@@ -176,7 +176,7 @@ INSERT INTO likes (forum_id, user_id)
         (1007, 'Moana'),
         (1009, 'Moana');
 
--- -- Insert a view
+-- Insert a view
 INSERT INTO views (forum_id, user_id)
  VALUES (1000, 'Ariel'),
         (1001, 'Ariel'),
