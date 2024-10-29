@@ -31,18 +31,18 @@ public class ReviewController {
 
     @GetMapping("/{username}")
     public ResponseEntity<ReviewDto> getReviewByUsername(@PathVariable("username") String username) {
-        return ResponseEntity.ok(reviewService.getReviewByUsername(username));
+        return ResponseEntity.ok().body(reviewService.getReviewByUsername(username));
     }
 
     @PutMapping("/{username}")
     public ResponseEntity<ReviewDto> updateReview(@PathVariable("username") String username, @RequestBody ReviewInputDto reviewInputDto) {
-        return ResponseEntity.ok(reviewService.updateReview(username, reviewInputDto));
+        return ResponseEntity.ok().body(reviewService.updateReview(username, reviewInputDto));
     }
 
     @GetMapping
     public ResponseEntity<List<ReviewDto>> getAllReviews() {
         List<ReviewDto> reviews = reviewService.getAllReviews();
-        return ResponseEntity.ok(reviews);
+        return ResponseEntity.ok().body(reviews);
     }
 
     @DeleteMapping("/{id}")

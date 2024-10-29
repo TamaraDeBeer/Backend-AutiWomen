@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,7 +36,6 @@ public class ReviewService {
         review.setProfilePictureUrl(user.getProfilePictureUrl());
         review.setDate(String.valueOf(LocalDate.now()));
         reviewRepository.save(review);
-
         return fromReview(review);
     }
 
@@ -49,11 +47,7 @@ public class ReviewService {
 
     public ReviewDto getReviewByUsername(String username) {
         User user = userRepository.findById(username).orElseThrow(() -> new RecordNotFoundException("User not found"));
-        Optional<Review> optionalReview = reviewRepository.findByUser(user);
-        if (optionalReview.isEmpty()) {
-            return new ReviewDto();
-        }
-        Review review = optionalReview.get();
+        Review review = reviewRepository.findByUser(user).orElseThrow(() -> new RecordNotFoundException("Review not found"));
         return fromReview(review);
     }
 

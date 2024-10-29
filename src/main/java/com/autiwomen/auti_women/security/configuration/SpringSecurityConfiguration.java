@@ -76,9 +76,9 @@ public class SpringSecurityConfiguration {
                         .requestMatchers(HttpMethod.PUT, "/users/{username}/profile-data").hasAnyRole("ADMIN", "USER")
                         .requestMatchers(HttpMethod.DELETE, "/users/{username}/profile-picture").hasAnyRole("ADMIN", "USER")
 
-                        .requestMatchers(HttpMethod.POST, "/users/profiles/{username}").hasAnyRole("ADMIN", "USER")
-                        .requestMatchers(HttpMethod.GET, "/users/profiles/{username}").hasAnyRole("ADMIN", "USER")
-                        .requestMatchers(HttpMethod.PUT, "/users/profiles/{username}").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.POST, "/profiles/{username}").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.GET, "/profiles/{username}").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.PUT, "/profiles/{username}").hasAnyRole("ADMIN", "USER")
 
                         .requestMatchers(HttpMethod.POST, "/reviews/{username}").hasAnyRole("ADMIN", "USER")
                         .requestMatchers(HttpMethod.GET, "/reviews/{username}").hasAnyRole("ADMIN", "USER")
@@ -113,7 +113,7 @@ public class SpringSecurityConfiguration {
                         .requestMatchers(HttpMethod.DELETE, "/authorities/{username}/{authority}").hasRole("ADMIN")
 
 
-                        .requestMatchers(HttpMethod.GET, "/users/profiles").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/profiles").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/reviews/{id}").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/forums/comments").hasRole("ADMIN")
 

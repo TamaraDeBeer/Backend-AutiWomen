@@ -11,7 +11,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/users/profiles")
+@RequestMapping("/profiles")
 public class ProfileController {
 
     private final ProfileService profileService;
@@ -31,18 +31,18 @@ public class ProfileController {
 
     @GetMapping("/{username}")
     public ResponseEntity<ProfileDto> getProfileByUsername(@PathVariable("username") String username) {
-        return ResponseEntity.ok(profileService.getProfileByUsername(username));
+        return ResponseEntity.ok().body(profileService.getProfileByUsername(username));
     }
 
     @PutMapping("/{username}")
     public ResponseEntity<ProfileDto> updateProfile(@PathVariable("username") String username, @RequestBody ProfileInputDto profileInputDto) {
-        return ResponseEntity.ok(profileService.updateProfile(username, profileInputDto));
+        return ResponseEntity.ok().body(profileService.updateProfile(username, profileInputDto));
     }
 
     @GetMapping
     public ResponseEntity<List<ProfileDto>> getAllProfiles() {
         List<ProfileDto> profiles = profileService.getAllProfiles();
-        return ResponseEntity.ok(profiles);
+        return ResponseEntity.ok().body(profiles);
     }
 
 }
