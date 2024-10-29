@@ -2,9 +2,13 @@ package com.autiwomen.auti_women.models;
 
 import com.autiwomen.auti_women.security.models.User;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "reviews")
 public class Review {
@@ -25,70 +29,6 @@ public class Review {
     private String date;
 
     public Review() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public String getReview() {
-        return review;
-    }
-
-    public void setReview(String review) {
-        this.review = review;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public LocalDate getDob() {
-        return dob;
-    }
-
-    public void setDob(LocalDate dob) {
-        this.dob = dob;
-    }
-
-    public Integer getAutismDiagnosesYear() {
-        return autismDiagnosesYear;
-    }
-
-    public void setAutismDiagnosesYear(Integer autismDiagnosesYear) {
-        this.autismDiagnosesYear = autismDiagnosesYear;
-    }
-
-    public String getProfilePictureUrl() {
-        return profilePictureUrl;
-    }
-
-    public void setProfilePictureUrl(String profilePictureUrl) {
-        this.profilePictureUrl = profilePictureUrl;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
     }
 
 }

@@ -2,11 +2,15 @@ package com.autiwomen.auti_women.models;
 
 import com.autiwomen.auti_women.security.models.User;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "forums")
 public class Forum {
@@ -87,126 +91,6 @@ public class Forum {
     }
 
     public Forum() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getAge() {
-        return age;
-    }
-
-    public void setAge(String age) {
-        this.age = age;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
-
-    public String getLastReaction() {
-        return lastReaction;
-    }
-
-    public void setLastReaction(String lastReaction) {
-        this.lastReaction = lastReaction;
-    }
-
-    public int getLikesCount() {
-        return likesCount;
-    }
-
-    public void setLikesCount(int likesCount) {
-        this.likesCount = likesCount;
-    }
-
-    public int getViewsCount() {
-        return viewsCount;
-    }
-
-    public void setViewsCount(int viewsCount) {
-        this.viewsCount = viewsCount;
-    }
-
-    public int getCommentsCount() {
-        return commentsCount;
-    }
-
-    public void setCommentsCount(int commentsCount) {
-        this.commentsCount = commentsCount;
-    }
-
-    public List<Comment> getCommentsList() {
-        return commentsList;
-    }
-
-    public void setCommentsList(List<Comment> commentsList) {
-        this.commentsList = commentsList;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Set<Like> getLikes() {
-        return likes;
-    }
-
-    public void setLikes(Set<Like> likes) {
-        this.likes = likes;
-    }
-
-    public Set<View> getViews() {
-        return views;
-    }
-
-    public void setViews(Set<View> views) {
-        this.views = views;
-    }
-
-    public String getTopic() {
-        return topic;
-    }
-
-    public void setTopic(String topic) {
-        this.topic = topic;
     }
 
 

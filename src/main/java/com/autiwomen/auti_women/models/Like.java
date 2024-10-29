@@ -2,7 +2,11 @@ package com.autiwomen.auti_women.models;
 
 import com.autiwomen.auti_women.security.models.User;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "likes")
 public class Like {
@@ -24,30 +28,6 @@ public class Like {
 
     public Like(User user, Forum forum) {
         this.user = user;
-        this.forum = forum;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Forum getForum() {
-        return forum;
-    }
-
-    public void setForum(Forum forum) {
         this.forum = forum;
     }
 
