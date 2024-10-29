@@ -39,7 +39,7 @@ public class AuthorityController {
             authorityService.addUserAuthority(username, authorityName);
             return ResponseEntity.ok().body(authorityService.getUserAuthorities(username));
         } catch (Exception ex) {
-            throw new BadRequestException();
+            throw new BadRequestException("You cannot add multiple authorities to a user, first delete the current authority");
         }
     }
 

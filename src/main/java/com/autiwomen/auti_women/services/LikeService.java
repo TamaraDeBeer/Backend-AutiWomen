@@ -53,8 +53,7 @@ public class LikeService {
         Forum forum = forumRepository.findById(forumId)
                 .orElseThrow(() -> new RecordNotFoundException("Forum not found"));
         Set<Like> likes = forum.getLikes();
-        int likeCount = likes.size();
-        return likeCount;
+        return likes.size();
     }
 
     public boolean hasUserLikedPost(String username, Long forumId) {

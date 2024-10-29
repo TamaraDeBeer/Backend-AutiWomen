@@ -11,7 +11,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 @CrossOrigin
@@ -93,12 +92,10 @@ public class ForumController {
         return ResponseEntity.ok(sortedForums);
     }
 
-    @GetMapping("/forums/search/{title}")
-    public ResponseEntity<List<ForumDto>> searchForums(@PathVariable("title") String name) {
-        List<ForumDto> forumDtos = forumService.searchForums(name);
-        return ResponseEntity.ok(forumDtos);
+    @GetMapping(value = "/forums/search")
+    public ResponseEntity<List<ForumDto>> searchForums(@RequestParam("searchQuery") String searchQuery) {
+        List<ForumDto> forums = forumService.searchForums(searchQuery);
+        return ResponseEntity.ok(forums);
     }
-
-
 
 }

@@ -68,7 +68,7 @@ public class SpringSecurityConfiguration {
                         .requestMatchers(HttpMethod.GET, "/forums/{forumId}/likes/count").permitAll()
                         .requestMatchers(HttpMethod.GET, "/forums/{forumId}/views/count").permitAll()
                         .requestMatchers(HttpMethod.GET, "/users/{username}/image").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/forums/search/${searchQuery}").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/forums/search").permitAll()
 
                         .requestMatchers(HttpMethod.GET, "/users/{username}").hasAnyRole("ADMIN", "USER")
                         .requestMatchers(HttpMethod.PUT, "/users/{username}/password").hasAnyRole("ADMIN", "USER")
