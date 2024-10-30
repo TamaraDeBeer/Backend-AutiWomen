@@ -37,20 +37,13 @@ public class UserController {
         return ResponseEntity.ok().body(optionalUser);
     }
 
-    @PostMapping(value = "/register")
+    @PostMapping(value = "/register", consumes = "multipart/form-data")
     public ResponseEntity<UserOutputDto> createUser(@Valid @RequestPart("user") UserInputDto userInputDto,
                                                     @RequestPart(value = "file", required = false) MultipartFile file) throws IOException {
-        if (file != null) {
-            System.out.println("Received file: " + file.getOriginalFilename());
-        } else {
-            System.out.println("No file received");
-        }
-
         String newUsername = userService.createUserWithImage(userInputDto, file);
 
         UserOutputDto outputDto = new UserOutputDto();
         outputDto.setUsername(newUsername);
-        outputDto.setEmail(userInputDto.getEmail());
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{username}")
                 .buildAndExpand(newUsername).toUri();

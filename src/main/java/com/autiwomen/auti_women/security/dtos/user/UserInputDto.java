@@ -45,6 +45,7 @@ public class UserInputDto {
     public Integer autismDiagnosesYear;
 
     public MultipartFile photo;
+
     public String profilePictureUrl;
 
     private Set<Authority> authorities;

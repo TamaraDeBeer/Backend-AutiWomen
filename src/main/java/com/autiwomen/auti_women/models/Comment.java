@@ -18,6 +18,7 @@ public class Comment {
 
     @Column(length = 2000)
     private String text;
+
     private String date;
     private String age;
 
