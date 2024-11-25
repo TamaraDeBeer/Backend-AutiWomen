@@ -29,46 +29,46 @@ alt#F5C84C #F5C84C99 User not found
     UserRepository -> LikeService : null
     LikeService -> LikeController : throw RecordNotFoundException("User not found")
     LikeController -> User : ResponseEntity(HttpStatus.NOT_FOUND)
+else #F8EAD9 User found
+    UserRepository -> LikeService : User
+    deactivate UserRepository
+
+    LikeService -> ForumRepository : findById(forumId)
+    activate ForumRepository #7AC37A
+
+    alt#F5C84C #F5C84C99 Forum not found
+        ForumRepository -> LikeService : null
+        LikeService -> LikeController : throw RecordNotFoundException("Forum not found")
+        LikeController -> User : ResponseEntity(HttpStatus.NOT_FOUND)
+    else #F8EAD9 Forum found
+        ForumRepository -> LikeService : Forum
+        deactivate ForumRepository
+
+        LikeService -> LikeRepository : findLikeByUserAndForum(user, forum)
+        activate LikeRepository #7AC37A
+
+        alt#F5C84C #F5C84C99 UserLike already exists
+            LikeRepository -> LikeService : Like
+            LikeService -> LikeController : throw IllegalStateException("Like already exists")
+            LikeController -> User : ResponseEntity(HttpStatus.CONFLICT)
+        else #F8EAD9 UserLike doesn't exist
+            LikeRepository -> LikeService : new Like (user, forum)
+            deactivate LikeRepository
+
+            LikeService -> LikeRepository : save(Like)
+            activate LikeRepository #7AC37A
+
+            LikeRepository -> LikeService : Like
+            deactivate LikeRepository
+
+            LikeService -> LikeController : LikeDto
+            deactivate LikeService
+
+            LikeController -> User : ResponseEntity(HttpStatus.OK)
+        end
+    end
 end
 
-UserRepository -> LikeService : User
-deactivate UserRepository
-
-LikeService -> ForumRepository : findById(forumId)
-activate ForumRepository #7AC37A
-
-alt#F5C84C #F5C84C99 Forum not found
-    ForumRepository -> LikeService : null
-    LikeService -> LikeController : throw RecordNotFoundException("Forum not found")
-    LikeController -> User : ResponseEntity(HttpStatus.NOT_FOUND)
-end
-
-ForumRepository -> LikeService : Forum
-deactivate ForumRepository
-
-LikeService -> LikeRepository : findLikeByUserAndForum(user, forum)
-activate LikeRepository #7AC37A
-
-alt#F5C84C #F5C84C99 UserLike already exists
-    LikeRepository -> LikeService : Like
-    LikeService -> LikeController : throw IllegalStateException("Like already exists")
-    LikeController -> User : ResponseEntity(HttpStatus.CONFLICT)
-end
-
-LikeRepository -> LikeService : new Like (user, forum)
-deactivate LikeRepository
-
-LikeService -> LikeRepository : save(Like)
-activate LikeRepository #7AC37A
-
-LikeRepository -> LikeService : Like
-deactivate LikeRepository
-
-LikeService -> LikeController : LikeDto
-deactivate LikeService
-
-LikeController -> User : ResponseEntity(HttpStatus.OK)
 deactivate LikeController
-
 deactivate User
 @enduml
