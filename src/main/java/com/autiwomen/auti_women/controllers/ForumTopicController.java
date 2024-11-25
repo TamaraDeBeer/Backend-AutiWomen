@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Set;
 
 @CrossOrigin
-@RestController
+@RestController("/topics")
 public class ForumTopicController {
 
     private final ForumTopicService forumTopicService;
@@ -22,25 +22,25 @@ public class ForumTopicController {
         this.forumTopicService = forumTopicService;
     }
 
-    @GetMapping("/forums/topic/{topic}")
+    @GetMapping("/{topic}/forums")
     public ResponseEntity<List<Forum>> getForumsByTopic(@PathVariable String topic) {
         List<Forum> forumsByTopic = forumTopicService.getForumsByTopic(topic);
         return ResponseEntity.ok().body(forumsByTopic);
     }
 
-    @GetMapping("/forums/unique-topics")
+    @GetMapping("/unique/forums")
     public ResponseEntity<Set<String>> getUniqueTopics() {
         Set<String> uniqueTopics = forumTopicService.getUniqueTopics();
         return ResponseEntity.ok().body(uniqueTopics);
     }
 
-    @GetMapping("/forums/sorted-unique-topics")
+    @GetMapping("/sorted/forums")
     public ResponseEntity<List<String>> getSortedUniqueTopics() {
         List<String> sortedUniqueTopics = forumTopicService.getSortedUniqueTopics();
         return ResponseEntity.ok().body(sortedUniqueTopics);
     }
 
-    @GetMapping("/topics/frequency")
+    @GetMapping("/frequency")
     public ResponseEntity<Map<String, Integer>> getTopicFrequency() {
         return ResponseEntity.ok().body(forumTopicService.getTopicFrequency());
     }

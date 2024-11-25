@@ -24,17 +24,6 @@ public class ProfileService {
         this.profileRepository = profileRepository;
     }
 
-    public ProfileDto createProfile(String username, ProfileInputDto profileInputDto) {
-        User user = userRepository.findById(username).orElseThrow(() -> new RecordNotFoundException("User not found"));
-
-        Profile profile = toProfile(profileInputDto);
-        profile.setName(user.getUsername());
-        profile.setDate(String.valueOf(LocalDate.now()));
-        profile.setUser(user);
-        profileRepository.save(profile);
-        return fromProfile(profile);
-    }
-
     public List<ProfileDto> getAllProfiles() {
         return profileRepository.findAll().stream()
                 .map(this::fromProfile)
@@ -44,6 +33,17 @@ public class ProfileService {
     public ProfileDto getProfileByUsername(String username) {
         User user = userRepository.findById(username).orElseThrow(() -> new RecordNotFoundException("User not found"));
         Profile profile = profileRepository.findByUser(user).orElseThrow(() -> new RecordNotFoundException("Profile not found"));
+        return fromProfile(profile);
+    }
+
+    public ProfileDto createProfile(String username, ProfileInputDto profileInputDto) {
+        User user = userRepository.findById(username).orElseThrow(() -> new RecordNotFoundException("User not found"));
+
+        Profile profile = toProfile(profileInputDto);
+        profile.setName(user.getUsername());
+        profile.setDate(String.valueOf(LocalDate.now()));
+        profile.setUser(user);
+        profileRepository.save(profile);
         return fromProfile(profile);
     }
 
@@ -57,6 +57,7 @@ public class ProfileService {
 
         return fromProfile(profile);
     }
+
 
     public ProfileDto fromProfile(Profile profile) {
         var profileDto = new ProfileDto();

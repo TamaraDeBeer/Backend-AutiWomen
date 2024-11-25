@@ -37,6 +37,12 @@ public class UserController {
         return ResponseEntity.ok().body(optionalUser);
     }
 
+    @GetMapping(value = "/users/{username}/image")
+    public ResponseEntity<UserOutputDto> getUserImage(@PathVariable("username") String username) {
+        UserOutputDto userImageDto = userService.getUserImage(username);
+        return ResponseEntity.ok().body(userImageDto);
+    }
+
     @PostMapping(value = "/register", consumes = "multipart/form-data")
     public ResponseEntity<UserOutputDto> createUser(@Valid @RequestPart("user") UserInputDto userInputDto,
                                                     @RequestPart(value = "file", required = false) MultipartFile file) throws IOException {
@@ -81,12 +87,6 @@ public class UserController {
     public ResponseEntity<Object> deleteUser(@PathVariable("username") String username) {
         userService.deleteUser(username);
         return ResponseEntity.noContent().build();
-    }
-
-    @GetMapping(value = "/users/{username}/image")
-    public ResponseEntity<UserOutputDto> getUserImage(@PathVariable("username") String username) {
-        UserOutputDto userImageDto = userService.getUserImage(username);
-        return ResponseEntity.ok().body(userImageDto);
     }
 
 }

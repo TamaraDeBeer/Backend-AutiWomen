@@ -26,17 +26,12 @@ public class ReviewController {
         return ResponseEntity.ok().body(reviews);
     }
 
-    @GetMapping("/{username}")
+    @GetMapping("/users/{username}")
     public ResponseEntity<ReviewDto> getReviewByUsername(@PathVariable("username") String username) {
         return ResponseEntity.ok().body(reviewService.getReviewByUsername(username));
     }
 
-    @PutMapping("/{username}")
-    public ResponseEntity<ReviewDto> updateReview(@PathVariable("username") String username, @RequestBody ReviewInputDto reviewInputDto) {
-        return ResponseEntity.ok().body(reviewService.updateReview(username, reviewInputDto));
-    }
-
-    @PostMapping("/{username}")
+    @PostMapping("/users/{username}")
     public ResponseEntity<ReviewDto> createReview(@PathVariable("username") String username, @RequestBody ReviewInputDto reviewInputDto) {
         ReviewDto reviewDto = reviewService.createReview(username, reviewInputDto);
         URI uri = URI.create(ServletUriComponentsBuilder
@@ -45,7 +40,12 @@ public class ReviewController {
         return ResponseEntity.created(uri).body(reviewDto);
     }
 
-    @DeleteMapping("/{username}")
+    @PutMapping("/users/{username}")
+    public ResponseEntity<ReviewDto> updateReview(@PathVariable("username") String username, @RequestBody ReviewInputDto reviewInputDto) {
+        return ResponseEntity.ok().body(reviewService.updateReview(username, reviewInputDto));
+    }
+
+    @DeleteMapping("/users/{username}")
     public ResponseEntity<Void> deleteReviewByUsername(@PathVariable("username") String username) {
         reviewService.deleteReviewByUsername(username);
         return ResponseEntity.noContent().build();

@@ -14,7 +14,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/forums")
+@RequestMapping("/comments")
 public class CommentController {
 
     private final CommentService commentService;
@@ -25,7 +25,29 @@ public class CommentController {
         this.forumService = forumService;
     }
 
-    @PostMapping("/{forumId}/comments/{username}")
+    @GetMapping
+    public ResponseEntity<List<CommentDto>> getAllComments() {
+        List<CommentDto> comments = commentService.getAllComments();
+        return ResponseEntity.ok().body(comments);
+    }
+
+    @GetMapping("/forums/{forumId}")
+    public ResponseEntity<List<CommentDto>> getCommentsByForumId(@PathVariable("forumId") Long forumId) {
+        List<CommentDto> comments = commentService.getCommentsByForumId(forumId);
+        return ResponseEntity.ok().body(comments);
+    }
+
+    @GetMapping("/users/{username}")
+    public ResponseEntity<List<Comment>> getCommentsByUser(@PathVariable("username") String username) {
+        return ResponseEntity.ok().body(commentService.getCommentsByUsername(username));
+    }
+
+    @GetMapping("/count/forums/{forumId}")
+    public ResponseEntity<Integer> getCommentCountByForumId(@PathVariable("forumId") Long forumId) {
+        return ResponseEntity.ok().body(commentService.getCommentCountByForumId(forumId));
+    }
+
+    @PostMapping("/forums/{forumId}/users/{username}")
     public ResponseEntity<CommentDto> createComment(@PathVariable("forumId") Long forumId, @PathVariable("username") String username, @Valid @RequestBody CommentInputDto commentInputDto) {
         CommentDto commentDto = commentService.createComment(commentInputDto, username);
         commentService.assignCommentToForum(commentDto.getId(), forumId);
@@ -37,36 +59,14 @@ public class CommentController {
         return ResponseEntity.created(uri).body(commentDto);
     }
 
-    @GetMapping("/comments")
-    public ResponseEntity<List<CommentDto>> getAllComments() {
-        List<CommentDto> comments = commentService.getAllComments();
-        return ResponseEntity.ok().body(comments);
-    }
-
-    @GetMapping("/{forumId}/comments")
-    public ResponseEntity<List<CommentDto>> getCommentsByForumId(@PathVariable("forumId") Long forumId) {
-        List<CommentDto> comments = commentService.getCommentsByForumId(forumId);
-        return ResponseEntity.ok().body(comments);
-    }
-
-    @GetMapping("/users/{username}/comments")
-    public ResponseEntity<List<Comment>> getCommentsByUser(@PathVariable("username") String username) {
-        return ResponseEntity.ok().body(commentService.getCommentsByUsername(username));
-    }
-
-    @GetMapping("/{forumId}/comments/count")
-    public ResponseEntity<Integer> getCommentCountByForumId(@PathVariable("forumId") Long forumId) {
-        return ResponseEntity.ok().body(commentService.getCommentCountByForumId(forumId));
-    }
-
-    @PutMapping("/{forumId}/comments/{commentId}")
+    @PutMapping("/{commentId}/forums/{forumId}")
     public ResponseEntity<CommentDto> updateComment(@PathVariable("forumId") Long forumId, @PathVariable("commentId") Long commentId, @RequestBody CommentDto updateCommentDto) {
         CommentDto commentDto = commentService.updateComment(commentId, updateCommentDto);
         forumService.updateLastReaction(forumId);
         return ResponseEntity.ok().body(commentDto);
     }
 
-    @DeleteMapping("/comments/{commentId}")
+    @DeleteMapping("{commentId}")
     public ResponseEntity<Comment> deleteComment(@PathVariable("commentId") Long commentId) {
         commentService.deleteComment(commentId);
         return ResponseEntity.noContent().build();

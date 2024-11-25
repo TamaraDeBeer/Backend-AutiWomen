@@ -14,8 +14,6 @@ import com.autiwomen.auti_women.security.repositories.UserRepository;
 import com.autiwomen.auti_women.security.models.User;
 
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -50,66 +48,39 @@ public class ForumService {
         return forumDtoList;
     }
 
-    public ForumDto getForumById(Long id) {
-        Optional<Forum> forumId = forumRepository.findById(id);
-        if (forumId.isPresent()) {
-            Forum forum = forumId.get();
+    public List<ForumDto> getForumsSortedByLikes() {
+        List<Forum> forums = forumRepository.findAll();
+        forums.forEach(this::updateForumCounts);
+        return forums.stream()
+                .sorted(Comparator.comparingInt(Forum::getLikesCount).reversed())
+                .map(this::fromForum)
+                .collect(Collectors.toList());
+    }
+
+    public List<ForumDto> getForumsSortedByDate() {
+        List<Forum> forums = forumRepository.findAll();
+        forums.forEach(this::updateForumCounts);
+        return forums.stream()
+                .sorted(Comparator.comparing(Forum::getDate).reversed())
+                .map(this::fromForum)
+                .collect(Collectors.toList());
+    }
+
+    public List<ForumDto> searchForums(String title) {
+        List<Forum> forums = forumRepository.findAllByTitleContainingIgnoreCase(title);
+        return forums.stream()
+                .map(this::fromForum)
+                .collect(Collectors.toList());
+    }
+
+    public ForumDto getForumById(Long forumId) {
+        Optional<Forum> forumOptional = forumRepository.findById(forumId);
+        if (forumOptional.isPresent()) {
+            Forum forum = forumOptional.get();
             updateForumCounts(forum);
             return fromForum(forum);
         } else {
-            throw new RecordNotFoundException("No forum found with id: " + id);
-        }
-    }
-
-    public ForumDto createForum(ForumInputDto forumInputDto, String username) {
-        User user = userRepository.findById(username)
-                .orElseThrow(() -> new RecordNotFoundException("User not found: " + username));
-
-        Forum forum = toForum(forumInputDto);
-        forum.setDate(String.valueOf(LocalDate.now()));
-        forum.setName(user.getUsername());
-        forum.setAge(user.getDob().toString());
-
-        forumRepository.save(forum);
-        return fromForum(forum);
-    }
-
-    public void assignForumToUser(Long forumId, String username) {
-        Optional<Forum> optionalForum = forumRepository.findById(forumId);
-        Optional<User> optionalUser = userRepository.findById(username);
-        if (optionalForum.isEmpty() || optionalUser.isEmpty()) {
-            throw new RecordNotFoundException("Forum or User not found");
-        } else {
-            Forum forum = optionalForum.get();
-            User user = optionalUser.get();
-            forum.setUser(user);
-            forumRepository.save(forum);
-        }
-    }
-
-    public ForumDto updateForum(@PathVariable Long id, @RequestBody ForumDto updateForum) {
-        Optional<Forum> forum = forumRepository.findById(id);
-        if (forum.isEmpty()) {
-            throw new RecordNotFoundException("No forum found with id: " + id);
-        } else {
-            Forum forum1 = forum.get();
-            forum1.setTitle(updateForum.getTitle());
-            forum1.setText(updateForum.getText());
-            forum1.setTopic(updateForum.getTopic());
-            Forum forum2 = forumRepository.save(forum1);
-
-            return fromForum(forum2);
-        }
-    }
-
-    @Transactional
-    public void deleteForum(Long id) {
-        Optional<Forum> optionalForum = forumRepository.findById(id);
-        if (optionalForum.isPresent()) {
-            commentRepository.deleteAllByForumId(id);
-            forumRepository.deleteById(id);
-        } else {
-            throw new RecordNotFoundException("No forum found with id: " + id);
+            throw new RecordNotFoundException("No forum found with id: " + forumId);
         }
     }
 
@@ -127,18 +98,6 @@ public class ForumService {
             updateForumCounts(forum);
             return fromForum(forum);
         }).collect(Collectors.toSet());
-    }
-
-    private Set<ForumDto> convertForumsToDtos(Set<Forum> forums) {
-        Set<ForumDto> forumDtos = new HashSet<>();
-        for (Forum forum : forums) {
-            if (forum != null) {
-                updateForumCounts(forum);
-                ForumDto forumDto = fromForum(forum);
-                forumDtos.add(forumDto);
-            }
-        }
-        return forumDtos;
     }
 
     public Set<ForumDto> getLikedForumsByUsername(String username) {
@@ -171,29 +130,70 @@ public class ForumService {
         return convertForumsToDtos(commentedForums);
     }
 
-    public List<ForumDto> getForumsSortedByLikes() {
-        List<Forum> forums = forumRepository.findAll();
-        forums.forEach(this::updateForumCounts);
-        return forums.stream()
-                .sorted(Comparator.comparingInt(Forum::getLikesCount).reversed())
-                .map(this::fromForum)
-                .collect(Collectors.toList());
+    public ForumDto createForum(ForumInputDto forumInputDto, String username) {
+        User user = userRepository.findById(username)
+                .orElseThrow(() -> new RecordNotFoundException("User not found: " + username));
+
+        Forum forum = toForum(forumInputDto);
+        forum.setDate(String.valueOf(LocalDate.now()));
+        forum.setName(user.getUsername());
+        forum.setAge(user.getDob().toString());
+
+        forumRepository.save(forum);
+        return fromForum(forum);
     }
 
-    public List<ForumDto> getForumsSortedByDate() {
-        List<Forum> forums = forumRepository.findAll();
-        forums.forEach(this::updateForumCounts);
-        return forums.stream()
-                .sorted(Comparator.comparing(Forum::getDate).reversed())
-                .map(this::fromForum)
-                .collect(Collectors.toList());
+    public ForumDto updateForum(Long forumId, ForumDto updateForum) {
+        Optional<Forum> forum = forumRepository.findById(forumId);
+        if (forum.isEmpty()) {
+            throw new RecordNotFoundException("No forum found with id: " + forumId);
+        } else {
+            Forum forum1 = forum.get();
+            forum1.setTitle(updateForum.getTitle());
+            forum1.setText(updateForum.getText());
+            forum1.setTopic(updateForum.getTopic());
+            Forum forum2 = forumRepository.save(forum1);
+
+            return fromForum(forum2);
+        }
     }
 
-    public List<ForumDto> searchForums(String title) {
-        List<Forum> forums = forumRepository.findAllByTitleContainingIgnoreCase(title);
-        return forums.stream()
-                .map(this::fromForum)
-                .collect(Collectors.toList());
+    @Transactional
+    public void deleteForum(Long forumId) {
+        Optional<Forum> optionalForum = forumRepository.findById(forumId);
+        if (optionalForum.isPresent()) {
+            commentRepository.deleteAllByForumId(forumId);
+            forumRepository.deleteById(forumId);
+        } else {
+            throw new RecordNotFoundException("No forum found with id: " + forumId);
+        }
+    }
+
+
+//    Helpers
+    public void assignForumToUser(Long forumId, String username) {
+        Optional<Forum> optionalForum = forumRepository.findById(forumId);
+        Optional<User> optionalUser = userRepository.findById(username);
+        if (optionalForum.isEmpty() || optionalUser.isEmpty()) {
+            throw new RecordNotFoundException("Forum or User not found");
+        } else {
+            Forum forum = optionalForum.get();
+            User user = optionalUser.get();
+            forum.setUser(user);
+            forumRepository.save(forum);
+        }
+    }
+
+    private Set<ForumDto> convertForumsToDtos(Set<Forum> forums) {
+        Set<ForumDto> forumDtos = new HashSet<>();
+        for (Forum forum : forums) {
+            if (forum != null) {
+                updateForumCounts(forum);
+                ForumDto forumDto = fromForum(forum);
+                forumDtos.add(forumDto);
+            }
+        }
+        return forumDtos;
     }
 
     public void updateLastReaction(Long forumId) {

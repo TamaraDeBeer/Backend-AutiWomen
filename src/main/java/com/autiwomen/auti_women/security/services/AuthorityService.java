@@ -25,6 +25,10 @@ public class AuthorityService {
         this.authorityRepository = authorityRepository;
     }
 
+    public List<Authority> getAllAuthorities() {
+        return authorityRepository.findAll();
+    }
+
     public Set<Authority> getUserAuthorities(String username) {
         Optional<User> userOptional = userRepository.findById(username);
         if (userOptional.isPresent()) {
@@ -34,10 +38,6 @@ public class AuthorityService {
         } else {
             throw new RecordNotFoundException("User not found: "+ username);
         }
-    }
-
-    public List<Authority> getAllAuthorities() {
-        return authorityRepository.findAll();
     }
 
     public void addUserAuthority(String username, String authority) {

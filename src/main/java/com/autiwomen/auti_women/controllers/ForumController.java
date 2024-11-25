@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Set;
 
 @CrossOrigin
-@RestController
+@RestController("/forums")
 public class ForumController {
 
     private final ForumService forumService;
@@ -23,40 +23,36 @@ public class ForumController {
         this.forumService = forumService;
     }
 
-    @GetMapping(value = "/forums")
+    @GetMapping
     public ResponseEntity<List<ForumDto>> getAllForums() {
         return ResponseEntity.ok().body(forumService.getAllForums());
     }
 
-    @GetMapping(value = "/forums/{id}")
-    public ResponseEntity<ForumDto> getOneForum(@PathVariable("id") Long id) {
+    @GetMapping("/sorted-by-likes")
+    public ResponseEntity<List<ForumDto>> getForumsSortedByLikes() {
+        List<ForumDto> sortedForums = forumService.getForumsSortedByLikes();
+        return ResponseEntity.ok().body(sortedForums);
+    }
+
+    @GetMapping("/sorted-by-date")
+    public ResponseEntity<List<ForumDto>> getForumsSortedByDate() {
+        List<ForumDto> sortedForums = forumService.getForumsSortedByDate();
+        return ResponseEntity.ok().body(sortedForums);
+    }
+
+    @GetMapping(value = "/search")
+    public ResponseEntity<List<ForumDto>> searchForums(@RequestParam("searchQuery") String searchQuery) {
+        List<ForumDto> forums = forumService.searchForums(searchQuery);
+        return ResponseEntity.ok().body(forums);
+    }
+
+    @GetMapping(value = "/{forumId}")
+    public ResponseEntity<ForumDto> getOneForum(@PathVariable("forumId") Long id) {
         ForumDto forumDto = forumService.getForumById(id);
         return ResponseEntity.ok().body(forumDto);
     }
 
-    @PostMapping(value = "/forums/{username}")
-    public ResponseEntity<ForumDto> createForum(@PathVariable("username") String username,@Valid @RequestBody ForumInputDto forumInputDto) {
-        ForumDto forumDto = forumService.createForum(forumInputDto, username);
-        forumService.assignForumToUser(forumDto.getId(),username);
-        URI uri = URI.create(ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .path("/" + forumDto.getId()).toUriString());
-        return ResponseEntity.created(uri).body(forumDto);
-    }
-
-    @PutMapping(value = "/forums/{id}")
-    public ResponseEntity<ForumDto> updateForum(@PathVariable Long id, @RequestBody ForumDto updateForumDto) {
-        ForumDto forumDto = forumService.updateForum(id, updateForumDto);
-        return ResponseEntity.ok().body(forumDto);
-    }
-
-    @DeleteMapping(value = "/forums/{id}")
-    public ResponseEntity<Forum> deleteForum(@PathVariable("id") Long id) {
-        forumService.deleteForum(id);
-        return ResponseEntity.noContent().build();
-    }
-
-    @GetMapping("/users/{username}/forums")
+    @GetMapping("/users/{username}")
     public ResponseEntity<Set<ForumDto>> getForumsByUsername(@PathVariable("username") String username) {
         Set<ForumDto> forums = forumService.getForumsByUsername(username);
         return ResponseEntity.ok().body(forums);
@@ -80,22 +76,26 @@ public class ForumController {
         return ResponseEntity.ok().body(commentedForums);
     }
 
-    @GetMapping("/forums/sorted-by-likes")
-    public ResponseEntity<List<ForumDto>> getForumsSortedByLikes() {
-        List<ForumDto> sortedForums = forumService.getForumsSortedByLikes();
-        return ResponseEntity.ok().body(sortedForums);
+    @PostMapping(value = "/users/{username}")
+    public ResponseEntity<ForumDto> createForum(@PathVariable("username") String username,@Valid @RequestBody ForumInputDto forumInputDto) {
+        ForumDto forumDto = forumService.createForum(forumInputDto, username);
+        forumService.assignForumToUser(forumDto.getId(),username);
+        URI uri = URI.create(ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/" + forumDto.getId()).toUriString());
+        return ResponseEntity.created(uri).body(forumDto);
     }
 
-    @GetMapping("/forums/sorted-by-date")
-    public ResponseEntity<List<ForumDto>> getForumsSortedByDate() {
-        List<ForumDto> sortedForums = forumService.getForumsSortedByDate();
-        return ResponseEntity.ok().body(sortedForums);
+    @PutMapping(value = "/{forumId}")
+    public ResponseEntity<ForumDto> updateForum(@PathVariable Long forumId, @RequestBody ForumDto updateForumDto) {
+        ForumDto forumDto = forumService.updateForum(forumId, updateForumDto);
+        return ResponseEntity.ok().body(forumDto);
     }
 
-    @GetMapping(value = "/forums/search")
-    public ResponseEntity<List<ForumDto>> searchForums(@RequestParam("searchQuery") String searchQuery) {
-        List<ForumDto> forums = forumService.searchForums(searchQuery);
-        return ResponseEntity.ok().body(forums);
+    @DeleteMapping(value = "/{forumId}")
+    public ResponseEntity<Forum> deleteForum(@PathVariable("forumId") Long id) {
+        forumService.deleteForum(id);
+        return ResponseEntity.noContent().build();
     }
 
 }
