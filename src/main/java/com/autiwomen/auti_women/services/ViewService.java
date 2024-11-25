@@ -25,20 +25,6 @@ public class ViewService {
         this.userRepository = userRepository;
     }
 
-    public void addViewToForum(Long forumId, String username) {
-        User user = userRepository.findById(username)
-                .orElseThrow(() -> new RecordNotFoundException("User not found"));
-        Forum forum = forumRepository.findById(forumId)
-                .orElseThrow(() -> new RecordNotFoundException("Forum not found"));
-
-        Optional<View> existingView = viewRepository.findViewByUserAndForum(user, forum);
-        if (existingView.isPresent()) {
-            throw new IllegalStateException("User has already viewed this forum");
-        }
-        View view = toView(user, forum);
-        viewRepository.save(view);
-    }
-
     public int getViewCountByForumId(Long forumId) {
         Forum forum = forumRepository.findById(forumId)
                 .orElseThrow(() -> new RecordNotFoundException("Forum not found"));
@@ -53,6 +39,20 @@ public class ViewService {
                 .orElseThrow(() -> new RecordNotFoundException("Forum not found"));
 
         return viewRepository.findViewByUserAndForum(user, forum).isPresent();
+    }
+
+    public void addViewToForum(Long forumId, String username) {
+        User user = userRepository.findById(username)
+                .orElseThrow(() -> new RecordNotFoundException("User not found"));
+        Forum forum = forumRepository.findById(forumId)
+                .orElseThrow(() -> new RecordNotFoundException("Forum not found"));
+
+        Optional<View> existingView = viewRepository.findViewByUserAndForum(user, forum);
+        if (existingView.isPresent()) {
+            throw new IllegalStateException("User has already viewed this forum");
+        }
+        View view = toView(user, forum);
+        viewRepository.save(view);
     }
 
     private View toView(User user, Forum forum) {

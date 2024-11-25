@@ -25,6 +25,22 @@ public class LikeService {
         this.userRepository = userRepository;
     }
 
+    public int getLikeCountByForumId(Long forumId) {
+        Forum forum = forumRepository.findById(forumId)
+                .orElseThrow(() -> new RecordNotFoundException("Forum not found"));
+        Set<Like> likes = forum.getLikes();
+        return likes.size();
+    }
+
+    public boolean hasUserLikedPost(String username, Long forumId) {
+        User user = userRepository.findById(username)
+                .orElseThrow(() -> new RecordNotFoundException("User not found"));
+        Forum forum = forumRepository.findById(forumId)
+                .orElseThrow(() -> new RecordNotFoundException("Forum not found"));
+
+        return likeRepository.findLikeByUserAndForum(user, forum).isPresent();
+    }
+
     public void addLikeToForum(Long forumId, String username) {
         User user = userRepository.findById(username)
                 .orElseThrow(() -> new RecordNotFoundException("User not found"));
@@ -51,22 +67,6 @@ public class LikeService {
         } else {
             throw new RecordNotFoundException("Like not found for user and forum");
         }
-    }
-
-    public int getLikeCountByForumId(Long forumId) {
-        Forum forum = forumRepository.findById(forumId)
-                .orElseThrow(() -> new RecordNotFoundException("Forum not found"));
-        Set<Like> likes = forum.getLikes();
-        return likes.size();
-    }
-
-    public boolean hasUserLikedPost(String username, Long forumId) {
-        User user = userRepository.findById(username)
-                .orElseThrow(() -> new RecordNotFoundException("User not found"));
-        Forum forum = forumRepository.findById(forumId)
-                .orElseThrow(() -> new RecordNotFoundException("Forum not found"));
-
-        return likeRepository.findLikeByUserAndForum(user, forum).isPresent();
     }
 
 }
