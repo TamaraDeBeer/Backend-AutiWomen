@@ -9,61 +9,88 @@ skinparam {
 class Forum #F5C84C99 {
     - Long id
     - String name
+    - String age
     - String title
     - String text
     - String topic
-    - int likesCount
-    - int viewsCount
+    - String date
+    - String lastReaction
     - int commentsCount
+    - List<Comment> commentsList
+    - User user
+    - Set<Like> likes
+    - Set<View> views
     }
 
 class Comment #F5C84C99 {
     - Long id
     - String name
+    - String age
     - String text
+    - String date
+    - User user
+    - Forum forum
     }
 
 class Like #F5C84C99 {
     - Long id
+    - User user
+    - Forum forum
     }
 
 class View #F5C84C99 {
     - Long id
+    - User user
+    - Forum forum
     }
 
 class User #F5C84C99 {
     - String username
     - String password
-    - LocalDDate dob
+    - String email
+    - String name
+    - String gender
+    - LocalDate dob
+    - String autismDiagnoses
+    - Int autismDiagnosesYear
     - String profilePictureUrl
+    - Set<Authority> authorities
+    - List<Comment> commentsList
+    - Set<Forum> forums
+    - Set<Like> likes
+    - Set<View> views
+    - Profile profile
 }
 
 class Profile #F5C84C99 {
     - Long id
     - String bio
     - String name
+    - String date
+    - User user
 }
 
 class Review #F5C84C99 {
     - Long id
-    - String rewview
+    - String review
     - String name
+    - LocalDate dob
+    - Integer autismDiagnosesYear
+    - String profilePictureUrl
+    - String date
+    - User user
 }
 
 User "1" *--[#064D1A] "1" Profile
 User "1" *--[#064D1A] "1" Review
 User "1" *--[#064D1A] "0..*" Forum
 
-Forum "0..*" *--[#7AC37A] "1" Comment
-Forum "0..*" *--[#7AC37A] "1" Like
-Forum "0..*" *--[#7AC37A] "1" View
+Forum "1" *--[#7AC37A] "0..*" Comment
+Forum "1" *--[#7AC37A] "0..*" Like
+Forum "1" *--[#7AC37A] "0..*" View
 
-User "0..*" --[#F5C84C] "0..*" Comment
-User "0..*" --[#F5C84C] "1" Like
-User "0..*" --[#F5C84C] "1" View
-
-'Comment "1" *--[#purple] "1" User
-'Like "1" *--[#purple] "1" User
-'View "1" *--[#purple] "1" User
+User "1" *--[#F5C84C] "0..*" Comment
+User "1" *--[#F5C84C] "0..*" Like
+User "1" *--[#F5C84C] "0..*" View
 
 @enduml
