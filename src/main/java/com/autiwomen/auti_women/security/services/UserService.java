@@ -68,6 +68,19 @@ public class UserService {
         return dto;
     }
 
+    public UserOutputDto getUserImage(String username) {
+        Optional<User> userOptional = userRepository.findById(username);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            UserOutputDto dto = new UserOutputDto();
+            dto.setUsername(user.getUsername());
+            dto.setProfilePictureUrl(user.getProfilePictureUrl());
+            return dto;
+        } else {
+            throw new RecordNotFoundException("User not found: "+ username);
+        }
+    }
+
     public void updatePasswordUser(String username, UserDto updateUser) {
         Optional<User> userOptional = userRepository.findById(username);
         if (userOptional.isPresent()) {
@@ -102,11 +115,28 @@ public class UserService {
         }
     }
 
-    public void removeProfilePicture(String username) {
+    public void updateUserData(String username, UserUpdateDto userUpdateDto) {
         Optional<User> userOptional = userRepository.findById(username);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-            user.setProfilePictureUrl(null);
+            if (userUpdateDto.getEmail() != null) {
+                user.setEmail(userUpdateDto.getEmail());
+            }
+            if (userUpdateDto.getName() != null) {
+                user.setName(userUpdateDto.getName());
+            }
+            if (userUpdateDto.getDob() != null) {
+                user.setDob(userUpdateDto.getDob());
+            }
+            if (userUpdateDto.getAutismDiagnoses() != null) {
+                user.setAutismDiagnoses(userUpdateDto.getAutismDiagnoses());
+            }
+            if (userUpdateDto.getAutismDiagnosesYear() != null) {
+                user.setAutismDiagnosesYear(userUpdateDto.getAutismDiagnosesYear());
+            }
+            if (userUpdateDto.getGender() != null) {
+                user.setGender(userUpdateDto.getGender());
+            }
             userRepository.save(user);
         } else {
             throw new RecordNotFoundException("User not found: "+ username);
@@ -121,6 +151,17 @@ public class UserService {
             reviewRepository.deleteByUser(user);
             authorityRepository.deleteAll(user.getAuthorities());
             userRepository.delete(user);
+        } else {
+            throw new RecordNotFoundException("User not found: "+ username);
+        }
+    }
+
+    public void removeProfilePicture(String username) {
+        Optional<User> userOptional = userRepository.findById(username);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            user.setProfilePictureUrl(null);
+            userRepository.save(user);
         } else {
             throw new RecordNotFoundException("User not found: "+ username);
         }
@@ -161,53 +202,14 @@ public class UserService {
         return newUser.getUsername();
     }
 
+
+//    Helpers
     private String saveImage(MultipartFile file, String username) throws IOException {
         String fileName = file.getOriginalFilename();
         Path path = Paths.get(uploadLocation, fileName);
         Files.createDirectories(path.getParent());
         Files.write(path, file.getBytes());
         return fileName;
-    }
-
-    public UserOutputDto getUserImage(String username) {
-        Optional<User> userOptional = userRepository.findById(username);
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            UserOutputDto dto = new UserOutputDto();
-            dto.setUsername(user.getUsername());
-            dto.setProfilePictureUrl(user.getProfilePictureUrl());
-            return dto;
-        } else {
-            throw new RecordNotFoundException("User not found: "+ username);
-        }
-    }
-
-    public void updateUserData(String username, UserUpdateDto userUpdateDto) {
-        Optional<User> userOptional = userRepository.findById(username);
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            if (userUpdateDto.getEmail() != null) {
-                user.setEmail(userUpdateDto.getEmail());
-            }
-            if (userUpdateDto.getName() != null) {
-                user.setName(userUpdateDto.getName());
-            }
-            if (userUpdateDto.getDob() != null) {
-                user.setDob(userUpdateDto.getDob());
-            }
-            if (userUpdateDto.getAutismDiagnoses() != null) {
-                user.setAutismDiagnoses(userUpdateDto.getAutismDiagnoses());
-            }
-            if (userUpdateDto.getAutismDiagnosesYear() != null) {
-                user.setAutismDiagnosesYear(userUpdateDto.getAutismDiagnosesYear());
-            }
-            if (userUpdateDto.getGender() != null) {
-                user.setGender(userUpdateDto.getGender());
-            }
-            userRepository.save(user);
-        } else {
-            throw new RecordNotFoundException("User not found: "+ username);
-        }
     }
 
     //    Deze methode is enkel voor de CustomUserDetailsService omdat we daar een wachtwoord nodig hebben en de UserOutputDto geen wachtwoord bevat
