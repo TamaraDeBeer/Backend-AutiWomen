@@ -25,6 +25,18 @@ public class ReviewService {
         this.reviewRepository = reviewRepository;
     }
 
+    public List<ReviewDto> getAllReviews() {
+        return reviewRepository.findAll().stream()
+                .map(this::fromReview)
+                .collect(Collectors.toList());
+    }
+
+    public ReviewDto getReviewByUsername(String username) {
+        User user = userRepository.findById(username).orElseThrow(() -> new RecordNotFoundException("User not found"));
+        Review review = reviewRepository.findByUser(user).orElseThrow(() -> new RecordNotFoundException("Review not found"));
+        return fromReview(review);
+    }
+
     public ReviewDto createReview(String username, ReviewInputDto reviewInputDto) {
         User user = userRepository.findById(username).orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -36,18 +48,6 @@ public class ReviewService {
         review.setProfilePictureUrl(user.getProfilePictureUrl());
         review.setDate(String.valueOf(LocalDate.now()));
         reviewRepository.save(review);
-        return fromReview(review);
-    }
-
-    public List<ReviewDto> getAllReviews() {
-        return reviewRepository.findAll().stream()
-                .map(this::fromReview)
-                .collect(Collectors.toList());
-    }
-
-    public ReviewDto getReviewByUsername(String username) {
-        User user = userRepository.findById(username).orElseThrow(() -> new RecordNotFoundException("User not found"));
-        Review review = reviewRepository.findByUser(user).orElseThrow(() -> new RecordNotFoundException("Review not found"));
         return fromReview(review);
     }
 
@@ -63,8 +63,9 @@ public class ReviewService {
     }
 
     @Transactional
-    public void deleteReviewById(Long id) {
-        Review review = reviewRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("Review not found with id: " + id));
+    public void deleteReviewByUsername(String username) {
+        User user = userRepository.findById(username).orElseThrow(() -> new RecordNotFoundException("User not found"));
+        Review review = reviewRepository.findByUser(user).orElseThrow(() -> new RecordNotFoundException("Review not found"));
         reviewRepository.delete(review);
     }
 

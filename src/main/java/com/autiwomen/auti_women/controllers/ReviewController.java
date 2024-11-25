@@ -20,13 +20,10 @@ public class ReviewController {
         this.reviewService = reviewService;
     }
 
-    @PostMapping("/{username}")
-    public ResponseEntity<ReviewDto> createReview(@PathVariable("username") String username, @RequestBody ReviewInputDto reviewInputDto) {
-        ReviewDto reviewDto = reviewService.createReview(username, reviewInputDto);
-        URI uri = URI.create(ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .path("/" + reviewDto.getId()).toUriString());
-        return ResponseEntity.created(uri).body(reviewDto);
+    @GetMapping
+    public ResponseEntity<List<ReviewDto>> getAllReviews() {
+        List<ReviewDto> reviews = reviewService.getAllReviews();
+        return ResponseEntity.ok().body(reviews);
     }
 
     @GetMapping("/{username}")
@@ -39,15 +36,18 @@ public class ReviewController {
         return ResponseEntity.ok().body(reviewService.updateReview(username, reviewInputDto));
     }
 
-    @GetMapping
-    public ResponseEntity<List<ReviewDto>> getAllReviews() {
-        List<ReviewDto> reviews = reviewService.getAllReviews();
-        return ResponseEntity.ok().body(reviews);
+    @PostMapping("/{username}")
+    public ResponseEntity<ReviewDto> createReview(@PathVariable("username") String username, @RequestBody ReviewInputDto reviewInputDto) {
+        ReviewDto reviewDto = reviewService.createReview(username, reviewInputDto);
+        URI uri = URI.create(ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/" + reviewDto.getId()).toUriString());
+        return ResponseEntity.created(uri).body(reviewDto);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteReviewById(@PathVariable("id") Long id) {
-        reviewService.deleteReviewById(id);
+    @DeleteMapping("/{username}")
+    public ResponseEntity<Void> deleteReviewByUsername(@PathVariable("username") String username) {
+        reviewService.deleteReviewByUsername(username);
         return ResponseEntity.noContent().build();
     }
 
