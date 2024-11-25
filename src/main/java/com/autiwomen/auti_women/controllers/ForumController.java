@@ -14,7 +14,8 @@ import java.util.List;
 import java.util.Set;
 
 @CrossOrigin
-@RestController("/forums")
+@RestController
+@RequestMapping("/forums")
 public class ForumController {
 
     private final ForumService forumService;

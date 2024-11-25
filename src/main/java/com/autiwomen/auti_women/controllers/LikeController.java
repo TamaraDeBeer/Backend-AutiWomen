@@ -32,7 +32,7 @@ public class LikeController {
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/remove/forums/{forumId}/users/{username}")
+    @DeleteMapping("/delete/forums/{forumId}/users/{username}")
     public ResponseEntity<Void> removeLikeFromForum(@PathVariable Long forumId, @PathVariable String username) {
         likeService.removeLikeFromForum(forumId, username);
         return ResponseEntity.ok().build();
