@@ -85,8 +85,8 @@ public class SpringSecurityConfiguration {
                         .requestMatchers(HttpMethod.PUT, "/reviews/users/{username}").hasAnyRole("ADMIN", "USER")
 
                         .requestMatchers(HttpMethod.POST, "/forums/users/{username}").hasAnyRole("ADMIN", "USER")
-                        .requestMatchers(HttpMethod.PUT, "/forums/{forumId}").hasAnyRole("ADMIN", "USER")
-                        .requestMatchers(HttpMethod.DELETE, "/forums/{forumId}").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.PUT, "/forums/{forumId}/users/{username}").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.DELETE, "/forums/{forumId}/users/{username}").hasAnyRole("ADMIN", "USER")
 
                         .requestMatchers(HttpMethod.GET, "/forums/users/{username}/liked-forums").hasAnyRole("ADMIN", "USER")
                         .requestMatchers(HttpMethod.GET, "/forums/users/{username}/viewed-forums").hasAnyRole("ADMIN", "USER")
@@ -99,7 +99,7 @@ public class SpringSecurityConfiguration {
 
                         .requestMatchers(HttpMethod.GET, "/likes/check/forums/{forumId}/users/{username}").hasAnyRole("ADMIN", "USER")
                         .requestMatchers(HttpMethod.POST, "/likes/add/forums/{forumId}/users/{username}").hasAnyRole("ADMIN", "USER")
-                        .requestMatchers(HttpMethod.DELETE, "/likes//delete/forums/{forumId}/users/{username}").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.DELETE, "/likes/delete/forums/{forumId}/users/{username}").hasAnyRole("ADMIN", "USER")
 
                         .requestMatchers(HttpMethod.GET, "/views/check/forums/{forumId}/users/{username}").hasAnyRole("ADMIN", "USER")
                         .requestMatchers(HttpMethod.POST, "/views/add/forums/{forumId}/users/{username}").hasAnyRole("ADMIN", "USER")
