@@ -94,8 +94,8 @@ public class SpringSecurityConfiguration {
 
                         .requestMatchers(HttpMethod.POST, "/comments/forums/{forumId}/users/{username}").hasAnyRole("ADMIN", "USER")
                         .requestMatchers(HttpMethod.GET, "/comments/users/{username}").hasAnyRole("ADMIN", "USER")
-                        .requestMatchers(HttpMethod.PUT, "/comments//{commentId}/forums/{forumId}").hasAnyRole("ADMIN", "USER")
-                        .requestMatchers(HttpMethod.DELETE, "/comments/{commentId}").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.PUT, "/comments/{commentId}/forums/{forumId}/users/{username}").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.DELETE, "/comments/{commentId}/users/{username}").hasAnyRole("ADMIN", "USER")
 
                         .requestMatchers(HttpMethod.GET, "/likes/check/forums/{forumId}/users/{username}").hasAnyRole("ADMIN", "USER")
                         .requestMatchers(HttpMethod.POST, "/likes/add/forums/{forumId}/users/{username}").hasAnyRole("ADMIN", "USER")

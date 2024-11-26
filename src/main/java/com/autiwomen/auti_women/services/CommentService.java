@@ -10,6 +10,7 @@ import com.autiwomen.auti_women.repositories.ForumRepository;
 import com.autiwomen.auti_women.security.dtos.user.UserDto;
 import com.autiwomen.auti_women.security.repositories.UserRepository;
 import com.autiwomen.auti_women.security.models.User;
+import com.autiwomen.auti_women.security.utils.SecurityUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,6 +57,9 @@ public class CommentService {
     }
 
     public List<Comment> getCommentsByUsername(String username) {
+        if (!SecurityUtil.isOwnerOrAdmin(username)) {
+            throw new SecurityException("Forbidden");
+        }
         Optional<User> optionalUser = userRepository.findById(username);
         if (optionalUser.isEmpty()) {
             throw new RecordNotFoundException("User not found");
@@ -71,6 +75,9 @@ public class CommentService {
     }
 
     public CommentDto createComment(CommentInputDto commentInputDto, String username) {
+        if (!SecurityUtil.isOwnerOrAdmin(username)) {
+            throw new SecurityException("Forbidden");
+        }
         User user = userRepository.findById(username)
                 .orElseThrow(() -> new RecordNotFoundException("User not found"));
 
@@ -82,7 +89,10 @@ public class CommentService {
         return fromComment(comment);
     }
 
-    public CommentDto updateComment (Long commentId, CommentDto updateComment) {
+    public CommentDto updateComment (Long commentId, CommentDto updateComment, String username) {
+        if (!SecurityUtil.isOwnerOrAdmin(username)) {
+            throw new SecurityException("Forbidden");
+        }
         Optional<Comment> comment = commentRepository.findById(commentId);
         if (comment.isEmpty()) {
             throw new RecordNotFoundException("Comment not found");
@@ -97,7 +107,10 @@ public class CommentService {
     }
 
     @Transactional
-    public void deleteComment(Long commentId) {
+    public void deleteComment(Long commentId, String username) {
+        if (!SecurityUtil.isOwnerOrAdmin(username)) {
+            throw new SecurityException("Forbidden");
+        }
         Optional<Comment> optionalComment = commentRepository.findById(commentId);
         if (optionalComment.isEmpty()) {
             throw new RecordNotFoundException("Comment not found");

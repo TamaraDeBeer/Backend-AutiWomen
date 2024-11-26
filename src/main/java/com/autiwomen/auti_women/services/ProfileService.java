@@ -7,6 +7,7 @@ import com.autiwomen.auti_women.repositories.ProfileRepository;
 import com.autiwomen.auti_women.security.repositories.UserRepository;
 import com.autiwomen.auti_women.security.models.User;
 import com.autiwomen.auti_women.models.Profile;
+import com.autiwomen.auti_women.security.utils.SecurityUtil;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -31,6 +32,9 @@ public class ProfileService {
     }
 
     public ProfileDto getProfileByUsername(String username) {
+        if (!SecurityUtil.isOwnerOrAdmin(username)) {
+            throw new SecurityException("Forbidden");
+        }
         User user = userRepository.findById(username).orElseThrow(() -> new RecordNotFoundException("User not found"));
         Profile profile = profileRepository.findByUser(user).orElseThrow(() -> new RecordNotFoundException("Profile not found"));
         return fromProfile(profile);
@@ -48,6 +52,9 @@ public class ProfileService {
     }
 
     public ProfileDto updateProfile(String username, ProfileInputDto profileInputDto) {
+        if (!SecurityUtil.isOwnerOrAdmin(username)) {
+            throw new SecurityException("Forbidden");
+        }
         User user = userRepository.findById(username).orElseThrow(() -> new RecordNotFoundException("User not found"));
         Profile profile = profileRepository.findByUser(user).orElseThrow(() -> new RecordNotFoundException("Profile not found"));
 

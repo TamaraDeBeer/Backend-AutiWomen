@@ -59,16 +59,16 @@ public class CommentController {
         return ResponseEntity.created(uri).body(commentDto);
     }
 
-    @PutMapping("/{commentId}/forums/{forumId}")
-    public ResponseEntity<CommentDto> updateComment(@PathVariable("forumId") Long forumId, @PathVariable("commentId") Long commentId, @RequestBody CommentDto updateCommentDto) {
-        CommentDto commentDto = commentService.updateComment(commentId, updateCommentDto);
+    @PutMapping("/{commentId}/forums/{forumId}/users/{username}")
+    public ResponseEntity<CommentDto> updateComment(@PathVariable("forumId") Long forumId, @PathVariable("commentId") Long commentId, @RequestBody CommentDto updateCommentDto, @PathVariable("username") String username) {
+        CommentDto commentDto = commentService.updateComment(commentId, updateCommentDto, username);
         forumService.updateLastReaction(forumId);
         return ResponseEntity.ok().body(commentDto);
     }
 
-    @DeleteMapping("{commentId}")
-    public ResponseEntity<Comment> deleteComment(@PathVariable("commentId") Long commentId) {
-        commentService.deleteComment(commentId);
+    @DeleteMapping("{commentId}/users/{username}")
+    public ResponseEntity<Comment> deleteComment(@PathVariable("commentId") Long commentId, @PathVariable("username") String username) {
+        commentService.deleteComment(commentId, username);
         return ResponseEntity.noContent().build();
     }
 

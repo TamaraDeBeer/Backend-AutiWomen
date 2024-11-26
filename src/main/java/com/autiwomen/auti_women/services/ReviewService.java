@@ -7,6 +7,7 @@ import com.autiwomen.auti_women.models.Review;
 import com.autiwomen.auti_women.repositories.ReviewRepository;
 import com.autiwomen.auti_women.security.models.User;
 import com.autiwomen.auti_women.security.repositories.UserRepository;
+import com.autiwomen.auti_women.security.utils.SecurityUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +33,9 @@ public class ReviewService {
     }
 
     public ReviewDto getReviewByUsername(String username) {
+        if (!SecurityUtil.isOwnerOrAdmin(username)) {
+            throw new SecurityException("Forbidden");
+        }
         User user = userRepository.findById(username).orElseThrow(() -> new RecordNotFoundException("User not found"));
         Review review = reviewRepository.findByUser(user).orElseThrow(() -> new RecordNotFoundException("Review not found"));
         return fromReview(review);
@@ -52,6 +56,9 @@ public class ReviewService {
     }
 
     public ReviewDto updateReview(String username, ReviewInputDto reviewInputDto) {
+        if (!SecurityUtil.isOwnerOrAdmin(username)) {
+            throw new SecurityException("Forbidden");
+        }
         User user = userRepository.findById(username).orElseThrow(() -> new RecordNotFoundException("User not found"));
         Review review = reviewRepository.findByUser(user).orElseThrow(() -> new RecordNotFoundException("Review not found"));
 

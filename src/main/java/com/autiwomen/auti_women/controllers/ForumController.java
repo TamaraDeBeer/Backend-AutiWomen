@@ -87,15 +87,15 @@ public class ForumController {
         return ResponseEntity.created(uri).body(forumDto);
     }
 
-    @PutMapping(value = "/{forumId}")
-    public ResponseEntity<ForumDto> updateForum(@PathVariable Long forumId, @RequestBody ForumDto updateForumDto) {
-        ForumDto forumDto = forumService.updateForum(forumId, updateForumDto);
+    @PutMapping(value = "/{forumId}/users/{username}")
+    public ResponseEntity<ForumDto> updateForum(@PathVariable Long forumId, @RequestBody ForumDto updateForumDto, @PathVariable String username) {
+        ForumDto forumDto = forumService.updateForum(forumId, updateForumDto, username);
         return ResponseEntity.ok().body(forumDto);
     }
 
-    @DeleteMapping(value = "/{forumId}")
-    public ResponseEntity<Forum> deleteForum(@PathVariable("forumId") Long id) {
-        forumService.deleteForum(id);
+    @DeleteMapping(value = "/{forumId}/users/{username}")
+    public ResponseEntity<Forum> deleteForum(@PathVariable("forumId") Long forumId, @PathVariable("username") String username) {
+        forumService.deleteForum(forumId, username);
         return ResponseEntity.noContent().build();
     }
 

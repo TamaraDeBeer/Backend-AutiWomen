@@ -7,6 +7,7 @@ import com.autiwomen.auti_women.repositories.ForumRepository;
 import com.autiwomen.auti_women.repositories.ViewRepository;
 import com.autiwomen.auti_women.security.repositories.UserRepository;
 import com.autiwomen.auti_women.security.models.User;
+import com.autiwomen.auti_women.security.utils.SecurityUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -33,6 +34,9 @@ public class ViewService {
     }
 
     public boolean hasUserViewedPost(String username, Long forumId) {
+        if (!SecurityUtil.isOwnerOrAdmin(username)) {
+            throw new SecurityException("Forbidden");
+        }
         User user = userRepository.findById(username)
                 .orElseThrow(() -> new RecordNotFoundException("User not found"));
         Forum forum = forumRepository.findById(forumId)
@@ -42,6 +46,9 @@ public class ViewService {
     }
 
     public void addViewToForum(Long forumId, String username) {
+        if (!SecurityUtil.isOwnerOrAdmin(username)) {
+            throw new SecurityException("Forbidden");
+        }
         User user = userRepository.findById(username)
                 .orElseThrow(() -> new RecordNotFoundException("User not found"));
         Forum forum = forumRepository.findById(forumId)

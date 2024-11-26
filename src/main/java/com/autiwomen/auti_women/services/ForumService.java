@@ -13,6 +13,7 @@ import com.autiwomen.auti_women.security.dtos.user.UserDto;
 import com.autiwomen.auti_women.security.repositories.UserRepository;
 import com.autiwomen.auti_women.security.models.User;
 
+import com.autiwomen.auti_women.security.utils.SecurityUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -85,6 +86,9 @@ public class ForumService {
     }
 
     public Set<ForumDto> getForumsByUsername(String username) {
+        if (!SecurityUtil.isOwnerOrAdmin(username)) {
+            throw new SecurityException("Forbidden");
+        }
         User user = userRepository.findById(username).orElseThrow(() -> new RecordNotFoundException("User not found"));
         Set<Forum> forums = new HashSet<>(forumRepository.findByUser(user));
         if (forums.isEmpty()) {
@@ -101,6 +105,9 @@ public class ForumService {
     }
 
     public Set<ForumDto> getLikedForumsByUsername(String username) {
+        if (!SecurityUtil.isOwnerOrAdmin(username)) {
+            throw new SecurityException("Forbidden");
+        }
         User user = userRepository.findById(username)
                 .orElseThrow(() -> new RecordNotFoundException("User not found"));
         Set<Forum> likedForums = likeRepository.findLikedForumsByUser(user);
@@ -111,6 +118,9 @@ public class ForumService {
     }
 
     public Set<ForumDto> getViewedForumsByUsername(String username) {
+        if (!SecurityUtil.isOwnerOrAdmin(username)) {
+            throw new SecurityException("Forbidden");
+        }
         User user = userRepository.findById(username)
                 .orElseThrow(() -> new RecordNotFoundException("User not found"));
         Set<Forum> viewedForums = viewRepository.findViewedForumsByUser(user);
@@ -121,6 +131,9 @@ public class ForumService {
     }
 
     public Set<ForumDto> getCommentedForumsByUsername(String username) {
+        if (!SecurityUtil.isOwnerOrAdmin(username)) {
+            throw new SecurityException("Forbidden");
+        }
         User user = userRepository.findById(username)
                 .orElseThrow(() -> new RecordNotFoundException("User not found"));
         Set<Forum> commentedForums = commentRepository.findCommentedForumsByUser(user);
@@ -143,7 +156,10 @@ public class ForumService {
         return fromForum(forum);
     }
 
-    public ForumDto updateForum(Long forumId, ForumDto updateForum) {
+    public ForumDto updateForum(Long forumId, ForumDto updateForum, String username) {
+        if (!SecurityUtil.isOwnerOrAdmin(username)) {
+            throw new SecurityException("Forbidden");
+        }
         Optional<Forum> forum = forumRepository.findById(forumId);
         if (forum.isEmpty()) {
             throw new RecordNotFoundException("No forum found with id: " + forumId);
@@ -159,7 +175,10 @@ public class ForumService {
     }
 
     @Transactional
-    public void deleteForum(Long forumId) {
+    public void deleteForum(Long forumId, String username) {
+        if (!SecurityUtil.isOwnerOrAdmin(username)) {
+            throw new SecurityException("Forbidden");
+        }
         Optional<Forum> optionalForum = forumRepository.findById(forumId);
         if (optionalForum.isPresent()) {
             commentRepository.deleteAllByForumId(forumId);

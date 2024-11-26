@@ -59,6 +59,9 @@ public class UserService {
     }
 
     public UserOutputDto getOneUser(String username) {
+        if (!SecurityUtil.isOwnerOrAdmin(username)) {
+            throw new SecurityException("Forbidden");
+        }
         UserOutputDto dto;
         Optional<User> user = userRepository.findById(username);
         if (user.isPresent()) {
@@ -102,6 +105,9 @@ public class UserService {
     }
 
     public void updateProfilePicture(String username, MultipartFile file) throws IOException {
+        if (!SecurityUtil.isOwnerOrAdmin(username)) {
+            throw new SecurityException("Forbidden");
+        }
         Optional<User> userOptional = userRepository.findById(username);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
@@ -120,6 +126,9 @@ public class UserService {
     }
 
     public void updateUserData(String username, UserUpdateDto userUpdateDto) {
+        if (!SecurityUtil.isOwnerOrAdmin(username)) {
+            throw new SecurityException("Forbidden");
+        }
         Optional<User> userOptional = userRepository.findById(username);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
@@ -161,6 +170,9 @@ public class UserService {
     }
 
     public void removeProfilePicture(String username) {
+        if (!SecurityUtil.isOwnerOrAdmin(username)) {
+            throw new SecurityException("Forbidden");
+        }
         Optional<User> userOptional = userRepository.findById(username);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
