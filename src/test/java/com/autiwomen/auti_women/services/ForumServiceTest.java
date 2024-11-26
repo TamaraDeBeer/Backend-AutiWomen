@@ -13,14 +13,12 @@ import com.autiwomen.auti_women.repositories.LikeRepository;
 import com.autiwomen.auti_women.repositories.ViewRepository;
 import com.autiwomen.auti_women.security.repositories.UserRepository;
 import com.autiwomen.auti_women.security.models.User;
+import com.autiwomen.auti_women.security.utils.SecurityUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
@@ -54,6 +52,9 @@ class ForumServiceTest {
     @Captor
     ArgumentCaptor<Forum> captor;
 
+    @Mock
+    MockedStatic<SecurityUtil> securityUtilMock;
+
     Forum forum1;
     Forum forum2;
     Comment comment1;
@@ -78,9 +79,13 @@ class ForumServiceTest {
         like2 = new Like(user2, forum2);
         view1 = new View(user1, forum1);
         view2 = new View(user2, forum2);
+
+        securityUtilMock.when(() -> SecurityUtil.isOwnerOrAdmin("user1")).thenReturn(true);
     }
+
     @AfterEach
     void tearDown() {
+        securityUtilMock.close();
     }
 
     @Test
@@ -258,6 +263,7 @@ class ForumServiceTest {
     @Test
     void updateForum() {
         Long forumId = 1L;
+        String username = "user1";
         ForumDto updateForumDto = new ForumDto();
         updateForumDto.setTitle("Updated Title");
         updateForumDto.setText("Updated Text");
@@ -265,7 +271,7 @@ class ForumServiceTest {
         when(forumRepository.findById(forumId)).thenReturn(Optional.of(forum1));
         when(forumRepository.save(any(Forum.class))).thenReturn(forum1);
 
-        ForumDto updatedForumDto = forumService.updateForum(forumId, updateForumDto);
+        ForumDto updatedForumDto = forumService.updateForum(forumId, updateForumDto, username);
 
         assertNotNull(updatedForumDto);
         assertEquals(updateForumDto.getTitle(), updatedForumDto.getTitle());
@@ -275,6 +281,7 @@ class ForumServiceTest {
     @Test
     void updateForum_ForumNotFound() {
         Long forumId = 1L;
+        String username = "user1";
         ForumDto updateForumDto = new ForumDto();
         updateForumDto.setName("Updated Name");
         updateForumDto.setTitle("Updated Title");
@@ -282,16 +289,28 @@ class ForumServiceTest {
 
         when(forumRepository.findById(forumId)).thenReturn(Optional.empty());
 
-        assertThrows(RecordNotFoundException.class, () -> forumService.updateForum(forumId, updateForumDto));
+        assertThrows(RecordNotFoundException.class, () -> forumService.updateForum(forumId, updateForumDto, username));
+    }
+
+    @Test
+    void updateForum_Forbidden() {
+        Long forumId = 1L;
+        String username = "user1";
+        ForumDto updateForumDto = new ForumDto();
+
+        securityUtilMock.when(() -> SecurityUtil.isOwnerOrAdmin(username)).thenReturn(false);
+
+        assertThrows(SecurityException.class, () -> forumService.updateForum(forumId, updateForumDto, username));
     }
 
     @Test
     void deleteForum() {
         Long forumId = 1L;
+        String username = "user1";
 
         when(forumRepository.findById(forumId)).thenReturn(Optional.of(forum1));
 
-        forumService.deleteForum(forumId);
+        forumService.deleteForum(forumId, username);
 
         verify(commentRepository, times(1)).deleteAllByForumId(forumId);
         verify(forumRepository, times(1)).deleteById(forumId);
@@ -300,13 +319,24 @@ class ForumServiceTest {
     @Test
     void deleteForum_ForumNotFound() {
         Long forumId = 1L;
+        String username = "user1";
 
         when(forumRepository.findById(forumId)).thenReturn(Optional.empty());
 
-        assertThrows(RecordNotFoundException.class, () -> forumService.deleteForum(forumId));
+        assertThrows(RecordNotFoundException.class, () -> forumService.deleteForum(forumId, username));
 
         verify(commentRepository, never()).deleteAllByForumId(anyLong());
         verify(forumRepository, never()).deleteById(anyLong());
+    }
+
+    @Test
+    void deleteForum_Forbidden() {
+        Long forumId = 1L;
+        String username = "user1";
+
+        securityUtilMock.when(() -> SecurityUtil.isOwnerOrAdmin(username)).thenReturn(false);
+
+        assertThrows(SecurityException.class, () -> forumService.deleteForum(forumId, username));
     }
 
     @Test
@@ -351,12 +381,37 @@ class ForumServiceTest {
     void getForumsByUsername_UserNotFound() {
         String username = "nonexistentUser";
 
+        securityUtilMock.when(() -> SecurityUtil.isOwnerOrAdmin(username)).thenReturn(true);
+
         when(userRepository.findById(username)).thenReturn(Optional.empty());
 
         assertThrows(RecordNotFoundException.class, () -> forumService.getForumsByUsername(username));
 
         verify(userRepository, times(1)).findById(username);
         verify(forumRepository, never()).findByUser(any(User.class));
+    }
+
+    @Test
+    void getForumsByUsername_Forbidden() {
+        String username = "user1";
+
+        securityUtilMock.when(() -> SecurityUtil.isOwnerOrAdmin(username)).thenReturn(false);
+
+        assertThrows(SecurityException.class, () -> forumService.getForumsByUsername(username));
+    }
+
+    @Test
+    void getForumsByUsername_NoForumsFound() {
+        String username = "user1";
+        User user = new User();
+        user.setUsername(username);
+
+        securityUtilMock.when(() -> SecurityUtil.isOwnerOrAdmin(username)).thenReturn(true);
+
+        when(userRepository.findById(username)).thenReturn(Optional.of(user));
+        when(forumRepository.findByUser(user)).thenReturn(Collections.emptySet());
+
+        assertThrows(RecordNotFoundException.class, () -> forumService.getForumsByUsername(username));
     }
 
     @Test
@@ -432,6 +487,8 @@ class ForumServiceTest {
     void getLikedForumsByUsername_UserNotFound() {
         String username = "nonexistentUser";
 
+        securityUtilMock.when(() -> SecurityUtil.isOwnerOrAdmin(username)).thenReturn(true);
+
         when(userRepository.findById(username)).thenReturn(Optional.empty());
 
         assertThrows(RecordNotFoundException.class, () -> forumService.getLikedForumsByUsername(username));
@@ -441,6 +498,29 @@ class ForumServiceTest {
         verify(likeRepository, never()).getLikeCountByForumId(anyLong());
         verify(viewRepository, never()).getViewCountByForumId(anyLong());
         verify(commentRepository, never()).getCommentCountByForumId(anyLong());
+    }
+
+    @Test
+    void getLikedForumsByUsername_Forbidden() {
+        String username = "user1";
+
+        securityUtilMock.when(() -> SecurityUtil.isOwnerOrAdmin(username)).thenReturn(false);
+
+        assertThrows(SecurityException.class, () -> forumService.getLikedForumsByUsername(username));
+    }
+
+    @Test
+    void getLikedForumsByUsername_NoForumsFound() {
+        String username = "user1";
+        User user = new User();
+        user.setUsername(username);
+
+        securityUtilMock.when(() -> SecurityUtil.isOwnerOrAdmin(username)).thenReturn(true);
+
+        when(userRepository.findById(username)).thenReturn(Optional.of(user));
+        when(likeRepository.findLikedForumsByUser(user)).thenReturn(Collections.emptySet());
+
+        assertThrows(RecordNotFoundException.class, () -> forumService.getLikedForumsByUsername(username));
     }
 
     @Test
@@ -487,6 +567,8 @@ class ForumServiceTest {
     void getViewedForumsByUsername_UserNotFound() {
         String username = "nonexistentUser";
 
+        securityUtilMock.when(() -> SecurityUtil.isOwnerOrAdmin(username)).thenReturn(true);
+
         when(userRepository.findById(username)).thenReturn(Optional.empty());
 
         assertThrows(RecordNotFoundException.class, () -> forumService.getViewedForumsByUsername(username));
@@ -496,6 +578,29 @@ class ForumServiceTest {
         verify(likeRepository, never()).getLikeCountByForumId(anyLong());
         verify(viewRepository, never()).getViewCountByForumId(anyLong());
         verify(commentRepository, never()).getCommentCountByForumId(anyLong());
+    }
+
+    @Test
+    void getViewedForumsByUsername_Forbidden() {
+        String username = "user1";
+
+        securityUtilMock.when(() -> SecurityUtil.isOwnerOrAdmin(username)).thenReturn(false);
+
+        assertThrows(SecurityException.class, () -> forumService.getViewedForumsByUsername(username));
+    }
+
+    @Test
+    void getViewedForumsByUsername_NoForumsFound() {
+        String username = "user1";
+        User user = new User();
+        user.setUsername(username);
+
+        securityUtilMock.when(() -> SecurityUtil.isOwnerOrAdmin(username)).thenReturn(true);
+
+        when(userRepository.findById(username)).thenReturn(Optional.of(user));
+        when(viewRepository.findViewedForumsByUser(user)).thenReturn(Collections.emptySet());
+
+        assertThrows(RecordNotFoundException.class, () -> forumService.getViewedForumsByUsername(username));
     }
 
     @Test
@@ -515,6 +620,8 @@ class ForumServiceTest {
 
         Set<Forum> commentedForums = new HashSet<>();
         commentedForums.add(forum);
+
+        securityUtilMock.when(() -> SecurityUtil.isOwnerOrAdmin(username)).thenReturn(true);
 
         when(userRepository.findById(username)).thenReturn(Optional.of(user));
         when(commentRepository.findCommentedForumsByUser(user)).thenReturn(commentedForums);
@@ -543,6 +650,8 @@ class ForumServiceTest {
     void getCommentedForumsByUsername_UserNotFound() {
         String username = "nonexistentUser";
 
+        securityUtilMock.when(() -> SecurityUtil.isOwnerOrAdmin(username)).thenReturn(true);
+
         when(userRepository.findById(username)).thenReturn(Optional.empty());
 
         assertThrows(RecordNotFoundException.class, () -> forumService.getCommentedForumsByUsername(username));
@@ -552,106 +661,29 @@ class ForumServiceTest {
         verify(likeRepository, never()).getLikeCountByForumId(anyLong());
         verify(viewRepository, never()).getViewCountByForumId(anyLong());
         verify(commentRepository, never()).getCommentCountByForumId(anyLong());
-
-    }
-
-
-    @Test
-    void getForumsByTopic() {
-        String topic = "topic1";
-
-        Forum forum1 = new Forum();
-        forum1.setTopic("topic1");
-
-        Forum forum2 = new Forum();
-        forum2.setTopic("topic2");
-
-        List<Forum> forums = Arrays.asList(forum1, forum2);
-
-        when(forumRepository.findAll()).thenReturn(forums);
-
-        List<Forum> result = forumService.getForumsByTopic(topic);
-
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        assertEquals("topic1", result.get(0).getTopic());
-
-        verify(forumRepository, times(1)).findAll();
     }
 
     @Test
-    void getUniqueTopics() {
-        Forum forum1 = new Forum();
-        forum1.setTopic("topic1");
+    void getCommentedForumsByUsername_Forbidden() {
+        String username = "user1";
 
-        Forum forum2 = new Forum();
-        forum2.setTopic("topic2");
+        securityUtilMock.when(() -> SecurityUtil.isOwnerOrAdmin(username)).thenReturn(false);
 
-        Forum forum3 = new Forum();
-        forum3.setTopic("topic1");
-
-        List<Forum> forums = Arrays.asList(forum1, forum2, forum3);
-
-        when(forumRepository.findAll()).thenReturn(forums);
-
-        Set<String> result = forumService.getUniqueTopics();
-
-        assertNotNull(result);
-        assertEquals(2, result.size());
-        assertTrue(result.contains("topic1"));
-        assertTrue(result.contains("topic2"));
-
-        verify(forumRepository, times(1)).findAll();
+        assertThrows(SecurityException.class, () -> forumService.getCommentedForumsByUsername(username));
     }
 
     @Test
-    void getSortedUniqueTopics() {
-        Forum forum1 = new Forum();
-        forum1.setTopic("topic1");
+    void getCommentedForumsByUsername_NoForumsFound() {
+        String username = "user1";
+        User user = new User();
+        user.setUsername(username);
 
-        Forum forum2 = new Forum();
-        forum2.setTopic("topic2");
+        securityUtilMock.when(() -> SecurityUtil.isOwnerOrAdmin(username)).thenReturn(true);
 
-        Forum forum3 = new Forum();
-        forum3.setTopic("topic1");
+        when(userRepository.findById(username)).thenReturn(Optional.of(user));
+        when(commentRepository.findCommentedForumsByUser(user)).thenReturn(Collections.emptySet());
 
-        List<Forum> forums = Arrays.asList(forum1, forum2, forum3);
-
-        when(forumRepository.findAll()).thenReturn(forums);
-
-        List<String> result = forumService.getSortedUniqueTopics();
-
-        assertNotNull(result);
-        assertEquals(2, result.size());
-        assertEquals("topic1", result.get(0));
-        assertEquals("topic2", result.get(1));
-
-        verify(forumRepository, times(1)).findAll();
-    }
-
-    @Test
-    void getTopicFrequency() {
-        Forum forum1 = new Forum();
-        forum1.setTopic("topic1");
-
-        Forum forum2 = new Forum();
-        forum2.setTopic("topic2");
-
-        Forum forum3 = new Forum();
-        forum3.setTopic("topic1");
-
-        List<Forum> forums = Arrays.asList(forum1, forum2, forum3);
-
-        when(forumRepository.findAll()).thenReturn(forums);
-
-        Map<String, Integer> result = forumService.getTopicFrequency();
-
-        assertNotNull(result);
-        assertEquals(2, result.size());
-        assertEquals(2, result.get("topic1").intValue());
-        assertEquals(1, result.get("topic2").intValue());
-
-        verify(forumRepository, times(1)).findAll();
+        assertThrows(RecordNotFoundException.class, () -> forumService.getCommentedForumsByUsername(username));
     }
 
     @Test

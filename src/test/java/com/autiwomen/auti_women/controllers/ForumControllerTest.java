@@ -50,13 +50,13 @@ class ForumControllerTest {
         authorities.add(new Authority("ROLE_USER"));
 
         userInputDto = new UserInputDto(
-                "Gender1",
                 "user1",
                 "password1",
                 "user1@example.com",
                 "apikey1",
                 true,
                 "Name1",
+                "vrouw",
                 dob,
                 "Diagnoses1",
                 2000,

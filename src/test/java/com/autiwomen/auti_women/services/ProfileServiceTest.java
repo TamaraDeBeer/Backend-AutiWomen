@@ -2,18 +2,17 @@ package com.autiwomen.auti_women.services;
 
 import com.autiwomen.auti_women.dtos.profiles.ProfileDto;
 import com.autiwomen.auti_women.dtos.profiles.ProfileInputDto;
+import com.autiwomen.auti_women.exceptions.RecordNotFoundException;
 import com.autiwomen.auti_women.models.Profile;
 import com.autiwomen.auti_women.repositories.ProfileRepository;
 import com.autiwomen.auti_women.security.repositories.UserRepository;
 import com.autiwomen.auti_women.security.models.User;
+import com.autiwomen.auti_women.security.utils.SecurityUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
@@ -35,6 +34,9 @@ class ProfileServiceTest {
     @InjectMocks
     ProfileService profileService;
 
+    @Mock
+    MockedStatic<SecurityUtil> securityUtilMock;
+
     @Captor
     ArgumentCaptor<Profile> captor;
     User user1;
@@ -49,10 +51,13 @@ class ProfileServiceTest {
         String currentDate = String.valueOf(LocalDate.now());
         profile1 = new Profile(1L, user1, "bio", "user1", currentDate);
         profile2 = new Profile(2L, user2, "bio", "user2", currentDate);
+
+        securityUtilMock.when(() -> SecurityUtil.isOwnerOrAdmin("user1")).thenReturn(true);
     }
 
     @AfterEach
     void tearDown() {
+        securityUtilMock.close();
     }
 
     @Test
@@ -106,22 +111,34 @@ class ProfileServiceTest {
     void getProfileByUsername_ProfileNotFound() {
         String username = "user1";
 
+        securityUtilMock.when(() -> SecurityUtil.isOwnerOrAdmin(username)).thenReturn(true);
+
         when(userRepository.findById(username)).thenReturn(Optional.of(user1));
         when(profileRepository.findByUser(user1)).thenReturn(Optional.empty());
 
-        ProfileDto profileDto = profileService.getProfileByUsername(username);
-
-        assertNotNull(profileDto);
-        assertNull(profileDto.id);
-        assertNull(profileDto.name);
-        assertNull(profileDto.date);
-        assertNull(profileDto.bio);
-
-        verify(userRepository, times(1)).findById(username);
-        verify(profileRepository, times(1)).findByUser(user1);
+        assertThrows(RecordNotFoundException.class, () -> profileService.getProfileByUsername(username));
     }
 
     @Test
+    void getProfileByUsername_Forbidden() {
+        String username = "user1";
+
+        securityUtilMock.when(() -> SecurityUtil.isOwnerOrAdmin(username)).thenReturn(false);
+
+        assertThrows(SecurityException.class, () -> profileService.getProfileByUsername(username));
+    }
+
+    @Test
+    void updateProfile_Forbidden() {
+        String username = "user1";
+        ProfileInputDto profileInputDto = new ProfileInputDto("bio2", "user1", String.valueOf(LocalDate.now()));
+
+        securityUtilMock.when(() -> SecurityUtil.isOwnerOrAdmin(username)).thenReturn(false);
+
+        assertThrows(SecurityException.class, () -> profileService.updateProfile(username, profileInputDto));
+    }
+
+        @Test
     void fromProfile() {
         Profile profile = new Profile(1L, user1, "bio", "user1", String.valueOf(LocalDate.now()));
 
