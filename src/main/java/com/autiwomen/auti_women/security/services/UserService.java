@@ -11,6 +11,7 @@ import com.autiwomen.auti_women.security.dtos.user.UserInputDto;
 import com.autiwomen.auti_women.security.dtos.user.UserOutputDto;
 import com.autiwomen.auti_women.security.models.Authority;
 import com.autiwomen.auti_women.security.models.User;
+import com.autiwomen.auti_women.security.utils.SecurityUtil;
 import com.autiwomen.auti_women.security.utils.RandomStringGenerator;
 import com.autiwomen.auti_women.services.ProfileService;
 import jakarta.transaction.Transactional;
@@ -82,6 +83,9 @@ public class UserService {
     }
 
     public void updatePasswordUser(String username, UserDto updateUser) {
+        if (!SecurityUtil.isOwnerOrAdmin(username)) {
+            throw new SecurityException("Forbidden");
+        }
         Optional<User> userOptional = userRepository.findById(username);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
