@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class ReviewInputDto {
 
     @NotEmpty
-    @Size
+    @Size(min = 1, max = 2000)
     public String review;
 
 }

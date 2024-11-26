@@ -1,20 +1,14 @@
 -- Wijzig de kolom 'text' in de 'forums' tabel naar VARCHAR(4000)
 ALTER TABLE forums ALTER COLUMN text TYPE VARCHAR(4000);
 
--- Wijzig de kolom 'text' in de 'comments' tabel naar VARCHAR(2000)
+-- Wijzig de kolom 'text', 'review', 'bio' in de 'comments', 'reviews', 'profiles' tabel naar VARCHAR(2000)
 ALTER TABLE comments ALTER COLUMN text TYPE VARCHAR(2000);
+ALTER TABLE reviews ALTER COLUMN review TYPE VARCHAR(2000);
+ALTER TABLE profiles ALTER COLUMN bio TYPE VARCHAR(2000);
 
 -- Een unieke constraint om ervoor te zorgen dat er geen dubbele gebruikersnamen zijn
 ALTER TABLE users
     ADD CONSTRAINT unique_username UNIQUE (username);
-
--- Add ON DELETE CASCADE to the foreign key constraint on comments table
--- ALTER TABLE comments
--- DROP CONSTRAINT fkt7clst21fs6p4g71yf83fvw75,
---     ADD CONSTRAINT fkt7clst21fs6p4g71yf83fvw75
---     FOREIGN KEY (forum_id)
---     REFERENCES forums (id)
---     ON DELETE CASCADE;
 
 ALTER TABLE comments DROP CONSTRAINT fkt7clst21fs6p4g71yf83fvw75;
 ALTER TABLE comments ADD CONSTRAINT fkt7clst21fs6p4g71yf83fvw75 FOREIGN KEY (forum_id) REFERENCES forums (id) ON DELETE CASCADE;

@@ -188,7 +188,10 @@ public class UserService {
             throw new BadRequestException("Password cannot be null or empty");
         }
         if (userRepository.existsById(userInputDto.getUsername())) {
-            throw new IllegalArgumentException("Username already exists");
+            throw new IllegalStateException("Username already exists");
+        }
+        if (userRepository.existsByEmail(userInputDto.getEmail())) {
+            throw new IllegalStateException("Email already exists");
         }
         String randomString = RandomStringGenerator.generateAlphaNumeric(20);
         userInputDto.setApikey(randomString);

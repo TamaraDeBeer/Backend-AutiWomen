@@ -1,5 +1,6 @@
 package com.autiwomen.auti_women.dtos.comments;
 
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,6 +13,7 @@ public class CommentInputDto {
 
     public String name;
 
+    @NotEmpty
     @Size(min = 1, max = 2000)
     public String text;
 
