@@ -9,12 +9,15 @@ ALTER TABLE users
     ADD CONSTRAINT unique_username UNIQUE (username);
 
 -- Add ON DELETE CASCADE to the foreign key constraint on comments table
-ALTER TABLE comments
-DROP CONSTRAINT fkt7clst21fs6p4g71yf83fvw75,
-    ADD CONSTRAINT fkt7clst21fs6p4g71yf83fvw75
-    FOREIGN KEY (forum_id)
-    REFERENCES forums (id)
-    ON DELETE CASCADE;
+-- ALTER TABLE comments
+-- DROP CONSTRAINT fkt7clst21fs6p4g71yf83fvw75,
+--     ADD CONSTRAINT fkt7clst21fs6p4g71yf83fvw75
+--     FOREIGN KEY (forum_id)
+--     REFERENCES forums (id)
+--     ON DELETE CASCADE;
+
+ALTER TABLE comments DROP CONSTRAINT fkt7clst21fs6p4g71yf83fvw75;
+ALTER TABLE comments ADD CONSTRAINT fkt7clst21fs6p4g71yf83fvw75 FOREIGN KEY (forum_id) REFERENCES forums (id) ON DELETE CASCADE;
 
 ALTER TABLE forums
     ALTER COLUMN comments_count SET DEFAULT 0;
