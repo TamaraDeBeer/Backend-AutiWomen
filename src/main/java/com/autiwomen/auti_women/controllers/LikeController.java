@@ -1,5 +1,6 @@
 package com.autiwomen.auti_women.controllers;
 
+import com.autiwomen.auti_women.dtos.likes.LikeDto;
 import com.autiwomen.auti_women.services.LikeService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,14 +28,14 @@ public class LikeController {
     }
 
     @PostMapping("/add/forums/{forumId}/users/{username}")
-    public ResponseEntity<Void> addLikeToForum(@PathVariable Long forumId, @PathVariable String username) {
-        likeService.addLikeToForum(forumId, username);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<LikeDto> addLikeToForum(@PathVariable Long forumId, @PathVariable String username) {
+        LikeDto likeDto = likeService.addLikeToForum(forumId, username);
+        return ResponseEntity.ok().body(likeDto);
     }
 
     @DeleteMapping("/delete/forums/{forumId}/users/{username}")
-    public ResponseEntity<Void> removeLikeFromForum(@PathVariable Long forumId, @PathVariable String username) {
+    public ResponseEntity<LikeDto> removeLikeFromForum(@PathVariable Long forumId, @PathVariable String username) {
         likeService.removeLikeFromForum(forumId, username);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 }

@@ -1,5 +1,7 @@
 package com.autiwomen.auti_women.services;
 
+import com.autiwomen.auti_women.dtos.likes.LikeDto;
+import com.autiwomen.auti_women.dtos.likes.LikeInputDto;
 import com.autiwomen.auti_women.exceptions.RecordNotFoundException;
 import com.autiwomen.auti_women.models.Forum;
 import com.autiwomen.auti_women.models.Like;
@@ -45,7 +47,7 @@ public class LikeService {
         return likeRepository.findLikeByUserAndForum(user, forum).isPresent();
     }
 
-    public void addLikeToForum(Long forumId, String username) {
+    public LikeDto addLikeToForum(Long forumId, String username) {
         if (!SecurityUtil.isOwnerOrAdmin(username)) {
             throw new SecurityException("Forbidden");
         }
@@ -58,8 +60,15 @@ public class LikeService {
         if (existingLike.isPresent()) {
             throw new IllegalStateException("User has already liked this forum");
         }
-        Like like = new Like(user, forum);
+        LikeInputDto likeInputDto = new LikeInputDto();
+        likeInputDto.setId(null);
+        Like like = toLike(likeInputDto);
+        like.setUser(user);
+        like.setForum(forum);
+        like.setUsername(username);
+        like.setForumTitle(forum.getTitle());
         likeRepository.save(like);
+        return fromLike(like);
     }
 
     public void removeLikeFromForum(Long forumId, String username) {
@@ -77,6 +86,20 @@ public class LikeService {
         } else {
             throw new RecordNotFoundException("Like not found for user and forum");
         }
+    }
+
+    public LikeDto fromLike(Like like) {
+        var likeDto = new LikeDto();
+        likeDto.id = like.getId();
+        likeDto.username = like.getUsername();
+        likeDto.forumTitle = like.getForumTitle();
+        return likeDto;
+    }
+
+    public Like toLike(LikeInputDto likeInputDto) {
+        var like = new Like();
+        like.setId(likeInputDto.id);
+        return like;
     }
 
 }
