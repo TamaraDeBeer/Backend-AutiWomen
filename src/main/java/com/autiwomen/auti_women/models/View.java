@@ -23,6 +23,9 @@ public class View {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    private String username;
+    private String forumTitle;
+
     public View() {
     }
 

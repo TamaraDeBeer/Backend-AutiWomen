@@ -1,5 +1,7 @@
 package com.autiwomen.auti_women.services;
 
+import com.autiwomen.auti_women.dtos.views.ViewDto;
+import com.autiwomen.auti_women.dtos.views.ViewInputDto;
 import com.autiwomen.auti_women.exceptions.RecordNotFoundException;
 import com.autiwomen.auti_women.models.Forum;
 import com.autiwomen.auti_women.models.View;
@@ -45,7 +47,7 @@ public class ViewService {
         return viewRepository.findViewByUserAndForum(user, forum).isPresent();
     }
 
-    public void addViewToForum(Long forumId, String username) {
+    public ViewDto addViewToForum(Long forumId, String username) {
         if (!SecurityUtil.isOwnerOrAdmin(username)) {
             throw new SecurityException("Forbidden");
         }
@@ -58,11 +60,28 @@ public class ViewService {
         if (existingView.isPresent()) {
             throw new IllegalStateException("User has already viewed this forum");
         }
-        View view = toView(user, forum);
+        ViewInputDto viewInputDto = new ViewInputDto();
+        viewInputDto.setId(null);
+        View view = toView(viewInputDto);
+        view.setUser(user);
+        view.setForum(forum);
+        view.setUsername(username);
+        view.setForumTitle(forum.getTitle());
         viewRepository.save(view);
+        return fromView(view);
     }
 
-    private View toView(User user, Forum forum) {
-        return new View(user, forum);
+    public ViewDto fromView(View view) {
+        var viewDto = new ViewDto();
+        viewDto.id = view.getId();
+        viewDto.username = view.getUsername();
+        viewDto.forumTitle = view.getForumTitle();
+        return viewDto;
+    }
+
+    public View toView (ViewInputDto viewInputDto) {
+        var view = new View();
+        view.setId(viewInputDto.getId());
+        return view;
     }
 }

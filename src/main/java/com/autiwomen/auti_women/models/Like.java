@@ -24,18 +24,9 @@ public class Like {
     private User user;
 
     private String username;
-
     private String forumTitle;
 
     public Like() {
-    }
-
-    public Like(Long id, Forum forum, User user, String username, String forumTitle) {
-        this.id = id;
-        this.forum = forum;
-        this.user = user;
-        this.username = username;
-        this.forumTitle = forumTitle;
     }
 
 }

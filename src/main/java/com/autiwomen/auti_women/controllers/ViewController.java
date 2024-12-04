@@ -1,5 +1,7 @@
 package com.autiwomen.auti_women.controllers;
 
+import com.autiwomen.auti_women.dtos.likes.LikeDto;
+import com.autiwomen.auti_women.dtos.views.ViewDto;
 import com.autiwomen.auti_women.services.ViewService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,8 +29,8 @@ public class ViewController {
     }
 
     @PostMapping("/add/forums/{forumId}/users/{username}")
-    public ResponseEntity<Void> addViewToForum(@PathVariable Long forumId, @PathVariable String username) {
-        viewService.addViewToForum(forumId, username);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<ViewDto> addViewToForum(@PathVariable Long forumId, @PathVariable String username) {
+        ViewDto viewDto = viewService.addViewToForum(forumId, username);
+        return ResponseEntity.ok().body(viewDto);
     }
 }
