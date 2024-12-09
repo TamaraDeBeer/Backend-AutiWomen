@@ -19,7 +19,7 @@ public class Forum {
     @GeneratedValue
     private Long id;
     private String name;
-    private String age;
+    private LocalDate dob;
     private String title;
 
     @Column(length = 4000)
@@ -49,9 +49,9 @@ public class Forum {
             orphanRemoval = true)
     private Set<View> views;
 
-    public Forum(String name, String age, String title, String text, LocalDate date, String topic, int likesCount, int viewsCount, int commentsCount, User user) {
+    public Forum(String name, LocalDate dob, String title, String text, LocalDate date, String topic, int likesCount, int viewsCount, int commentsCount, User user) {
         this.name = name;
-        this.age = age;
+        this.dob = dob;
         this.title = title;
         this.text = text;
         this.date = date;
@@ -62,10 +62,10 @@ public class Forum {
         this.user = user;
     }
 
-    public Forum(Long id, String name, String age, String title, String text, LocalDate date, String topic) {
+    public Forum(Long id, String name, LocalDate dob, String title, String text, LocalDate date, String topic) {
         this.id = id;
         this.name = name;
-        this.age = age;
+        this.dob = dob;
         this.title = title;
         this.text = text;
         this.date = date;

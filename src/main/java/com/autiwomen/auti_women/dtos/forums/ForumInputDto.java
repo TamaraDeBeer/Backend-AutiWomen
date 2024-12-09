@@ -23,7 +23,7 @@ public class ForumInputDto {
     @Size(min = 1, max = 4000)
     public String text;
 
-    public String age;
+    public LocalDate dob;
     public LocalDate date;
     public LocalDate lastReaction;
 

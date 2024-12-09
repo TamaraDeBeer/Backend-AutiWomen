@@ -20,6 +20,6 @@ public class CommentInputDto {
     public String text;
 
     public LocalDate date;
-    public String age;
+    public LocalDate dob;
 
 }

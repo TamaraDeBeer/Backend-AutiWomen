@@ -9,12 +9,12 @@ skinparam {
 class Forum #F5C84C99 {
     - Long id
     - String name
-    - String age
+    - LocalDate dob
     - String title
     - String text
     - String topic
-    - String date
-    - String lastReaction
+    - LocalDate date
+    - LocalDate lastReaction
     - int commentsCount
     - List<Comment> commentsList
     - User user
@@ -25,21 +25,25 @@ class Forum #F5C84C99 {
 class Comment #F5C84C99 {
     - Long id
     - String name
-    - String age
+    - LocalDate dob
     - String text
-    - String date
+    - LocalDate date
     - User user
     - Forum forum
     }
 
 class Like #F5C84C99 {
     - Long id
+    - String username
+    - String forumTitle
     - User user
     - Forum forum
     }
 
 class View #F5C84C99 {
     - Long id
+    - String username
+    - String forumTitle
     - User user
     - Forum forum
     }
@@ -47,12 +51,14 @@ class View #F5C84C99 {
 class User #F5C84C99 {
     - String username
     - String password
+    - boolean enabled
+    - String apikey
     - String email
     - String name
     - String gender
     - LocalDate dob
     - String autismDiagnoses
-    - Int autismDiagnosesYear
+    - Integer autismDiagnosesYear
     - String profilePictureUrl
     - Set<Authority> authorities
     - List<Comment> commentsList
@@ -62,11 +68,16 @@ class User #F5C84C99 {
     - Profile profile
 }
 
+class Authority #F5C84C99 {
+    - String username
+    - String authority
+}
+
 class Profile #F5C84C99 {
     - Long id
     - String bio
     - String name
-    - String date
+    - LocalDate date
     - User user
 }
 
@@ -77,13 +88,14 @@ class Review #F5C84C99 {
     - LocalDate dob
     - Integer autismDiagnosesYear
     - String profilePictureUrl
-    - String date
+    - LocalDate date
     - User user
 }
 
 User "1" *--[#064D1A] "1" Profile
 User "1" *--[#064D1A] "1" Review
 User "1" *--[#064D1A] "0..*" Forum
+User "1" *--[#064D1A] "0..*" Authority
 
 Forum "1" *--[#7AC37A] "0..*" Comment
 Forum "1" *--[#7AC37A] "0..*" Like

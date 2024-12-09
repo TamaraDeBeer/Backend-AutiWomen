@@ -15,7 +15,7 @@ import java.time.LocalDate;
 public class ForumDto {
     public Long id;
     public String name;
-    public String age;
+    public LocalDate dob;
     public String title;
     public String text;
     public LocalDate date;

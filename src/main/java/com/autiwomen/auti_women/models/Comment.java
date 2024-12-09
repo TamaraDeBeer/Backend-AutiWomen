@@ -22,7 +22,7 @@ public class Comment {
     private String text;
 
     private LocalDate date;
-    private String age;
+    private LocalDate dob;
 
     @ManyToOne
     @JoinColumn(name = "forum_id")
@@ -32,11 +32,11 @@ public class Comment {
     @JoinColumn(name = "user_id", referencedColumnName = "username")
     private User user;
 
-    public Comment(String name, String text, LocalDate date, String age, Forum forum, User user) {
+    public Comment(String name, String text, LocalDate date, LocalDate dob, Forum forum, User user) {
         this.name = name;
         this.text = text;
         this.date = date;
-        this.age = age;
+        this.dob = dob;
         this.forum = forum;
         this.user = user;
     }

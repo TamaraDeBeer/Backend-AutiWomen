@@ -19,7 +19,7 @@ public class CommentDto {
     public String name;
     public String text;
     public LocalDate date;
-    public String age;
+    public LocalDate dob;
 
     public ForumDto forumDto;
     public UserDto userDto;

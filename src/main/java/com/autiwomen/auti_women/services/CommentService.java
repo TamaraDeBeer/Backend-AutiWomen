@@ -50,7 +50,7 @@ public class CommentService {
             User user = comment.getUser();
             if (user != null) {
                 comment.setName(user.getUsername());
-                comment.setAge(user.getDob().toString());
+                comment.setDob(user.getDob());
             }
             return toCommentDto(comment);
         }).collect(Collectors.toList());
@@ -83,8 +83,8 @@ public class CommentService {
 
         Comment comment = toComment(commentInputDto);
         comment.setName(user.getUsername());
-        comment.setAge(user.getDob().toString());
-        comment.setDate(LocalDate.parse(String.valueOf(LocalDate.now())));
+        comment.setDob(user.getDob());
+        comment.setDate(LocalDate.now());
         commentRepository.save(comment);
         return fromComment(comment);
     }
@@ -176,6 +176,7 @@ public class CommentService {
         comment.setName(commentInputDto.getName());
         comment.setText(commentInputDto.getText());
         comment.setDate(commentInputDto.getDate());
+        comment.setDob(commentInputDto.getDob());
 
         return comment;
     }
@@ -186,7 +187,7 @@ public class CommentService {
         dto.setName(comment.getName());
         dto.setText(comment.getText());
         dto.setDate(comment.getDate());
-        dto.setAge(comment.getAge());
+        dto.setDob(comment.getDob());
 
         if (comment.getUser() != null) {
             User user = comment.getUser();

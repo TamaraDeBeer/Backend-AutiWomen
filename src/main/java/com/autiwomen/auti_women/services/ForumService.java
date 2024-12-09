@@ -97,7 +97,7 @@ public class ForumService {
         return forums.stream().map(forum -> {
             if (forum.getUser() != null) {
                 forum.setName(forum.getUser().getUsername());
-                forum.setAge(forum.getUser().getDob().toString());
+                forum.setDob(forum.getUser().getDob());
             }
             updateForumCounts(forum);
             return fromForum(forum);
@@ -150,7 +150,7 @@ public class ForumService {
         Forum forum = toForum(forumInputDto);
         forum.setDate(LocalDate.parse(String.valueOf(LocalDate.now())));
         forum.setName(user.getUsername());
-        forum.setAge(user.getDob().toString());
+        forum.setDob(user.getDob());
 
         forumRepository.save(forum);
         return fromForum(forum);
@@ -246,7 +246,7 @@ public class ForumService {
         var forumDto = new ForumDto();
         forumDto.id = forum.getId();
         forumDto.name = forum.getName();
-        forumDto.age = forum.getAge();
+        forumDto.dob = forum.getDob();
         forumDto.title = forum.getTitle();
         forumDto.text = forum.getText();
         forumDto.date = forum.getDate();
