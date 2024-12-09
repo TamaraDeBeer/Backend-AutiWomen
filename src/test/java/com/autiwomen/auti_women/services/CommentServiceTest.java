@@ -61,11 +61,11 @@ class CommentServiceTest {
         LocalDate dob = LocalDate.of(1990, 5, 15);
         user1 = new User("user1", dob);
         user2 = new User("user2", dob);
-        String currentDate = String.valueOf(LocalDate.now());
-        comment1 = new Comment(1L, "user1", "comment1", currentDate, "1990-05-15");
-        comment2 = new Comment(2L, "user2", "comment2", currentDate, "1990-05-15");
-        forum1 = new Forum(1L, "user1", "1990-05-15", "title1", "text1", currentDate, "School");
-        forum2 = new Forum(2L, "user2", "1990-05-15", "title2", "text2", currentDate, "School");
+        LocalDate currentDate = LocalDate.now();
+        comment1 = new Comment(1L, "user1", "comment1", currentDate, dob);
+        comment2 = new Comment(2L, "user2", "comment2", currentDate, dob);
+        forum1 = new Forum(1L, "Name1", dob, "title", "text", currentDate, "School", 0, 0, 0);
+        forum2 = new Forum(2L, "Name1", dob, "title2", "text2", currentDate, "topic", 0, 0, 0);
 
         comment1.setForum(forum1);
         comment2.setForum(forum2);
@@ -83,7 +83,7 @@ class CommentServiceTest {
 
     @Test
     void createComment() {
-        CommentInputDto commentInputDto = new CommentInputDto("user1", "comment1", String.valueOf(LocalDate.now()), "1990-05-15");
+        CommentInputDto commentInputDto = new CommentInputDto("user1", "comment1", LocalDate.now(), (LocalDate.of(1990, 5, 15)));
         String username = "user1";
 
         when(userRepository.findById(username)).thenReturn(Optional.of(user1));
@@ -97,7 +97,7 @@ class CommentServiceTest {
         assertEquals(comment1.getName(), savedComment.getName());
         assertEquals(comment1.getText(), savedComment.getText());
         assertEquals(comment1.getDate(), savedComment.getDate());
-        assertEquals(comment1.getAge(), savedComment.getAge());
+        assertEquals(comment1.getDob(), savedComment.getDob());
         assertNotNull(result);
         assertEquals(comment1.getName(), result.getName());
         assertEquals(comment1.getText(), result.getText());
@@ -107,7 +107,7 @@ class CommentServiceTest {
     @Test
     void createComment_Forbidden() {
         String username = "user1";
-        CommentInputDto commentInputDto = new CommentInputDto("user1", "comment1", String.valueOf(LocalDate.now()), "1990-05-15");
+        CommentInputDto commentInputDto = new CommentInputDto("user1", "comment1", LocalDate.now(), (LocalDate.of(1990, 5, 15)));
 
         securityUtilMock.when(() -> SecurityUtil.isOwnerOrAdmin(username)).thenReturn(false);
 
@@ -227,7 +227,7 @@ class CommentServiceTest {
         assertEquals(comment1.getName(), commentDtos.get(0).getName());
         assertEquals(comment1.getText(), commentDtos.get(0).getText());
         assertEquals(comment1.getDate(), commentDtos.get(0).getDate());
-        assertEquals(comment1.getAge(), commentDtos.get(0).getAge());
+        assertEquals(comment1.getDob(), commentDtos.get(0).getDob());
     }
 
     @Test
@@ -373,7 +373,7 @@ class CommentServiceTest {
         comment.setId(1L);
         comment.setName("user1");
         comment.setText("Comment");
-        comment.setDate("2023-10-01");
+        comment.setDate(LocalDate.of(2023, 10, 1));
 
         Forum forum = new Forum();
         forum.setId(1L);
@@ -397,7 +397,7 @@ class CommentServiceTest {
         CommentInputDto commentInputDto = new CommentInputDto();
         commentInputDto.setName("user1");
         commentInputDto.setText("Comment");
-        commentInputDto.setDate("2023-10-01");
+        commentInputDto.setDate(LocalDate.of(2023, 10, 1));
 
         Comment comment = commentService.toComment(commentInputDto);
 

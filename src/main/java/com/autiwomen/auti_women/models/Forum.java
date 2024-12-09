@@ -62,7 +62,7 @@ public class Forum {
         this.user = user;
     }
 
-    public Forum(Long id, String name, LocalDate dob, String title, String text, LocalDate date, String topic) {
+    public Forum(Long id, String name, LocalDate dob, String title, String text, LocalDate date, String topic, int likesCount, int viewsCount, int commentsCount) {
         this.id = id;
         this.name = name;
         this.dob = dob;
@@ -70,6 +70,9 @@ public class Forum {
         this.text = text;
         this.date = date;
         this.topic = topic;
+        this.likesCount = likesCount;
+        this.viewsCount = viewsCount;
+        this.commentsCount = commentsCount;
     }
 
 

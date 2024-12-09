@@ -29,4 +29,9 @@ public class Like {
     public Like() {
     }
 
+    public Like(User user, Forum forum) {
+        this.user = user;
+        this.forum = forum;
+    }
+
 }

@@ -49,10 +49,11 @@ class ForumTopicServiceTest {
         LocalDate dob = LocalDate.of(1990, 5, 15);
         user1 = new User("user1", dob);
         user2 = new User("user2", dob);
-        forum1 = new Forum(1L, "user1", "1990-05-15", "title1", "text1", "2023-10-01", null, "topic1", 0, 0, 0);
-        forum2 = new Forum(2L, "user2", "1990-05-15", "title2", "text2", "2023-10-02", null, "topic2", 0, 0, 0);
-        comment1 = new Comment(1L, "user1", "comment1", "2023-10-01", "1990-05-15");
-        comment2 = new Comment(2L, "user2", "comment2", "2023-10-02", "1990-05-15");
+        LocalDate currentDate = LocalDate.now();
+        comment1 = new Comment(1L, "user1", "comment1", currentDate, dob);
+        comment2 = new Comment(2L, "user2", "comment2", currentDate, dob);
+        forum1 = new Forum(1L, "Name1", dob, "title", "text", currentDate, "School", 0, 0, 0);
+        forum2 = new Forum(2L, "Name1", dob, "title2", "text2", currentDate, "topic", 0, 0, 0);
         like1 = new Like(user1, forum1);
         like2 = new Like(user2, forum2);
         view1 = new View(user1, forum1);

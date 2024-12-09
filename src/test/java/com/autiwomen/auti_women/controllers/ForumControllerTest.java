@@ -77,10 +77,10 @@ class ForumControllerTest {
         user1.setProfilePictureUrl(userInputDto.getProfilePictureUrl());
         userRepository.save(user1);
 
-        Forum forum1 = new Forum(1L, "Name1", "05-05-1990", "title", "text", "06-07-2024", null, "topic", 0, 0, 0);
+        Forum forum1 = new Forum(1L, "Name1", dob, "title", "text", LocalDate.of(2024, 7, 6), "topic", 0, 0, 0);
         forumRepository.save(forum1);
 
-        Forum forum2 = new Forum(2L, "Name1", "05-05-1990", "title2", "text2", "06-07-2024", null, "topic", 0, 0, 0);
+        Forum forum2 = new Forum(2L, "Name1", dob, "title2", "text2", LocalDate.of(2024, 7, 6), "topic", 0, 0, 0);
         forumRepository.save(forum2);
     }
 
@@ -90,21 +90,19 @@ class ForumControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$[0].name").value("Name1"))
-                .andExpect(jsonPath("$[0].age").value("05-05-1990"))
+                .andExpect(jsonPath("$[0].dob").value("1990-05-05"))
                 .andExpect(jsonPath("$[0].title").value("title"))
                 .andExpect(jsonPath("$[0].text").value("text"))
-                .andExpect(jsonPath("$[0].date").value("06-07-2024"))
-                .andExpect(jsonPath("$[0].lastReaction").value(org.hamcrest.Matchers.nullValue()))
+                .andExpect(jsonPath("$[0].date").value("2024-07-06"))
                 .andExpect(jsonPath("$[0].topic").value("topic"))
                 .andExpect(jsonPath("$[0].likesCount").value(0))
                 .andExpect(jsonPath("$[0].viewsCount").value(0))
                 .andExpect(jsonPath("$[0].commentsCount").value(0))
                 .andExpect(jsonPath("$[1].name").value("Name1"))
-                .andExpect(jsonPath("$[1].age").value("05-05-1990"))
+                .andExpect(jsonPath("$[1].dob").value("1990-05-05"))
                 .andExpect(jsonPath("$[1].title").value("title2"))
                 .andExpect(jsonPath("$[1].text").value("text2"))
-                .andExpect(jsonPath("$[1].date").value("06-07-2024"))
-                .andExpect(jsonPath("$[1].lastReaction").value(org.hamcrest.Matchers.nullValue()))
+                .andExpect(jsonPath("$[1].date").value("2024-07-06"))
                 .andExpect(jsonPath("$[1].topic").value("topic"))
                 .andExpect(jsonPath("$[1].likesCount").value(0))
                 .andExpect(jsonPath("$[1].viewsCount").value(0))
@@ -116,11 +114,10 @@ class ForumControllerTest {
         mockMvc.perform(get("/forums/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Name1"))
-                .andExpect(jsonPath("$.age").value("05-05-1990"))
+                .andExpect(jsonPath("$.dob").value("1990-05-05"))
                 .andExpect(jsonPath("$.title").value("title"))
                 .andExpect(jsonPath("$.text").value("text"))
-                .andExpect(jsonPath("$.date").value("06-07-2024"))
-                .andExpect(jsonPath("$.lastReaction").value(org.hamcrest.Matchers.nullValue()))
+                .andExpect(jsonPath("$.date").value("2024-07-06"))
                 .andExpect(jsonPath("$.topic").value("topic"))
                 .andExpect(jsonPath("$.likesCount").value(0))
                 .andExpect(jsonPath("$.viewsCount").value(0))

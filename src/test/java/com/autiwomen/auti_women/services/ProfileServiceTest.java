@@ -48,7 +48,7 @@ class ProfileServiceTest {
     void setUp() {
         user1 = new User("user1");
         user2 = new User("user2");
-        String currentDate = String.valueOf(LocalDate.now());
+        LocalDate currentDate = LocalDate.now();
         profile1 = new Profile(1L, user1, "bio", "user1", currentDate);
         profile2 = new Profile(2L, user2, "bio", "user2", currentDate);
 
@@ -62,7 +62,7 @@ class ProfileServiceTest {
 
     @Test
     void createProfile() {
-        ProfileInputDto profileInputDto = new ProfileInputDto("bio", "user1", String.valueOf(LocalDate.now()));
+        ProfileInputDto profileInputDto = new ProfileInputDto("bio", "user1", (LocalDate.of(2023, 10, 1)));
 
         when(userRepository.findById("user1")).thenReturn(Optional.of(user1));
         when(profileRepository.save(any(Profile.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -90,9 +90,8 @@ class ProfileServiceTest {
 
     @Test
     void updateProfile() {
-        ProfileInputDto profileInputDto = new ProfileInputDto ("bio2", "user1", String.valueOf(LocalDate.now()));
-        Profile profile = new Profile(1L, user1, "bio2", "user1", String.valueOf(LocalDate.now()));
-        Profile profile3 = new Profile(1L, user1, "bio2", "user1", String.valueOf(LocalDate.now()));
+        ProfileInputDto profileInputDto = new ProfileInputDto ("bio2", "user1", (LocalDate.of(2023, 10, 1)));
+        Profile profile3 = new Profile(1L, user1, "bio2", "user1", (LocalDate.of(2023, 10, 1)));
 
         when(userRepository.findById("user1")).thenReturn(Optional.of(user1));
         when(profileRepository.findByUser(user1)).thenReturn(Optional.of(profile1));
@@ -131,7 +130,7 @@ class ProfileServiceTest {
     @Test
     void updateProfile_Forbidden() {
         String username = "user1";
-        ProfileInputDto profileInputDto = new ProfileInputDto("bio2", "user1", String.valueOf(LocalDate.now()));
+        ProfileInputDto profileInputDto = new ProfileInputDto("bio2", "user1", (LocalDate.of(2023, 10, 1)));
 
         securityUtilMock.when(() -> SecurityUtil.isOwnerOrAdmin(username)).thenReturn(false);
 
@@ -140,7 +139,7 @@ class ProfileServiceTest {
 
         @Test
     void fromProfile() {
-        Profile profile = new Profile(1L, user1, "bio", "user1", String.valueOf(LocalDate.now()));
+        Profile profile = new Profile(1L, user1, "bio", "user1", (LocalDate.of(2023, 10, 1)));
 
         ProfileDto profileDto = profileService.fromProfile(profile);
 
@@ -152,7 +151,7 @@ class ProfileServiceTest {
 
     @Test
     void toProfile() {
-        ProfileInputDto profileInputDto = new ProfileInputDto("bio", "user1", String.valueOf(LocalDate.now()));
+        ProfileInputDto profileInputDto = new ProfileInputDto("bio", "user1", (LocalDate.of(2023, 10, 1)));
 
         Profile profile = profileService.toProfile(profileInputDto);
 

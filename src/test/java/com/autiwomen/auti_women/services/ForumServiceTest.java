@@ -71,10 +71,11 @@ class ForumServiceTest {
         LocalDate dob = LocalDate.of(1990, 5, 15);
         user1 = new User("user1", dob);
         user2 = new User("user2", dob);
-        forum1 = new Forum(1L, "user1", "1990-05-15", "title1", "text1", "2023-10-01", null, "topic1", 0, 0, 0);
-        forum2 = new Forum(2L, "user2", "1990-05-15", "title2", "text2", "2023-10-02", null, "topic2", 0, 0, 0);
-        comment1 = new Comment(1L, "user1", "comment1", "2023-10-01", "1990-05-15");
-        comment2 = new Comment(2L, "user2", "comment2", "2023-10-02", "1990-05-15");
+        forum1 = new Forum(1L, "user1", dob, "title", "text", LocalDate.of(2024, 7, 6), "topic", 0, 0, 0);
+        forum2 = new Forum(2L, "user2", dob, "title2", "text2", LocalDate.of(2024, 7, 6), "topic", 0, 0, 0);
+        LocalDate currentDate = LocalDate.now();
+        comment1 = new Comment(1L, "user1", "comment1", currentDate, dob);
+        comment2 = new Comment(2L, "user2", "comment2", currentDate, dob);
         like1 = new Like(user1, forum1);
         like2 = new Like(user2, forum2);
         view1 = new View(user1, forum1);
@@ -134,7 +135,7 @@ class ForumServiceTest {
         assertEquals(forumInputDto.getText(), forumDto.getText());
         assertEquals(forumInputDto.getTopic(), forumDto.getTopic());
         assertEquals(username, forumDto.getName());
-        assertEquals(user1.getDob().toString(), forumDto.getAge());
+        assertEquals(user1.getDob(), forumDto.getDob());
         assertEquals(0, forumDto.getLikesCount());
         assertEquals(0, forumDto.getViewsCount());
         assertEquals(0, forumDto.getCommentsCount());
@@ -197,7 +198,7 @@ class ForumServiceTest {
     void updateLastReaction() {
         Long forumId = 1L;
         Comment lastComment = new Comment();
-        lastComment.setDate(String.valueOf(LocalDate.now()));
+        lastComment.setDate(LocalDate.now());
 
         when(commentRepository.findTopByForumIdOrderByDateDesc(forumId)).thenReturn(Optional.of(lastComment));
         when(forumRepository.findById(forumId)).thenReturn(Optional.of(forum1));
@@ -207,14 +208,14 @@ class ForumServiceTest {
         verify(forumRepository, times(1)).save(captor.capture());
         Forum updatedForum = captor.getValue();
 
-        assertEquals(String.valueOf(LocalDate.now()), updatedForum.getLastReaction());
+        assertEquals((LocalDate.now()), updatedForum.getLastReaction());
     }
 
     @Test
     void updateLastReaction_ForumNotFound() {
         Long forumId = 1L;
         Comment lastComment = new Comment();
-        lastComment.setDate(String.valueOf(LocalDate.now()));
+        lastComment.setDate(LocalDate.now());
 
         when(commentRepository.findTopByForumIdOrderByDateDesc(forumId)).thenReturn(Optional.of(lastComment));
         when(forumRepository.findById(forumId)).thenReturn(Optional.empty());
@@ -360,10 +361,10 @@ class ForumServiceTest {
         for (ForumDto forumDto : forumDtos) {
             if (forumDto.getId().equals(forum1.getId())) {
                 assertEquals(user1.getUsername(), forumDto.getName());
-                assertEquals(user1.getDob().toString(), forumDto.getAge());
+                assertEquals(user1.getDob(), forumDto.getDob());
             } else if (forumDto.getId().equals(forum2.getId())) {
                 assertEquals(user2.getUsername(), forumDto.getName());
-                assertEquals(user2.getDob().toString(), forumDto.getAge());
+                assertEquals(user2.getDob(), forumDto.getDob());
             }
         }
 
@@ -432,10 +433,10 @@ class ForumServiceTest {
         for (ForumDto forumDto : forumDtos) {
             if (forumDto.getId().equals(forum1.getId())) {
                 assertEquals(user1.getUsername(), forumDto.getName());
-                assertEquals(user1.getDob().toString(), forumDto.getAge());
+                assertEquals(user1.getDob(), forumDto.getDob());
             } else if (forumDto.getId().equals(forum2.getId())) {
                 assertEquals(user2.getUsername(), forumDto.getName());
-                assertEquals(user2.getDob().toString(), forumDto.getAge());
+                assertEquals(user2.getDob(), forumDto.getDob());
             }
         }
 
@@ -614,8 +615,8 @@ class ForumServiceTest {
         forum.setName("Test Forum");
         forum.setTitle("Test Title");
         forum.setText("Test Text");
-        forum.setDate("2023-10-01");
-        forum.setLastReaction("2023-10-02");
+        forum.setDate(LocalDate.of(2023, 10, 1));
+        forum.setLastReaction(LocalDate.of(2023, 10, 2));
         forum.setTopic("Test Topic");
 
         Set<Forum> commentedForums = new HashSet<>();
@@ -724,8 +725,8 @@ class ForumServiceTest {
 
     @Test
     void getForumsSortedByDate() {
-        forum1.setDate("2023-10-01");
-        forum2.setDate("2023-10-02");
+        forum1.setDate(LocalDate.of(2023, 10, 1));
+        forum2.setDate(LocalDate.of(2023, 10, 2));
 
         List<Forum> forums = Arrays.asList(forum1, forum2);
 
@@ -789,11 +790,11 @@ class ForumServiceTest {
         Forum forum = new Forum();
         forum.setId(1L);
         forum.setName("Test Name");
-        forum.setAge("30");
+        forum.setDob(LocalDate.of(1990, 5, 15));
         forum.setTitle("Test Title");
         forum.setText("Test Text");
-        forum.setDate("2023-10-01");
-        forum.setLastReaction("2023-10-02");
+        forum.setDate(LocalDate.of(2023, 10, 1));
+        forum.setLastReaction(LocalDate.of(2023, 10, 2));
         forum.setTopic("Test Topic");
         forum.setLikesCount(10);
         forum.setViewsCount(100);
@@ -804,7 +805,7 @@ class ForumServiceTest {
         assertNotNull(forumDto);
         assertEquals(forum.getId(), forumDto.id);
         assertEquals(forum.getName(), forumDto.name);
-        assertEquals(forum.getAge(), forumDto.age);
+        assertEquals(forum.getDob(), forumDto.dob);
         assertEquals(forum.getTitle(), forumDto.title);
         assertEquals(forum.getText(), forumDto.text);
         assertEquals(forum.getDate(), forumDto.date);
@@ -821,8 +822,8 @@ class ForumServiceTest {
         forumInputDto.setName("Test Name");
         forumInputDto.setTitle("Test Title");
         forumInputDto.setText("Test Text");
-        forumInputDto.setDate("2023-10-01");
-        forumInputDto.setLastReaction("2023-10-02");
+        forumInputDto.setDate(LocalDate.of(2023, 10, 1));
+        forumInputDto.setLastReaction(LocalDate.of(2023, 10, 2));
         forumInputDto.setTopic("Test Topic");
 
         Forum forum = forumService.toForum(forumInputDto);
