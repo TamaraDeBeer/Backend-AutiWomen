@@ -21,6 +21,6 @@ public class ReviewDto {
     public LocalDate dob;
     public Integer autismDiagnosesYear;
     public String profilePictureUrl;
-    public String date;
+    public LocalDate date;
 
 }

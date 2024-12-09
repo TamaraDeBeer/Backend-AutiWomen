@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
 @Setter
 @Getter
 @Entity
@@ -23,12 +25,12 @@ public class Profile {
     private String bio;
 
     private String name;
-    private String date;
+    private LocalDate date;
 
     public Profile() {
     }
 
-    public Profile(Long id, User user, String bio, String name, String date) {
+    public Profile(Long id, User user, String bio, String name, LocalDate date) {
         this.id = id;
         this.user = user;
         this.bio = bio;

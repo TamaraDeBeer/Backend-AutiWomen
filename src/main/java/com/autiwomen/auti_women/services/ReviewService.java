@@ -50,7 +50,7 @@ public class ReviewService {
         review.setDob(user.getDob());
         review.setAutismDiagnosesYear(user.getAutismDiagnosesYear());
         review.setProfilePictureUrl(user.getProfilePictureUrl());
-        review.setDate(String.valueOf(LocalDate.now()));
+        review.setDate(LocalDate.parse(String.valueOf(LocalDate.now())));
         reviewRepository.save(review);
         return fromReview(review);
     }
@@ -63,7 +63,7 @@ public class ReviewService {
         Review review = reviewRepository.findByUser(user).orElseThrow(() -> new RecordNotFoundException("Review not found"));
 
         review.setReview(reviewInputDto.getReview());
-        review.setDate(String.valueOf(LocalDate.now()));
+        review.setDate(LocalDate.parse(String.valueOf(LocalDate.now())));
         reviewRepository.save(review);
 
         return fromReview(review);

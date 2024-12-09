@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,8 +18,8 @@ public class ForumDto {
     public String age;
     public String title;
     public String text;
-    public String date;
-    public String lastReaction;
+    public LocalDate date;
+    public LocalDate lastReaction;
     public String topic;
     public int likesCount;
     public int viewsCount;

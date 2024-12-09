@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -22,8 +24,8 @@ public class ForumInputDto {
     public String text;
 
     public String age;
-    public String date;
-    public String lastReaction;
+    public LocalDate date;
+    public LocalDate lastReaction;
 
     @NotEmpty
     public String topic;

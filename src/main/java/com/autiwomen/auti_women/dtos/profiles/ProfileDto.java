@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -14,7 +16,7 @@ public class ProfileDto {
 
     public Long id;
     public String bio;
-    public String date;
+    public LocalDate date;
     public String name;
     public UserDto userDto;
 

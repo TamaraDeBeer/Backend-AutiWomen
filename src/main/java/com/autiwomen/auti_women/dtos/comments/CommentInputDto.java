@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,7 +19,7 @@ public class CommentInputDto {
     @Size(min = 1, max = 2000)
     public String text;
 
-    public String date;
+    public LocalDate date;
     public String age;
 
 }

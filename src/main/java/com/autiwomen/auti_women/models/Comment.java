@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
 @Setter
 @Getter
 @Entity
@@ -19,7 +21,7 @@ public class Comment {
     @Column(length = 2000)
     private String text;
 
-    private String date;
+    private LocalDate date;
     private String age;
 
     @ManyToOne
@@ -30,12 +32,13 @@ public class Comment {
     @JoinColumn(name = "user_id", referencedColumnName = "username")
     private User user;
 
-    public Comment(Long id, String name, String text, String date, String age) {
-        this.id = id;
+    public Comment(String name, String text, LocalDate date, String age, Forum forum, User user) {
         this.name = name;
         this.text = text;
         this.date = date;
         this.age = age;
+        this.forum = forum;
+        this.user = user;
     }
 
     public Comment() {

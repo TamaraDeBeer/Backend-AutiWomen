@@ -45,7 +45,7 @@ public class ProfileService {
 
         Profile profile = toProfile(profileInputDto);
         profile.setName(user.getUsername());
-        profile.setDate(String.valueOf(LocalDate.now()));
+        profile.setDate(LocalDate.parse(String.valueOf(LocalDate.now())));
         profile.setUser(user);
         profileRepository.save(profile);
         return fromProfile(profile);
@@ -59,7 +59,7 @@ public class ProfileService {
         Profile profile = profileRepository.findByUser(user).orElseThrow(() -> new RecordNotFoundException("Profile not found"));
 
         profile.setBio(profileInputDto.getBio());
-        profile.setDate(String.valueOf(LocalDate.now()));
+        profile.setDate(LocalDate.parse(String.valueOf(LocalDate.now())));
         profileRepository.save(profile);
 
         return fromProfile(profile);

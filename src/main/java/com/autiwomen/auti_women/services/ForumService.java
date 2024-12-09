@@ -148,7 +148,7 @@ public class ForumService {
                 .orElseThrow(() -> new RecordNotFoundException("User not found: " + username));
 
         Forum forum = toForum(forumInputDto);
-        forum.setDate(String.valueOf(LocalDate.now()));
+        forum.setDate(LocalDate.parse(String.valueOf(LocalDate.now())));
         forum.setName(user.getUsername());
         forum.setAge(user.getDob().toString());
 
@@ -219,12 +219,12 @@ public class ForumService {
         Optional<Comment> lastComment = commentRepository.findTopByForumIdOrderByDateDesc(forumId);
         if (lastComment.isPresent()) {
             Forum forum = forumRepository.findById(forumId).orElseThrow(() -> new RecordNotFoundException("Forum not found"));
-            forum.setLastReaction(String.valueOf(LocalDate.now()));
+            forum.setLastReaction(LocalDate.parse(String.valueOf(LocalDate.now())));
             forumRepository.save(forum);
         }
     }
 
-    public String getLastReaction(Long forumId) {
+    public LocalDate getLastReaction(Long forumId) {
         Optional<Comment> lastComment = commentRepository.findTopByForumIdOrderByDateDesc(forumId);
         return lastComment.map(Comment::getDate).orElse(null);
     }

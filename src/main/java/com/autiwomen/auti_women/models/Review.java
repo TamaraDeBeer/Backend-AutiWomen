@@ -4,6 +4,7 @@ import com.autiwomen.auti_women.security.models.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.cglib.core.Local;
 
 import java.time.LocalDate;
 
@@ -26,7 +27,7 @@ public class Review {
     private LocalDate dob;
     private Integer autismDiagnosesYear;
     private String profilePictureUrl;
-    private String date;
+    private LocalDate date;
 
     public Review() {
     }

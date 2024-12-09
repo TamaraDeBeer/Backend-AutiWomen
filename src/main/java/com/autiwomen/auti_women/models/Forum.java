@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -24,8 +25,8 @@ public class Forum {
     @Column(length = 4000)
     private String text;
 
-    private String date;
-    private String lastReaction;
+    private LocalDate date;
+    private LocalDate lastReaction;
     private String topic;
     private int likesCount;
     private int viewsCount;
@@ -48,25 +49,20 @@ public class Forum {
             orphanRemoval = true)
     private Set<View> views;
 
-    public Forum(Long id, String name, String age, String title, String text, String date, String lastReaction, String topic, int likesCount, int viewsCount, int commentsCount, List<Comment> commentsList, User user, Set<Like> likes, Set<View> views) {
-        this.id = id;
+    public Forum(String name, String age, String title, String text, LocalDate date, String topic, int likesCount, int viewsCount, int commentsCount, User user) {
         this.name = name;
         this.age = age;
         this.title = title;
         this.text = text;
         this.date = date;
-        this.lastReaction = lastReaction;
         this.topic = topic;
         this.likesCount = likesCount;
         this.viewsCount = viewsCount;
         this.commentsCount = commentsCount;
-        this.commentsList = commentsList;
         this.user = user;
-        this.likes = likes;
-        this.views = views;
     }
 
-    public Forum(Long id, String name, String age, String title, String text, String date, String topic) {
+    public Forum(Long id, String name, String age, String title, String text, LocalDate date, String topic) {
         this.id = id;
         this.name = name;
         this.age = age;
@@ -76,19 +72,7 @@ public class Forum {
         this.topic = topic;
     }
 
-    public Forum(Long id, String name, String age, String title, String text, String date, String lastReaction, String topic, int likesCount, int viewsCount, int commentsCount) {
-        this.id = id;
-        this.name = name;
-        this.age = age;
-        this.title = title;
-        this.text = text;
-        this.date = date;
-        this.lastReaction = lastReaction;
-        this.topic = topic;
-        this.likesCount = likesCount;
-        this.viewsCount = viewsCount;
-        this.commentsCount = commentsCount;
-    }
+
 
     public Forum() {
     }

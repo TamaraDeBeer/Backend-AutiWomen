@@ -84,7 +84,7 @@ public class CommentService {
         Comment comment = toComment(commentInputDto);
         comment.setName(user.getUsername());
         comment.setAge(user.getDob().toString());
-        comment.setDate(String.valueOf(LocalDate.now()));
+        comment.setDate(LocalDate.parse(String.valueOf(LocalDate.now())));
         commentRepository.save(comment);
         return fromComment(comment);
     }
@@ -99,7 +99,7 @@ public class CommentService {
         } else {
             Comment comment1 = comment.get();
             comment1.setText(updateComment.getText());
-            comment1.setDate(String.valueOf(LocalDate.now()));
+            comment1.setDate(LocalDate.parse(String.valueOf(LocalDate.now())));
             Comment comment2 = commentRepository.save(comment1);
 
             return fromComment(comment2);
