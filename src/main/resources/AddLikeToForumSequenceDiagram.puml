@@ -16,11 +16,22 @@ skinparam {
 actor User #064D1A
 activate User #064D1A
 
-User -> LikeController : process add like to forum
+User -> LikeController : addLikeToForum(forumId, username)
 activate LikeController #7AC37A
 
 LikeController -> LikeService : addLikeToForum(forumId, username)
 activate LikeService #7AC37A
+
+LikeService -> SecurityUtil : isOwnerOrAdmin(username)
+activate SecurityUtil #7AC37A
+
+alt#F5C84C #F5C84C99 Not owner or admin
+    SecurityUtil -> LikeService : false
+    LikeService -> LikeController : throw SecurityException("Forbidden")
+    LikeController -> User : ResponseEntity(HttpStatus.FORBIDDEN)
+else #F8EAD9 Owner or admin
+    SecurityUtil -> LikeService : true
+    deactivate SecurityUtil
 
 LikeService -> UserRepository : findById(username)
 activate UserRepository #7AC37A
@@ -67,6 +78,7 @@ else #F8EAD9 User found
             LikeController -> User : ResponseEntity(HttpStatus.OK)
         end
     end
+end
 end
 
 deactivate LikeController
