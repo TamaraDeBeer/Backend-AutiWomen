@@ -28,8 +28,8 @@ public class LikeController {
     }
 
     @PostMapping("/add/forums/{forumId}/users/{username}")
-    public ResponseEntity<LikeDto> addLikeToForum(@PathVariable Long forumId, @PathVariable String username) {
-        LikeDto likeDto = likeService.addLikeToForum(forumId, username);
+    public ResponseEntity<Integer> addLikeToForum(@PathVariable Long forumId, @PathVariable String username) {
+        int likeDto = likeService.addLikeToForum(forumId, username);
         return ResponseEntity.ok().body(likeDto);
     }
 

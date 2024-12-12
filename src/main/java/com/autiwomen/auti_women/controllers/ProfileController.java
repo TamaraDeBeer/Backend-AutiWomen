@@ -40,7 +40,7 @@ public class ProfileController {
         return ResponseEntity.created(uri).body(profileDto);
     }
 
-    @PutMapping("/users/{username}")
+    @PutMapping("/{profileId}/users/{username}")
     public ResponseEntity<ProfileDto> updateProfile(@PathVariable("username") String username, @RequestBody ProfileInputDto profileInputDto) {
         return ResponseEntity.ok().body(profileService.updateProfile(username, profileInputDto));
     }

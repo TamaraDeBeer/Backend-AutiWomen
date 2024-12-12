@@ -40,12 +40,12 @@ public class ReviewController {
         return ResponseEntity.created(uri).body(reviewDto);
     }
 
-    @PutMapping("/users/{username}")
+    @PutMapping("/{reviewId}/users/{username}")
     public ResponseEntity<ReviewDto> updateReview(@PathVariable("username") String username, @RequestBody ReviewInputDto reviewInputDto) {
         return ResponseEntity.ok().body(reviewService.updateReview(username, reviewInputDto));
     }
 
-    @DeleteMapping("/users/{username}")
+    @DeleteMapping("/{reviewId}/users/{username}")
     public ResponseEntity<Void> deleteReviewByUsername(@PathVariable("username") String username) {
         reviewService.deleteReviewByUsername(username);
         return ResponseEntity.noContent().build();

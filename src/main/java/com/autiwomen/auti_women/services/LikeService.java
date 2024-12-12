@@ -47,7 +47,7 @@ public class LikeService {
         return likeRepository.findLikeByUserAndForum(user, forum).isPresent();
     }
 
-    public LikeDto addLikeToForum(Long forumId, String username) {
+    public int addLikeToForum(Long forumId, String username) {
         if (!SecurityUtil.isOwnerOrAdmin(username)) {
             throw new SecurityException("Forbidden");
         }
@@ -68,7 +68,8 @@ public class LikeService {
         like.setUsername(username);
         like.setForumTitle(forum.getTitle());
         likeRepository.save(like);
-        return fromLike(like);
+//        return fromLike(like);
+        return forum.getLikesCount();
     }
 
     public void removeLikeFromForum(Long forumId, String username) {

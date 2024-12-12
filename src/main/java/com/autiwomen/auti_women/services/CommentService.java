@@ -106,6 +106,22 @@ public class CommentService {
         }
     }
 
+//    @Transactional
+//    public void deleteComment(Long commentId, String username) {
+//        if (!SecurityUtil.isOwnerOrAdmin(username)) {
+//            throw new SecurityException("Forbidden");
+//        }
+//        Optional<Comment> optionalComment = commentRepository.findById(commentId);
+//        if (optionalComment.isEmpty()) {
+//            throw new RecordNotFoundException("Comment not found");
+//        }
+//        Comment comment = optionalComment.get();
+//        comment.setForum(null);
+//        comment.setUser(null);
+//        commentRepository.save(comment);
+//        commentRepository.delete(comment);
+//    }
+
     @Transactional
     public void deleteComment(Long commentId, String username) {
         if (!SecurityUtil.isOwnerOrAdmin(username)) {
@@ -116,6 +132,9 @@ public class CommentService {
             throw new RecordNotFoundException("Comment not found");
         }
         Comment comment = optionalComment.get();
+        if (!comment.getUser().getUsername().equals(username) && !SecurityUtil.isAdmin(username)) {
+            throw new SecurityException("Forbidden");
+        }
         comment.setForum(null);
         comment.setUser(null);
         commentRepository.save(comment);

@@ -3,17 +3,15 @@ package com.autiwomen.auti_women.controllers;
 import com.autiwomen.auti_women.models.Forum;
 import com.autiwomen.auti_women.services.ForumTopicService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 @CrossOrigin
-@RestController("/topics")
+@RestController
+@RequestMapping("/topics")
 public class ForumTopicController {
 
     private final ForumTopicService forumTopicService;

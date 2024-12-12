@@ -174,18 +174,34 @@ public class ForumService {
         }
     }
 
+//    @Transactional
+//    public void deleteForum(Long forumId, String username) {
+//        if (!SecurityUtil.isOwnerOrAdmin(username)) {
+//            throw new SecurityException("Forbidden");
+//        }
+//        Optional<Forum> optionalForum = forumRepository.findById(forumId);
+//        if (optionalForum.isPresent()) {
+//            commentRepository.deleteAllByForumId(forumId);
+//            forumRepository.deleteById(forumId);
+//        } else {
+//            throw new RecordNotFoundException("No forum found with id: " + forumId);
+//        }
+//    }
+
     @Transactional
     public void deleteForum(Long forumId, String username) {
         if (!SecurityUtil.isOwnerOrAdmin(username)) {
             throw new SecurityException("Forbidden");
         }
         Optional<Forum> optionalForum = forumRepository.findById(forumId);
-        if (optionalForum.isPresent()) {
-            commentRepository.deleteAllByForumId(forumId);
-            forumRepository.deleteById(forumId);
-        } else {
-            throw new RecordNotFoundException("No forum found with id: " + forumId);
+        if (optionalForum.isEmpty()) {
+            throw new RecordNotFoundException("Forum not found");
         }
+        Forum forum = optionalForum.get();
+        if (!forum.getUser().getUsername().equals(username) && !SecurityUtil.isAdmin(username)) {
+            throw new SecurityException("Forbidden");
+        }
+        forumRepository.delete(forum);
     }
 
 

@@ -78,11 +78,11 @@ public class SpringSecurityConfiguration {
 
                         .requestMatchers(HttpMethod.POST, "/profiles/users/{username}").hasAnyRole("ADMIN", "USER")
                         .requestMatchers(HttpMethod.GET, "/profiles/users/{username}").hasAnyRole("ADMIN", "USER")
-                        .requestMatchers(HttpMethod.PUT, "/profiles/users/{username}").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.PUT, "/profiles/{profileId}/users/{username}").hasAnyRole("ADMIN", "USER")
 
                         .requestMatchers(HttpMethod.POST, "/reviews/users/{username}").hasAnyRole("ADMIN", "USER")
                         .requestMatchers(HttpMethod.GET, "/reviews/users/{username}").hasAnyRole("ADMIN", "USER")
-                        .requestMatchers(HttpMethod.PUT, "/reviews/users/{username}").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.PUT, "/reviews/{reviewId}/users/{username}").hasAnyRole("ADMIN", "USER")
 
                         .requestMatchers(HttpMethod.POST, "/forums/users/{username}").hasAnyRole("ADMIN", "USER")
                         .requestMatchers(HttpMethod.PUT, "/forums/{forumId}/users/{username}").hasAnyRole("ADMIN", "USER")
@@ -114,7 +114,7 @@ public class SpringSecurityConfiguration {
 
 
                         .requestMatchers(HttpMethod.GET, "/profiles").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/reviews/users/{username}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/reviews/{reviewId}/users/{username}").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/comments").hasRole("ADMIN")
 
                         .anyRequest().denyAll()
