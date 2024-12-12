@@ -23,9 +23,6 @@ public class Like {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    private String username;
-    private String forumTitle;
-
     public Like() {
     }
 
@@ -33,5 +30,4 @@ public class Like {
         this.user = user;
         this.forum = forum;
     }
-
 }

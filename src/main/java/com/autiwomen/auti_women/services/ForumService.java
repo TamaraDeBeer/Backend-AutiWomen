@@ -174,20 +174,6 @@ public class ForumService {
         }
     }
 
-//    @Transactional
-//    public void deleteForum(Long forumId, String username) {
-//        if (!SecurityUtil.isOwnerOrAdmin(username)) {
-//            throw new SecurityException("Forbidden");
-//        }
-//        Optional<Forum> optionalForum = forumRepository.findById(forumId);
-//        if (optionalForum.isPresent()) {
-//            commentRepository.deleteAllByForumId(forumId);
-//            forumRepository.deleteById(forumId);
-//        } else {
-//            throw new RecordNotFoundException("No forum found with id: " + forumId);
-//        }
-//    }
-
     @Transactional
     public void deleteForum(Long forumId, String username) {
         if (!SecurityUtil.isOwnerOrAdmin(username)) {

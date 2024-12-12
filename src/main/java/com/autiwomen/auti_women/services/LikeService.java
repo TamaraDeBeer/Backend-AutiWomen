@@ -65,10 +65,9 @@ public class LikeService {
         Like like = toLike(likeInputDto);
         like.setUser(user);
         like.setForum(forum);
-        like.setUsername(username);
-        like.setForumTitle(forum.getTitle());
         likeRepository.save(like);
-//        return fromLike(like);
+
+        updateLikesCount(forum);
         return forum.getLikesCount();
     }
 
@@ -89,13 +88,12 @@ public class LikeService {
         }
     }
 
-    public LikeDto fromLike(Like like) {
-        var likeDto = new LikeDto();
-        likeDto.id = like.getId();
-        likeDto.username = like.getUsername();
-        likeDto.forumTitle = like.getForumTitle();
-        return likeDto;
-    }
+//    Helper
+public void updateLikesCount(Forum forum) {
+    int likeCount = likeRepository.getLikeCountByForumId(forum.getId());
+    forum.setLikesCount(likeCount);
+    forumRepository.save(forum);
+}
 
     public Like toLike(LikeInputDto likeInputDto) {
         var like = new Like();
