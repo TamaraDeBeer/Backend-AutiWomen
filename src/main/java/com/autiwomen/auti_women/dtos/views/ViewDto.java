@@ -13,7 +13,4 @@ import lombok.NoArgsConstructor;
 @Valid
 public class ViewDto {
     public Long id;
-    public String username;
-    public String forumTitle;
-
 }

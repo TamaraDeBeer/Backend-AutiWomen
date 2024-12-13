@@ -47,7 +47,7 @@ public class ViewService {
         return viewRepository.findViewByUserAndForum(user, forum).isPresent();
     }
 
-    public ViewDto addViewToForum(Long forumId, String username) {
+    public int addViewToForum(Long forumId, String username) {
         if (!SecurityUtil.isOwnerOrAdmin(username)) {
             throw new SecurityException("Forbidden");
         }
@@ -65,17 +65,22 @@ public class ViewService {
         View view = toView(viewInputDto);
         view.setUser(user);
         view.setForum(forum);
-        view.setUsername(username);
-        view.setForumTitle(forum.getTitle());
         viewRepository.save(view);
-        return fromView(view);
+
+        updateViewsCount(forum);
+        return forum.getViewsCount();
+    }
+
+    //    Helper
+    public void updateViewsCount(Forum forum) {
+        int viewCount = viewRepository.getViewCountByForumId(forum.getId());
+        forum.setViewsCount(viewCount);
+        forumRepository.save(forum);
     }
 
     public ViewDto fromView(View view) {
         var viewDto = new ViewDto();
         viewDto.id = view.getId();
-        viewDto.username = view.getUsername();
-        viewDto.forumTitle = view.getForumTitle();
         return viewDto;
     }
 

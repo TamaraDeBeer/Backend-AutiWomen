@@ -59,9 +59,6 @@ public class UserService {
     }
 
     public UserOutputDto getOneUser(String username) {
-        if (!SecurityUtil.isOwnerOrAdmin(username)) {
-            throw new SecurityException("Forbidden");
-        }
         UserOutputDto dto;
         Optional<User> user = userRepository.findById(username);
         if (user.isPresent()) {

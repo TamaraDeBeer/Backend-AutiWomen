@@ -86,9 +86,6 @@ public class ForumService {
     }
 
     public Set<ForumDto> getForumsByUsername(String username) {
-        if (!SecurityUtil.isOwnerOrAdmin(username)) {
-            throw new SecurityException("Forbidden");
-        }
         User user = userRepository.findById(username).orElseThrow(() -> new RecordNotFoundException("User not found"));
         Set<Forum> forums = new HashSet<>(forumRepository.findByUser(user));
         if (forums.isEmpty()) {

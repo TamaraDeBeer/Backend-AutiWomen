@@ -29,8 +29,8 @@ public class ViewController {
     }
 
     @PostMapping("/add/forums/{forumId}/users/{username}")
-    public ResponseEntity<ViewDto> addViewToForum(@PathVariable Long forumId, @PathVariable String username) {
-        ViewDto viewDto = viewService.addViewToForum(forumId, username);
+    public ResponseEntity<Integer> addViewToForum(@PathVariable Long forumId, @PathVariable String username) {
+        int viewDto = viewService.addViewToForum(forumId, username);
         return ResponseEntity.ok().body(viewDto);
     }
 }

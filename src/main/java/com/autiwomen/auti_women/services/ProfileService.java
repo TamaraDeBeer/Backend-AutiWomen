@@ -32,9 +32,6 @@ public class ProfileService {
     }
 
     public ProfileDto getProfileByUsername(String username) {
-        if (!SecurityUtil.isOwnerOrAdmin(username)) {
-            throw new SecurityException("Forbidden");
-        }
         User user = userRepository.findById(username).orElseThrow(() -> new RecordNotFoundException("User not found"));
         Profile profile = profileRepository.findByUser(user).orElseThrow(() -> new RecordNotFoundException("Profile not found"));
         return fromProfile(profile);
