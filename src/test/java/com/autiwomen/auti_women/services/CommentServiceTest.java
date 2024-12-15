@@ -10,14 +10,12 @@ import com.autiwomen.auti_women.repositories.CommentRepository;
 import com.autiwomen.auti_women.repositories.ForumRepository;
 import com.autiwomen.auti_women.security.repositories.UserRepository;
 import com.autiwomen.auti_women.security.models.User;
+import com.autiwomen.auti_women.security.utils.SecurityUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
@@ -48,6 +46,9 @@ class CommentServiceTest {
     @Captor
     ArgumentCaptor<Comment> captor;
 
+    @Mock
+    MockedStatic<SecurityUtil> securityUtilMock;
+
     Comment comment1;
     Comment comment2;
     Forum forum1;
@@ -60,38 +61,57 @@ class CommentServiceTest {
         LocalDate dob = LocalDate.of(1990, 5, 15);
         user1 = new User("user1", dob);
         user2 = new User("user2", dob);
-        String currentDate = String.valueOf(LocalDate.now());
-        comment1 = new Comment(1L, "user1", "comment1", currentDate, "1990-05-15");
-        comment2 = new Comment(2L, "user2", "comment2", currentDate, "1990-05-15");
-        forum1 = new Forum(1L, "user1", "1990-05-15", "title1", "text1", currentDate, "School");
-        forum2 = new Forum(2L, "user2", "1990-05-15", "title2", "text2", currentDate, "School");
+        LocalDate currentDate = LocalDate.now();
+        comment1 = new Comment(1L, "user1", "comment1", currentDate, dob);
+        comment2 = new Comment(2L, "user2", "comment2", currentDate, dob);
+        forum1 = new Forum(1L, "Name1", dob, "title", "text", currentDate, "School", 0, 0, 0);
+        forum2 = new Forum(2L, "Name1", dob, "title2", "text2", currentDate, "topic", 0, 0, 0);
 
         comment1.setForum(forum1);
         comment2.setForum(forum2);
         comment1.setUser(user1);
         comment2.setUser(user2);
 
+        securityUtilMock.when(() -> SecurityUtil.isOwnerOrAdmin("user1")).thenReturn(true);
+
     }
 
     @AfterEach
     void tearDown() {
+        securityUtilMock.close();
     }
 
     @Test
     void createComment() {
-        CommentInputDto commentInputDto = new CommentInputDto("user1", "comment1", String.valueOf(LocalDate.now()), "1990-05-15");
+        CommentInputDto commentInputDto = new CommentInputDto("user1", "comment1", LocalDate.now(), (LocalDate.of(1990, 5, 15)));
+        String username = "user1";
 
-        when(userRepository.findById("user1")).thenReturn(Optional.of(user1));
+        when(userRepository.findById(username)).thenReturn(Optional.of(user1));
         doReturn(comment1).when(commentRepository).save(any(Comment.class));
 
-        commentService.createComment(commentInputDto, "user1");
-        verify(commentRepository, times(1)).save(captor.capture());
-        Comment commentCreated = captor.getValue();
+        CommentDto result = commentService.createComment(commentInputDto, username);
 
-        assertEquals(comment1.getName(), commentCreated.getName());
-        assertEquals(comment1.getText(), commentCreated.getText());
-        assertEquals(comment1.getDate(), commentCreated.getDate());
-        assertEquals(comment1.getAge(), commentCreated.getAge());
+        verify(commentRepository, times(1)).save(captor.capture());
+        Comment savedComment = captor.getValue();
+
+        assertEquals(comment1.getName(), savedComment.getName());
+        assertEquals(comment1.getText(), savedComment.getText());
+        assertEquals(comment1.getDate(), savedComment.getDate());
+        assertEquals(comment1.getDob(), savedComment.getDob());
+        assertNotNull(result);
+        assertEquals(comment1.getName(), result.getName());
+        assertEquals(comment1.getText(), result.getText());
+        assertEquals(comment1.getDate(), result.getDate());
+    }
+
+    @Test
+    void createComment_Forbidden() {
+        String username = "user1";
+        CommentInputDto commentInputDto = new CommentInputDto("user1", "comment1", LocalDate.now(), (LocalDate.of(1990, 5, 15)));
+
+        securityUtilMock.when(() -> SecurityUtil.isOwnerOrAdmin(username)).thenReturn(false);
+
+        assertThrows(SecurityException.class, () -> commentService.createComment(commentInputDto, username));
     }
 
     @Test
@@ -207,7 +227,16 @@ class CommentServiceTest {
         assertEquals(comment1.getName(), commentDtos.get(0).getName());
         assertEquals(comment1.getText(), commentDtos.get(0).getText());
         assertEquals(comment1.getDate(), commentDtos.get(0).getDate());
-        assertEquals(comment1.getAge(), commentDtos.get(0).getAge());
+        assertEquals(comment1.getDob(), commentDtos.get(0).getDob());
+    }
+
+    @Test
+    void getCommentsByForumId_CommentsNotFound() {
+        Long forumId = 1L;
+
+        when(commentRepository.findByForumId(forumId)).thenReturn(List.of());
+
+        assertThrows(RecordNotFoundException.class, () -> commentService.getCommentsByForumId(forumId));
     }
 
     @Test
@@ -224,9 +253,19 @@ class CommentServiceTest {
     }
 
     @Test
+    void getCommentsByUsername_Forbidden() {
+        String username = "user1";
+
+        securityUtilMock.when(() -> SecurityUtil.isOwnerOrAdmin(username)).thenReturn(false);
+
+        assertThrows(SecurityException.class, () -> commentService.getCommentsByUsername(username));
+    }
+
+    @Test
     void getCommentsByUsername_UserNotFound() {
         String username = "nonexistentUser";
 
+        securityUtilMock.when(() -> SecurityUtil.isOwnerOrAdmin(username)).thenReturn(true);
         when(userRepository.findById(username)).thenReturn(Optional.empty());
 
         assertThrows(RecordNotFoundException.class, () -> commentService.getCommentsByUsername(username));
@@ -257,33 +296,46 @@ class CommentServiceTest {
     @Test
     void deleteComment() {
         Long commentId = 1L;
+        String username = "user1";
 
         when(commentRepository.findById(commentId)).thenReturn(Optional.of(comment1));
 
-        commentService.deleteComment(commentId);
+        commentService.deleteComment(commentId, username);
 
         verify(commentRepository, times(1)).delete(comment1);
     }
 
     @Test
+    void deleteComment_Forbidden() {
+        Long commentId = 1L;
+        String username = "user1";
+
+        securityUtilMock.when(() -> SecurityUtil.isOwnerOrAdmin(username)).thenReturn(false);
+
+        assertThrows(SecurityException.class, () -> commentService.deleteComment(commentId, username));
+    }
+
+    @Test
     void deleteComment_CommentNotFound() {
         Long commentId = 1L;
+        String username = "user1";
 
         when(commentRepository.findById(commentId)).thenReturn(Optional.empty());
 
-        assertThrows(RecordNotFoundException.class, () -> commentService.deleteComment(commentId));
+        assertThrows(RecordNotFoundException.class, () -> commentService.deleteComment(commentId, username));
     }
 
     @Test
     void updateComment() {
         Long commentId = 1L;
+        String username = "user1";
         CommentDto updateCommentDto = new CommentDto();
         updateCommentDto.setText("Updated comment text");
 
         when(commentRepository.findById(commentId)).thenReturn(Optional.of(comment1));
         when(commentRepository.save(any(Comment.class))).thenReturn(comment1);
 
-        CommentDto updatedCommentDto = commentService.updateComment(commentId, updateCommentDto);
+        CommentDto updatedCommentDto = commentService.updateComment(commentId, updateCommentDto, username);
 
         verify(commentRepository, times(1)).save(captor.capture());
         Comment savedComment = captor.getValue();
@@ -292,14 +344,27 @@ class CommentServiceTest {
     }
 
     @Test
+    void updateComment_Forbidden() {
+        Long commentId = 1L;
+        String username = "user1";
+        CommentDto updateCommentDto = new CommentDto();
+        updateCommentDto.setText("Updated comment text");
+
+        securityUtilMock.when(() -> SecurityUtil.isOwnerOrAdmin(username)).thenReturn(false);
+
+        assertThrows(SecurityException.class, () -> commentService.updateComment(commentId, updateCommentDto, username));
+    }
+
+    @Test
     void updateComment_CommentNotFound() {
         Long commentId = 1L;
+        String username = "user1";
         CommentDto updateCommentDto = new CommentDto();
         updateCommentDto.setText("Updated comment text");
 
         when(commentRepository.findById(commentId)).thenReturn(Optional.empty());
 
-        assertThrows(RecordNotFoundException.class, () -> commentService.updateComment(commentId, updateCommentDto));
+        assertThrows(RecordNotFoundException.class, () -> commentService.updateComment(commentId, updateCommentDto, username));
     }
 
     @Test
@@ -308,7 +373,7 @@ class CommentServiceTest {
         comment.setId(1L);
         comment.setName("user1");
         comment.setText("Comment");
-        comment.setDate("2023-10-01");
+        comment.setDate(LocalDate.of(2023, 10, 1));
 
         Forum forum = new Forum();
         forum.setId(1L);
@@ -332,7 +397,7 @@ class CommentServiceTest {
         CommentInputDto commentInputDto = new CommentInputDto();
         commentInputDto.setName("user1");
         commentInputDto.setText("Comment");
-        commentInputDto.setDate("2023-10-01");
+        commentInputDto.setDate(LocalDate.of(2023, 10, 1));
 
         Comment comment = commentService.toComment(commentInputDto);
 

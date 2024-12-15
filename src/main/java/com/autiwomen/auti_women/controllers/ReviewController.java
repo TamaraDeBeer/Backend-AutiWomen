@@ -20,7 +20,18 @@ public class ReviewController {
         this.reviewService = reviewService;
     }
 
-    @PostMapping("/{username}")
+    @GetMapping
+    public ResponseEntity<List<ReviewDto>> getAllReviews() {
+        List<ReviewDto> reviews = reviewService.getAllReviews();
+        return ResponseEntity.ok().body(reviews);
+    }
+
+    @GetMapping("/users/{username}")
+    public ResponseEntity<ReviewDto> getReviewByUsername(@PathVariable("username") String username) {
+        return ResponseEntity.ok().body(reviewService.getReviewByUsername(username));
+    }
+
+    @PostMapping("/users/{username}")
     public ResponseEntity<ReviewDto> createReview(@PathVariable("username") String username, @RequestBody ReviewInputDto reviewInputDto) {
         ReviewDto reviewDto = reviewService.createReview(username, reviewInputDto);
         URI uri = URI.create(ServletUriComponentsBuilder
@@ -29,25 +40,15 @@ public class ReviewController {
         return ResponseEntity.created(uri).body(reviewDto);
     }
 
-    @GetMapping("/{username}")
-    public ResponseEntity<ReviewDto> getReviewByUsername(@PathVariable("username") String username) {
-        return ResponseEntity.ok(reviewService.getReviewByUsername(username));
-    }
-
-    @PutMapping("/{username}")
+    @PutMapping("/{reviewId}/users/{username}")
     public ResponseEntity<ReviewDto> updateReview(@PathVariable("username") String username, @RequestBody ReviewInputDto reviewInputDto) {
-        return ResponseEntity.ok(reviewService.updateReview(username, reviewInputDto));
+        return ResponseEntity.ok().body(reviewService.updateReview(username, reviewInputDto));
     }
 
-    @GetMapping
-    public ResponseEntity<List<ReviewDto>> getAllReviews() {
-        List<ReviewDto> reviews = reviewService.getAllReviews();
-        return ResponseEntity.ok(reviews);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteReviewById(@PathVariable("id") Long id) {
-        reviewService.deleteReviewById(id);
+    @DeleteMapping("/{reviewId}/users/{username}")
+    public ResponseEntity<Void> deleteReviewByUsername(@PathVariable("username") String username) {
+        reviewService.deleteReviewByUsername(username);
         return ResponseEntity.noContent().build();
     }
+
 }

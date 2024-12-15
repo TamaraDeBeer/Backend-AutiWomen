@@ -1,5 +1,6 @@
 package com.autiwomen.auti_women.security.services;
 
+import com.autiwomen.auti_women.exceptions.RecordNotFoundException;
 import com.autiwomen.auti_women.security.repositories.UserRepository;
 import com.autiwomen.auti_women.security.models.Authority;
 import com.autiwomen.auti_women.security.models.User;
@@ -29,7 +30,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         Optional<User> optionalUser = userRepository.findById(username);
         if (optionalUser.isEmpty()) {
-            throw new UsernameNotFoundException(username);
+            throw new RecordNotFoundException("User not found: " + username);
         } else {
             User foundUser = optionalUser.get();
             String password = foundUser.getPassword();

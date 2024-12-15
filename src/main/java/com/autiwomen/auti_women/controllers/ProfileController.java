@@ -11,7 +11,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/users/profiles")
+@RequestMapping("/profiles")
 public class ProfileController {
 
     private final ProfileService profileService;
@@ -20,7 +20,18 @@ public class ProfileController {
         this.profileService = profileService;
     }
 
-    @PostMapping("/{username}")
+    @GetMapping
+    public ResponseEntity<List<ProfileDto>> getAllProfiles() {
+        List<ProfileDto> profiles = profileService.getAllProfiles();
+        return ResponseEntity.ok().body(profiles);
+    }
+
+    @GetMapping("/users/{username}")
+    public ResponseEntity<ProfileDto> getProfileByUsername(@PathVariable("username") String username) {
+        return ResponseEntity.ok().body(profileService.getProfileByUsername(username));
+    }
+
+    @PostMapping("/users/{username}")
     public ResponseEntity<ProfileDto> createProfile(@PathVariable("username") String username, @RequestBody ProfileInputDto profileInputDto) {
         ProfileDto profileDto = profileService.createProfile(username, profileInputDto);
         URI uri = URI.create(ServletUriComponentsBuilder
@@ -29,20 +40,9 @@ public class ProfileController {
         return ResponseEntity.created(uri).body(profileDto);
     }
 
-    @GetMapping("/{username}")
-    public ResponseEntity<ProfileDto> getProfileByUsername(@PathVariable("username") String username) {
-        return ResponseEntity.ok(profileService.getProfileByUsername(username));
-    }
-
-    @PutMapping("/{username}")
+    @PutMapping("/{profileId}/users/{username}")
     public ResponseEntity<ProfileDto> updateProfile(@PathVariable("username") String username, @RequestBody ProfileInputDto profileInputDto) {
-        return ResponseEntity.ok(profileService.updateProfile(username, profileInputDto));
-    }
-
-    @GetMapping
-    public ResponseEntity<List<ProfileDto>> getAllProfiles() {
-        List<ProfileDto> profiles = profileService.getAllProfiles();
-        return ResponseEntity.ok(profiles);
+        return ResponseEntity.ok().body(profileService.updateProfile(username, profileInputDto));
     }
 
 }

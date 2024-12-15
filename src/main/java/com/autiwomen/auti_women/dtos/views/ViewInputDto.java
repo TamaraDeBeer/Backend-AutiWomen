@@ -1,21 +1,16 @@
 package com.autiwomen.auti_women.dtos.views;
 
+import jakarta.validation.constraints.NotEmpty;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ViewInputDto {
 
+    @NotEmpty
     public Long id;
 
-    public ViewInputDto(Long id) {
-        this.id = id;
-    }
-
-    public ViewInputDto() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 }

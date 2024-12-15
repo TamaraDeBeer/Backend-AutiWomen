@@ -18,8 +18,6 @@ public class GlobalCorsConfiguration {
                         .allowedHeaders("*")
                         .allowCredentials(true);
             }
-
-            ;
         };
     }
 }

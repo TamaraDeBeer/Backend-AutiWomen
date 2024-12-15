@@ -2,7 +2,6 @@ package com.autiwomen.auti_women.controllers;
 
 import com.autiwomen.auti_women.dtos.forums.ForumDto;
 import com.autiwomen.auti_women.dtos.forums.ForumInputDto;
-import com.autiwomen.auti_women.exceptions.RecordNotFoundException;
 import com.autiwomen.auti_women.models.Forum;
 import com.autiwomen.auti_women.services.ForumService;
 import jakarta.validation.Valid;
@@ -12,12 +11,11 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @CrossOrigin
 @RestController
+@RequestMapping("/forums")
 public class ForumController {
 
     private final ForumService forumService;
@@ -26,18 +24,60 @@ public class ForumController {
         this.forumService = forumService;
     }
 
-    @GetMapping(value = "/forums")
+    @GetMapping
     public ResponseEntity<List<ForumDto>> getAllForums() {
-        return ResponseEntity.ok(forumService.getAllForums());
+        return ResponseEntity.ok().body(forumService.getAllForums());
     }
 
-    @GetMapping(value = "/forums/{id}")
-    public ResponseEntity<ForumDto> getOneForum(@PathVariable("id") Long id) {
+    @GetMapping("/sorted-by-likes")
+    public ResponseEntity<List<ForumDto>> getForumsSortedByLikes() {
+        List<ForumDto> sortedForums = forumService.getForumsSortedByLikes();
+        return ResponseEntity.ok().body(sortedForums);
+    }
+
+    @GetMapping("/sorted-by-date")
+    public ResponseEntity<List<ForumDto>> getForumsSortedByDate() {
+        List<ForumDto> sortedForums = forumService.getForumsSortedByDate();
+        return ResponseEntity.ok().body(sortedForums);
+    }
+
+    @GetMapping(value = "/search")
+    public ResponseEntity<List<ForumDto>> searchForums(@RequestParam("searchQuery") String searchQuery) {
+        List<ForumDto> forums = forumService.searchForums(searchQuery);
+        return ResponseEntity.ok().body(forums);
+    }
+
+    @GetMapping(value = "/{forumId}")
+    public ResponseEntity<ForumDto> getOneForum(@PathVariable("forumId") Long id) {
         ForumDto forumDto = forumService.getForumById(id);
         return ResponseEntity.ok().body(forumDto);
     }
 
-    @PostMapping(value = "/forums/{username}")
+    @GetMapping("/users/{username}")
+    public ResponseEntity<Set<ForumDto>> getForumsByUsername(@PathVariable("username") String username) {
+        Set<ForumDto> forums = forumService.getForumsByUsername(username);
+        return ResponseEntity.ok().body(forums);
+    }
+
+    @GetMapping("/users/{username}/liked-forums")
+    public ResponseEntity<Set<ForumDto>> getLikedForumsByUsername(@PathVariable("username") String username) {
+        Set<ForumDto> likedForums = forumService.getLikedForumsByUsername(username);
+        return ResponseEntity.ok().body(likedForums);
+    }
+
+    @GetMapping("/users/{username}/viewed-forums")
+    public ResponseEntity<Set<ForumDto>> getViewedForumsByUsername(@PathVariable("username") String username) {
+        Set<ForumDto> viewedForums = forumService.getViewedForumsByUsername(username);
+        return ResponseEntity.ok().body(viewedForums);
+    }
+
+    @GetMapping("/users/{username}/commented-forums")
+    public ResponseEntity<Set<ForumDto>> getCommentedForumsByUsername(@PathVariable("username") String username) {
+        Set<ForumDto> commentedForums = forumService.getCommentedForumsByUsername(username);
+        return ResponseEntity.ok().body(commentedForums);
+    }
+
+    @PostMapping(value = "/users/{username}")
     public ResponseEntity<ForumDto> createForum(@PathVariable("username") String username,@Valid @RequestBody ForumInputDto forumInputDto) {
         ForumDto forumDto = forumService.createForum(forumInputDto, username);
         forumService.assignForumToUser(forumDto.getId(),username);
@@ -47,82 +87,16 @@ public class ForumController {
         return ResponseEntity.created(uri).body(forumDto);
     }
 
-    @PutMapping(value = "/forums/{id}")
-    public ResponseEntity<ForumDto> updateForum(@PathVariable Long id, @RequestBody ForumDto updateForumDto) {
-        ForumDto forumDto = forumService.updateForum(id, updateForumDto);
+    @PutMapping(value = "/{forumId}/users/{username}")
+    public ResponseEntity<ForumDto> updateForum(@PathVariable Long forumId, @RequestBody ForumDto updateForumDto, @PathVariable String username) {
+        ForumDto forumDto = forumService.updateForum(forumId, updateForumDto, username);
         return ResponseEntity.ok().body(forumDto);
     }
 
-    @DeleteMapping(value = "/forums/{id}")
-    public ResponseEntity<Forum> deleteForum(@PathVariable("id") Long id) {
-        forumService.deleteForum(id);
+    @DeleteMapping(value = "/{forumId}/users/{username}")
+    public ResponseEntity<Forum> deleteForum(@PathVariable("forumId") Long forumId, @PathVariable("username") String username) {
+        forumService.deleteForum(forumId, username);
         return ResponseEntity.noContent().build();
     }
-
-    @GetMapping("/users/{username}/forums")
-    public ResponseEntity<Set<ForumDto>> getForumsByUsername(@PathVariable("username") String username) {
-        Set<ForumDto> forums = forumService.getForumsByUsername(username);
-        return ResponseEntity.ok(forums);
-    }
-
-    @GetMapping("/users/{username}/liked-forums")
-    public ResponseEntity<Set<ForumDto>> getLikedForumsByUsername(@PathVariable("username") String username) {
-        Set<ForumDto> likedForums = forumService.getLikedForumsByUsername(username);
-        return ResponseEntity.ok(likedForums);
-    }
-
-    @GetMapping("/users/{username}/viewed-forums")
-    public ResponseEntity<Set<ForumDto>> getViewedForumsByUsername(@PathVariable("username") String username) {
-        Set<ForumDto> viewedForums = forumService.getViewedForumsByUsername(username);
-        return ResponseEntity.ok(viewedForums);
-    }
-
-    @GetMapping("/users/{username}/commented-forums")
-    public ResponseEntity<Set<ForumDto>> getCommentedForumsByUsername(@PathVariable("username") String username) {
-        Set<ForumDto> commentedForums = forumService.getCommentedForumsByUsername(username);
-        return ResponseEntity.ok(commentedForums);
-    }
-
-    @GetMapping("/forums/topic/{topic}")
-    public ResponseEntity<List<Forum>> getForumsByTopic(@PathVariable String topic) {
-        List<Forum> forumsByTopic = forumService.getForumsByTopic(topic);
-        return ResponseEntity.ok(forumsByTopic);
-    }
-
-    @GetMapping("/forums/unique-topics")
-    public ResponseEntity<Set<String>> getUniqueTopics() {
-        Set<String> uniqueTopics = forumService.getUniqueTopics();
-        return ResponseEntity.ok(uniqueTopics);
-    }
-
-    @GetMapping("/forums/sorted-unique-topics")
-    public ResponseEntity<List<String>> getSortedUniqueTopics() {
-        List<String> sortedUniqueTopics = forumService.getSortedUniqueTopics();
-        return ResponseEntity.ok(sortedUniqueTopics);
-    }
-
-    @GetMapping("/topics/frequency")
-    public ResponseEntity<Map<String, Integer>> getTopicFrequency() {
-        return ResponseEntity.ok(forumService.getTopicFrequency());
-    }
-
-    @GetMapping("/forums/sorted-by-likes")
-    public ResponseEntity<List<ForumDto>> getForumsSortedByLikes() {
-        List<ForumDto> sortedForums = forumService.getForumsSortedByLikes();
-        return ResponseEntity.ok(sortedForums);
-    }
-
-    @GetMapping("/forums/sorted-by-date")
-    public ResponseEntity<List<ForumDto>> getForumsSortedByDate() {
-        List<ForumDto> sortedForums = forumService.getForumsSortedByDate();
-        return ResponseEntity.ok(sortedForums);
-    }
-
-    @GetMapping("/forums/search/{title}")
-    public ResponseEntity<List<ForumDto>> searchForums(@PathVariable("title") String name) {
-        List<ForumDto> forumDtos = forumService.searchForums(name);
-        return ResponseEntity.ok(forumDtos);
-    }
-
 
 }

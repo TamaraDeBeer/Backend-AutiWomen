@@ -7,12 +7,12 @@ import com.autiwomen.auti_women.models.Review;
 import com.autiwomen.auti_women.repositories.ReviewRepository;
 import com.autiwomen.auti_women.security.models.User;
 import com.autiwomen.auti_women.security.repositories.UserRepository;
+import com.autiwomen.auti_women.security.utils.SecurityUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,6 +26,21 @@ public class ReviewService {
         this.reviewRepository = reviewRepository;
     }
 
+    public List<ReviewDto> getAllReviews() {
+        return reviewRepository.findAll().stream()
+                .map(this::fromReview)
+                .collect(Collectors.toList());
+    }
+
+    public ReviewDto getReviewByUsername(String username) {
+        if (!SecurityUtil.isOwnerOrAdmin(username)) {
+            throw new SecurityException("Forbidden");
+        }
+        User user = userRepository.findById(username).orElseThrow(() -> new RecordNotFoundException("User not found"));
+        Review review = reviewRepository.findByUser(user).orElseThrow(() -> new RecordNotFoundException("Review not found"));
+        return fromReview(review);
+    }
+
     public ReviewDto createReview(String username, ReviewInputDto reviewInputDto) {
         User user = userRepository.findById(username).orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -35,42 +50,29 @@ public class ReviewService {
         review.setDob(user.getDob());
         review.setAutismDiagnosesYear(user.getAutismDiagnosesYear());
         review.setProfilePictureUrl(user.getProfilePictureUrl());
-        review.setDate(String.valueOf(LocalDate.now()));
+        review.setDate(LocalDate.parse(String.valueOf(LocalDate.now())));
         reviewRepository.save(review);
-
-        return fromReview(review);
-    }
-
-    public List<ReviewDto> getAllReviews() {
-        return reviewRepository.findAll().stream()
-                .map(this::fromReview)
-                .collect(Collectors.toList());
-    }
-
-    public ReviewDto getReviewByUsername(String username) {
-        User user = userRepository.findById(username).orElseThrow(() -> new RecordNotFoundException("User not found"));
-        Optional<Review> optionalReview = reviewRepository.findByUser(user);
-        if (optionalReview.isEmpty()) {
-            return new ReviewDto();
-        }
-        Review review = optionalReview.get();
         return fromReview(review);
     }
 
     public ReviewDto updateReview(String username, ReviewInputDto reviewInputDto) {
+        if (!SecurityUtil.isOwnerOrAdmin(username)) {
+            throw new SecurityException("Forbidden");
+        }
         User user = userRepository.findById(username).orElseThrow(() -> new RecordNotFoundException("User not found"));
         Review review = reviewRepository.findByUser(user).orElseThrow(() -> new RecordNotFoundException("Review not found"));
 
         review.setReview(reviewInputDto.getReview());
-        review.setDate(String.valueOf(LocalDate.now()));
+        review.setDate(LocalDate.parse(String.valueOf(LocalDate.now())));
         reviewRepository.save(review);
 
         return fromReview(review);
     }
 
     @Transactional
-    public void deleteReviewById(Long id) {
-        Review review = reviewRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("Review not found with id: " + id));
+    public void deleteReviewByUsername(String username) {
+        User user = userRepository.findById(username).orElseThrow(() -> new RecordNotFoundException("User not found"));
+        Review review = reviewRepository.findByUser(user).orElseThrow(() -> new RecordNotFoundException("Review not found"));
         reviewRepository.delete(review);
     }
 

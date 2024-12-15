@@ -1,11 +1,13 @@
 package com.autiwomen.auti_women.controllers;
 
+import com.autiwomen.auti_women.dtos.likes.LikeDto;
+import com.autiwomen.auti_women.dtos.views.ViewDto;
 import com.autiwomen.auti_women.services.ViewService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/forums/{forumId}")
+@RequestMapping("/views")
 public class ViewController {
 
     private final ViewService viewService;
@@ -14,19 +16,21 @@ public class ViewController {
         this.viewService = viewService;
     }
 
-    @PostMapping("/users/{username}/views/add")
-    public void addViewToForum(@PathVariable Long forumId, @PathVariable String username) {
-        viewService.addViewToForum(forumId, username);
-    }
-
-    @GetMapping("/views/count")
+    @GetMapping("/count/forums/{forumId}")
     public ResponseEntity<Integer> getViewCountByForumId(@PathVariable("forumId") Long forumId) {
-        return ResponseEntity.ok(viewService.getViewCountByForumId(forumId));
+        int viewCount = viewService.getViewCountByForumId(forumId);
+        return ResponseEntity.ok().body(viewCount);
     }
 
-    @GetMapping("/users/{username}/views/check")
+    @GetMapping("/check/forums/{forumId}/users/{username}")
     public ResponseEntity<Boolean> checkUserView(@PathVariable Long forumId, @PathVariable String username) {
         boolean hasViewed = viewService.hasUserViewedPost(username, forumId);
-        return ResponseEntity.ok(hasViewed);
+        return ResponseEntity.ok().body(hasViewed);
+    }
+
+    @PostMapping("/add/forums/{forumId}/users/{username}")
+    public ResponseEntity<Integer> addViewToForum(@PathVariable Long forumId, @PathVariable String username) {
+        int viewDto = viewService.addViewToForum(forumId, username);
+        return ResponseEntity.ok().body(viewDto);
     }
 }

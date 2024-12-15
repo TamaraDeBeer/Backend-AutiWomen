@@ -1,7 +1,5 @@
 @startuml
-'https://plantuml.com/sequence-diagram
-
-autonumber
+'autonumber
 
 skinparam sequence {
     ParticipantBackgroundColor #F5C84C
@@ -16,7 +14,7 @@ skinparam {
 actor User #064D1A
 activate User #064D1A
 
-User -> ForumController : process create forum
+User -> ForumController : createForum(forumInputDto, username)
 activate ForumController #7AC37A
 
 ForumController -> ForumService : createForum(forumInputDto, username)
@@ -29,42 +27,42 @@ alt#F5C84C #F5C84C99 User not found
     UserRepository -> ForumService : null
     ForumService -> ForumController : throw RecordNotFoundException("User not found")
     ForumController -> User : ResponseEntity(HttpStatus.NOT_FOUND)
+else #F8EAD9 User found
+    UserRepository -> ForumService : User
+    deactivate UserRepository
+
+    ForumService -> ForumRepository : save(forum)
+    activate ForumRepository #7AC37A
+
+    ForumRepository -> ForumService : Forum
+    deactivate ForumRepository
+
+    ForumService -> ForumController : assignForumToUser(forumDto.getId(), username)
+    activate UserRepository #7AC37A
+    activate ForumRepository #7AC37A
+
+    alt#F5C84C #F5C84C99 Forum or User not found
+        UserRepository -> ForumService : null
+        ForumRepository -> ForumService : null
+        ForumService -> ForumController : throw RecordNotFoundException("Forum or User not found")
+        ForumController -> User : ResponseEntity(HttpStatus.NOT_FOUND)
+    else #F8EAD9 Forum and User found
+        UserRepository -> ForumService : User
+        ForumRepository -> ForumService : Forum
+        deactivate UserRepository
+        deactivate ForumRepository
+
+        ForumService -> ForumRepository : save(forum)
+        activate ForumRepository #7AC37A
+        ForumRepository -> ForumService : Forum
+        deactivate ForumRepository
+
+        ForumService -> ForumController : ForumDto
+        ForumController -> User : ResponseEntity(HttpStatus.CREATED)
+    end
 end
 
-UserRepository -> ForumService : User
-deactivate UserRepository
-
-ForumService -> ForumRepository : save(forum)
-activate ForumRepository #7AC37A
-
-ForumRepository -> ForumService : Forum
-deactivate ForumRepository
-
-ForumService -> ForumService : assignForumToUser(forumDto.getId(), username)
-activate UserRepository #7AC37A
-activate ForumRepository #7AC37A
-
-alt#F5C84C #F5C84C99 Forum or User not found
-    UserRepository -> ForumService : null
-    ForumRepository -> ForumService : null
-    ForumService -> ForumController : throw RecordNotFoundException("Forum or User not found")
-    ForumController -> User : ResponseEntity(HttpStatus.NOT_FOUND)
-end
-
-UserRepository -> ForumService : User
-ForumRepository -> ForumService : Forum
-deactivate UserRepository
-deactivate ForumRepository
-
-ForumService -> ForumRepository : save(forum)
-activate ForumRepository #7AC37A
-ForumRepository -> ForumService : Forum
-deactivate ForumRepository
-
-ForumService -> ForumController : ForumDto
 deactivate ForumService
-
-ForumController -> User : ResponseEntity(HttpStatus.CREATED)
 deactivate ForumController
 
 @enduml

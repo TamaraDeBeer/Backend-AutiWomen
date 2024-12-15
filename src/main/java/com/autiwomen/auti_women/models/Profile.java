@@ -2,7 +2,13 @@ package com.autiwomen.auti_women.models;
 
 import com.autiwomen.auti_women.security.models.User;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.time.LocalDate;
+
+@Setter
+@Getter
 @Entity
 @Table(name = "profiles")
 public class Profile {
@@ -19,12 +25,12 @@ public class Profile {
     private String bio;
 
     private String name;
-    private String date;
+    private LocalDate date;
 
     public Profile() {
     }
 
-    public Profile(Long id, User user, String bio, String name, String date) {
+    public Profile(Long id, User user, String bio, String name, LocalDate date) {
         this.id = id;
         this.user = user;
         this.bio = bio;
@@ -32,43 +38,4 @@ public class Profile {
         this.date = date;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public String getBio() {
-        return bio;
-    }
-
-    public void setBio(String bio) {
-        this.bio = bio;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
 }

@@ -56,8 +56,4 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     }
 
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        return new AntPathRequestMatcher("/login").matches(request);
-    }
 }

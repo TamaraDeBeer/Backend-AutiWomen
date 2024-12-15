@@ -1,6 +1,5 @@
 package com.autiwomen.auti_women.services;
 
-
 import com.autiwomen.auti_women.dtos.forums.ForumDto;
 import com.autiwomen.auti_women.dtos.forums.ForumInputDto;
 import com.autiwomen.auti_women.exceptions.RecordNotFoundException;
@@ -14,11 +13,8 @@ import com.autiwomen.auti_women.security.dtos.user.UserDto;
 import com.autiwomen.auti_women.security.repositories.UserRepository;
 import com.autiwomen.auti_women.security.models.User;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.autiwomen.auti_women.security.utils.SecurityUtil;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -27,8 +23,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class ForumService {
-
-    private static final Logger logger = LoggerFactory.getLogger(ForumService.class);
 
     private final ForumRepository forumRepository;
     private final UserRepository userRepository;
@@ -49,59 +43,151 @@ public class ForumService {
         List<ForumDto> forumDtoList = new ArrayList<>();
 
         for (Forum forum : forumList) {
-
-            int likeCount = likeRepository.getLikeCountByForumId(forum.getId());
-            forum.setLikesCount(likeCount);
-
-            int viewCount = viewRepository.getViewCountByForumId(forum.getId());
-            forum.setViewsCount(viewCount);
-
-            int commentCount = commentRepository.getCommentCountByForumId(forum.getId());
-            forum.setCommentsCount(commentCount);
-
-            forum.setLastReaction(getLastReaction(forum.getId()));
-
+            updateForumCounts(forum);
             forumDtoList.add(fromForum(forum));
         }
-
         return forumDtoList;
     }
 
-    public ForumDto getForumById(Long id) {
-        Optional<Forum> forumId = forumRepository.findById(id);
-        if (forumId.isPresent()) {
-            Forum forum = forumId.get();
+    public List<ForumDto> getForumsSortedByLikes() {
+        List<Forum> forums = forumRepository.findAll();
+        forums.forEach(this::updateForumCounts);
+        return forums.stream()
+                .sorted(Comparator.comparingInt(Forum::getLikesCount).reversed())
+                .map(this::fromForum)
+                .collect(Collectors.toList());
+    }
 
-            int likeCount = likeRepository.getLikeCountByForumId(forum.getId());
-            forum.setLikesCount(likeCount);
+    public List<ForumDto> getForumsSortedByDate() {
+        List<Forum> forums = forumRepository.findAll();
+        forums.forEach(this::updateForumCounts);
+        return forums.stream()
+                .sorted(Comparator.comparing(Forum::getDate).reversed())
+                .map(this::fromForum)
+                .collect(Collectors.toList());
+    }
 
-            int viewCount = viewRepository.getViewCountByForumId(forum.getId());
-            forum.setViewsCount(viewCount);
+    public List<ForumDto> searchForums(String title) {
+        List<Forum> forums = forumRepository.findAllByTitleContainingIgnoreCase(title);
+        return forums.stream()
+                .map(this::fromForum)
+                .collect(Collectors.toList());
+    }
 
-            int commentCount = commentRepository.getCommentCountByForumId(forum.getId());
-            forum.setCommentsCount(commentCount);
-
-            forum.setLastReaction(getLastReaction(forum.getId()));
-
+    public ForumDto getForumById(Long forumId) {
+        Optional<Forum> forumOptional = forumRepository.findById(forumId);
+        if (forumOptional.isPresent()) {
+            Forum forum = forumOptional.get();
+            updateForumCounts(forum);
             return fromForum(forum);
         } else {
-            throw new RecordNotFoundException("Er is geen forum gevonden met id: " + id);
+            throw new RecordNotFoundException("No forum found with id: " + forumId);
         }
+    }
+
+    public Set<ForumDto> getForumsByUsername(String username) {
+        User user = userRepository.findById(username).orElseThrow(() -> new RecordNotFoundException("User not found"));
+        Set<Forum> forums = new HashSet<>(forumRepository.findByUser(user));
+        if (forums.isEmpty()) {
+            throw new RecordNotFoundException("No forums found for user: " + username);
+        }
+        return forums.stream().map(forum -> {
+            if (forum.getUser() != null) {
+                forum.setName(forum.getUser().getUsername());
+                forum.setDob(forum.getUser().getDob());
+            }
+            updateForumCounts(forum);
+            return fromForum(forum);
+        }).collect(Collectors.toSet());
+    }
+
+    public Set<ForumDto> getLikedForumsByUsername(String username) {
+        if (!SecurityUtil.isOwnerOrAdmin(username)) {
+            throw new SecurityException("Forbidden");
+        }
+        User user = userRepository.findById(username)
+                .orElseThrow(() -> new RecordNotFoundException("User not found"));
+        Set<Forum> likedForums = likeRepository.findLikedForumsByUser(user);
+        if (likedForums.isEmpty()) {
+            throw new RecordNotFoundException("No liked forums found for user: " + username);
+        }
+        return convertForumsToDtos(likedForums);
+    }
+
+    public Set<ForumDto> getViewedForumsByUsername(String username) {
+        if (!SecurityUtil.isOwnerOrAdmin(username)) {
+            throw new SecurityException("Forbidden");
+        }
+        User user = userRepository.findById(username)
+                .orElseThrow(() -> new RecordNotFoundException("User not found"));
+        Set<Forum> viewedForums = viewRepository.findViewedForumsByUser(user);
+        if (viewedForums.isEmpty()) {
+            throw new RecordNotFoundException("No viewed forums found for user: " + username);
+        }
+        return convertForumsToDtos(viewedForums);
+    }
+
+    public Set<ForumDto> getCommentedForumsByUsername(String username) {
+        if (!SecurityUtil.isOwnerOrAdmin(username)) {
+            throw new SecurityException("Forbidden");
+        }
+        User user = userRepository.findById(username)
+                .orElseThrow(() -> new RecordNotFoundException("User not found"));
+        Set<Forum> commentedForums = commentRepository.findCommentedForumsByUser(user);
+        if (commentedForums.isEmpty()) {
+            throw new RecordNotFoundException("No commented forums found for user: " + username);
+        }
+        return convertForumsToDtos(commentedForums);
     }
 
     public ForumDto createForum(ForumInputDto forumInputDto, String username) {
         User user = userRepository.findById(username)
-                .orElseThrow(() -> new RecordNotFoundException("User not found"));
+                .orElseThrow(() -> new RecordNotFoundException("User not found: " + username));
 
         Forum forum = toForum(forumInputDto);
-        forum.setDate(String.valueOf(LocalDate.now()));
+        forum.setDate(LocalDate.parse(String.valueOf(LocalDate.now())));
         forum.setName(user.getUsername());
-        forum.setAge(user.getDob().toString());
+        forum.setDob(user.getDob());
 
         forumRepository.save(forum);
         return fromForum(forum);
     }
 
+    public ForumDto updateForum(Long forumId, ForumDto updateForum, String username) {
+        if (!SecurityUtil.isOwnerOrAdmin(username)) {
+            throw new SecurityException("Forbidden");
+        }
+        Optional<Forum> forum = forumRepository.findById(forumId);
+        if (forum.isEmpty()) {
+            throw new RecordNotFoundException("No forum found with id: " + forumId);
+        } else {
+            Forum forum1 = forum.get();
+            forum1.setTitle(updateForum.getTitle());
+            forum1.setText(updateForum.getText());
+            forum1.setTopic(updateForum.getTopic());
+            Forum forum2 = forumRepository.save(forum1);
+
+            return fromForum(forum2);
+        }
+    }
+
+    @Transactional
+    public void deleteForum(Long forumId, String username) {
+        if (!SecurityUtil.isOwnerOrAdmin(username)) {
+            throw new SecurityException("Forbidden");
+        }
+        Optional<Forum> optionalForum = forumRepository.findById(forumId);
+        if (optionalForum.isEmpty()) {
+            throw new RecordNotFoundException("Forum not found");
+        }
+        Forum forum = optionalForum.get();
+        forum.setCommentsList(null);
+        forumRepository.save(forum);
+        forumRepository.delete(forum);
+    }
+
+
+//    Helpers
     public void assignForumToUser(Long forumId, String username) {
         Optional<Forum> optionalForum = forumRepository.findById(forumId);
         Optional<User> optionalUser = userRepository.findById(username);
@@ -115,232 +201,50 @@ public class ForumService {
         }
     }
 
+    private Set<ForumDto> convertForumsToDtos(Set<Forum> forums) {
+        Set<ForumDto> forumDtos = new HashSet<>();
+        for (Forum forum : forums) {
+            if (forum != null) {
+                updateForumCounts(forum);
+                ForumDto forumDto = fromForum(forum);
+                forumDtos.add(forumDto);
+            }
+        }
+        return forumDtos;
+    }
+
     public void updateLastReaction(Long forumId) {
         Optional<Comment> lastComment = commentRepository.findTopByForumIdOrderByDateDesc(forumId);
         if (lastComment.isPresent()) {
             Forum forum = forumRepository.findById(forumId).orElseThrow(() -> new RecordNotFoundException("Forum not found"));
-            forum.setLastReaction(String.valueOf(LocalDate.now()));
+            forum.setLastReaction(LocalDate.parse(String.valueOf(LocalDate.now())));
             forumRepository.save(forum);
         }
     }
 
-    public String getLastReaction(Long forumId) {
+    public LocalDate getLastReaction(Long forumId) {
         Optional<Comment> lastComment = commentRepository.findTopByForumIdOrderByDateDesc(forumId);
-        return lastComment.map(comment -> comment.getDate()).orElse(null);
+        return lastComment.map(Comment::getDate).orElse(null);
     }
 
-    public ForumDto updateForum(@PathVariable Long id, @RequestBody ForumDto updateForum) {
-        Optional<Forum> forum = forumRepository.findById(id);
-        if (forum.isEmpty()) {
-            throw new RecordNotFoundException("Er is geen forum gevonden met id: " + id);
-        } else {
-            Forum forum1 = forum.get();
-//            forum1.setName(updateForum.getName());
-            forum1.setTitle(updateForum.getTitle());
-            forum1.setText(updateForum.getText());
-            forum1.setTopic(updateForum.getTopic());
-            Forum forum2 = forumRepository.save(forum1);
+    private void updateForumCounts(Forum forum) {
+        int likeCount = likeRepository.getLikeCountByForumId(forum.getId());
+        forum.setLikesCount(likeCount);
 
-            return fromForum(forum2);
-        }
-    }
+        int viewCount = viewRepository.getViewCountByForumId(forum.getId());
+        forum.setViewsCount(viewCount);
 
-    @Transactional
-    public void deleteForum(Long id) {
-        Optional<Forum> optionalForum = forumRepository.findById(id);
-        if (optionalForum.isPresent()) {
-            commentRepository.deleteAllByForumId(id);
-            forumRepository.deleteById(id);
-        } else {
-            throw new RecordNotFoundException("Forum not found with id: " + id);
-        }}
+        int commentCount = commentRepository.getCommentCountByForumId(forum.getId());
+        forum.setCommentsCount(commentCount);
 
-        public Set<ForumDto> getForumsByUsername(String username) {
-        User user = userRepository.findById(username).orElseThrow(() -> new RecordNotFoundException("User not found"));
-        Set<Forum> forums = new HashSet<>(forumRepository.findByUser(user));
-        return forums.stream().map(forum -> {
-            if (forum.getUser() != null) {
-                forum.setName(forum.getUser().getUsername());
-                forum.setAge(forum.getUser().getDob().toString());
-            }
-            int likeCount = likeRepository.getLikeCountByForumId(forum.getId());
-            forum.setLikesCount(likeCount);
-
-            int viewCount = viewRepository.getViewCountByForumId(forum.getId());
-            forum.setViewsCount(viewCount);
-
-            int commentCount = commentRepository.getCommentCountByForumId(forum.getId());
-            forum.setCommentsCount(commentCount);
-
-            forum.setLastReaction(getLastReaction(forum.getId()));
-
-            return fromForum(forum);
-        }).collect(Collectors.toSet());
-    }
-
-
-    public Set<ForumDto> getLikedForumsByUsername(String username) {
-        User user = userRepository.findById(username)
-                .orElseThrow(() -> new RecordNotFoundException("User not found"));
-        Set<Forum> likedForums = likeRepository.findLikedForumsByUser(user);
-        Set<ForumDto> likedForumDtos = new HashSet<>();
-        for (Forum forum : likedForums) {
-            if (forum != null) {
-                int likeCount = likeRepository.getLikeCountByForumId(forum.getId());
-                forum.setLikesCount(likeCount);
-                int viewCount = viewRepository.getViewCountByForumId(forum.getId());
-                forum.setViewsCount(viewCount);
-                int commentCount = commentRepository.getCommentCountByForumId(forum.getId());
-                forum.setCommentsCount(commentCount);
-                ForumDto forumDto = fromForum(forum);
-                likedForumDtos.add(forumDto);
-            }
-        }
-        return likedForumDtos;
-    }
-
-    public Set<ForumDto> getViewedForumsByUsername(String username) {
-        User user = userRepository.findById(username)
-                .orElseThrow(() -> new RecordNotFoundException("User not found"));
-        Set<Forum> viewedForums = viewRepository.findViewedForumsByUser(user);
-        Set<ForumDto> viewedForumDtos = new HashSet<>();
-        for (Forum forum : viewedForums) {
-            if (forum != null) {
-                int likeCount = likeRepository.getLikeCountByForumId(forum.getId());
-                forum.setLikesCount(likeCount);
-                int viewCount = viewRepository.getViewCountByForumId(forum.getId());
-                forum.setViewsCount(viewCount);
-                int commentCount = commentRepository.getCommentCountByForumId(forum.getId());
-                forum.setCommentsCount(commentCount);
-                ForumDto forumDto = fromForum(forum);
-                viewedForumDtos.add(forumDto);
-            }
-        }
-        return viewedForumDtos;
-    }
-
-    public Set<ForumDto> getCommentedForumsByUsername(String username) {
-        User user = userRepository.findById(username)
-                .orElseThrow(() -> new RecordNotFoundException("User not found"));
-        Set<Forum> commentedForums = commentRepository.findCommentedForumsByUser(user);
-        Set<ForumDto> commentedForumDtos = new HashSet<>();
-
-        for (Forum forum : commentedForums) {
-            if (forum != null) {
-                int likeCount = likeRepository.getLikeCountByForumId(forum.getId());
-                forum.setLikesCount(likeCount);
-                int viewCount = viewRepository.getViewCountByForumId(forum.getId());
-                forum.setViewsCount(viewCount);
-                int commentCount = commentRepository.getCommentCountByForumId(forum.getId());
-                forum.setCommentsCount(commentCount);
-                ForumDto forumDto = fromForum(forum);
-                commentedForumDtos.add(forumDto);
-            }
-        }
-        return commentedForumDtos;
-    }
-
-    public List<Forum> getForumsByTopic(String topic) {
-        List<Forum> forums = forumRepository.findAll();
-        List<Forum> forumsByTopic = new ArrayList<>();
-        for (Forum forum : forums) {
-            if (forum.getTopic().equals(topic)) {
-                forumsByTopic.add(forum);
-            }
-        }
-        return forumsByTopic;
-    }
-
-    public Set<String> getUniqueTopics() {
-        List<Forum> forums = forumRepository.findAll();
-        Set<String> uniqueTopics = new HashSet<>();
-        for (Forum forum : forums) {
-            if (!uniqueTopics.contains(forum.getTopic())) {
-                uniqueTopics.add(forum.getTopic());
-            }
-        }
-        return uniqueTopics;
-    }
-
-    public List<String> getSortedUniqueTopics() {
-        List<Forum> forums = forumRepository.findAll();
-        Map<String, Integer> topicFrequency = new HashMap<>();
-        for (Forum forum : forums) {
-            String topic = forum.getTopic();
-            topicFrequency.put(topic, topicFrequency.getOrDefault(topic, 0) + 1);
-        }
-        return topicFrequency.entrySet()
-                .stream()
-                .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
-                .map(Map.Entry::getKey)
-                .collect(Collectors.toList());
-    }
-
-    public Map<String, Integer> getTopicFrequency() {
-        List<Forum> forums = forumRepository.findAll();
-        Map<String, Integer> topicFrequency = new HashMap<>();
-        for (Forum forum : forums) {
-            String topic = forum.getTopic();
-            if (topicFrequency.containsKey(topic)) {
-                topicFrequency.put(topic, topicFrequency.get(topic) + 1);
-            } else {
-                topicFrequency.put(topic, 1);
-            }
-        }
-        return topicFrequency.entrySet()
-                .stream()
-                .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
-                .collect(LinkedHashMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), LinkedHashMap::putAll);
-    }
-
-    public List<ForumDto> getForumsSortedByLikes() {
-        List<Forum> forums = forumRepository.findAll();
-        forums.forEach(forum -> {
-            int likeCount = likeRepository.getLikeCountByForumId(forum.getId());
-            int viewCount = viewRepository.getViewCountByForumId(forum.getId());
-            int commentCount = commentRepository.getCommentCountByForumId(forum.getId());
-            forum.setLastReaction(getLastReaction(forum.getId()));
-            forum.setCommentsCount(commentCount);
-            forum.setViewsCount(viewCount);
-            forum.setLikesCount(likeCount);
-        });
-        return forums.stream()
-                .sorted(Comparator.comparingInt(Forum::getLikesCount).reversed())
-                .map(this::fromForum)
-                .collect(Collectors.toList());
-    }
-
-    public List<ForumDto> getForumsSortedByDate() {
-        List<Forum> forums = forumRepository.findAll();
-        forums.forEach(forum -> {
-            int likeCount = likeRepository.getLikeCountByForumId(forum.getId());
-            int viewCount = viewRepository.getViewCountByForumId(forum.getId());
-            int commentCount = commentRepository.getCommentCountByForumId(forum.getId());
-            forum.setLastReaction(getLastReaction(forum.getId()));
-            forum.setCommentsCount(commentCount);
-            forum.setViewsCount(viewCount);
-            forum.setLikesCount(likeCount);
-        });
-        return forums.stream()
-                .sorted(Comparator.comparing(Forum::getDate).reversed())
-                .map(this::fromForum)
-                .collect(Collectors.toList());
-    }
-
-    public List<ForumDto> searchForums(String title) {
-        logger.info("Searching forums with title containing: {}", title);
-        List<Forum> forums = forumRepository.findAllByTitleContainingIgnoreCase(title);
-        logger.info("Found {} forums", forums.size());
-        return forums.stream()
-                .map(this::fromForum)
-                .collect(Collectors.toList());
+        forum.setLastReaction(getLastReaction(forum.getId()));
     }
 
     public ForumDto fromForum(Forum forum) {
         var forumDto = new ForumDto();
         forumDto.id = forum.getId();
         forumDto.name = forum.getName();
-        forumDto.age = forum.getAge();
+        forumDto.dob = forum.getDob();
         forumDto.title = forum.getTitle();
         forumDto.text = forum.getText();
         forumDto.date = forum.getDate();
@@ -356,7 +260,6 @@ public class ForumService {
         } else {
             forumDto.userDto = null;
         }
-
         return forumDto;
     }
 

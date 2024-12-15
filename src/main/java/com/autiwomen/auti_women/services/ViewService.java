@@ -1,5 +1,7 @@
 package com.autiwomen.auti_women.services;
 
+import com.autiwomen.auti_women.dtos.views.ViewDto;
+import com.autiwomen.auti_women.dtos.views.ViewInputDto;
 import com.autiwomen.auti_women.exceptions.RecordNotFoundException;
 import com.autiwomen.auti_women.models.Forum;
 import com.autiwomen.auti_women.models.View;
@@ -7,9 +9,9 @@ import com.autiwomen.auti_women.repositories.ForumRepository;
 import com.autiwomen.auti_women.repositories.ViewRepository;
 import com.autiwomen.auti_women.security.repositories.UserRepository;
 import com.autiwomen.auti_women.security.models.User;
+import com.autiwomen.auti_women.security.utils.SecurityUtil;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -26,21 +28,6 @@ public class ViewService {
         this.userRepository = userRepository;
     }
 
-    public void addViewToForum(Long forumId, String username) {
-        User user = userRepository.findById(username)
-                .orElseThrow(() -> new RecordNotFoundException("User not found"));
-        Forum forum = forumRepository.findById(forumId)
-                .orElseThrow(() -> new RecordNotFoundException("Forum not found"));
-
-        List<View> existingViews = viewRepository.findViewByUserAndForum(user, forum);
-        if (!existingViews.isEmpty()) {
-            return;
-        }
-
-        View view = new View(user, forum);
-        viewRepository.save(view);
-    }
-
     public int getViewCountByForumId(Long forumId) {
         Forum forum = forumRepository.findById(forumId)
                 .orElseThrow(() -> new RecordNotFoundException("Forum not found"));
@@ -49,14 +36,57 @@ public class ViewService {
     }
 
     public boolean hasUserViewedPost(String username, Long forumId) {
+        if (!SecurityUtil.isOwnerOrAdmin(username)) {
+            throw new SecurityException("Forbidden");
+        }
         User user = userRepository.findById(username)
                 .orElseThrow(() -> new RecordNotFoundException("User not found"));
         Forum forum = forumRepository.findById(forumId)
                 .orElseThrow(() -> new RecordNotFoundException("Forum not found"));
 
-        List<View> views = viewRepository.findViewByUserAndForum(user, forum);
-        return !views.isEmpty();
+        return viewRepository.findViewByUserAndForum(user, forum).isPresent();
     }
 
+    public int addViewToForum(Long forumId, String username) {
+        if (!SecurityUtil.isOwnerOrAdmin(username)) {
+            throw new SecurityException("Forbidden");
+        }
+        User user = userRepository.findById(username)
+                .orElseThrow(() -> new RecordNotFoundException("User not found"));
+        Forum forum = forumRepository.findById(forumId)
+                .orElseThrow(() -> new RecordNotFoundException("Forum not found"));
 
+        Optional<View> existingView = viewRepository.findViewByUserAndForum(user, forum);
+        if (existingView.isPresent()) {
+            throw new IllegalStateException("User has already viewed this forum");
+        }
+        ViewInputDto viewInputDto = new ViewInputDto();
+        viewInputDto.setId(null);
+        View view = toView(viewInputDto);
+        view.setUser(user);
+        view.setForum(forum);
+        viewRepository.save(view);
+
+        updateViewsCount(forum);
+        return forum.getViewsCount();
+    }
+
+    //    Helper
+    public void updateViewsCount(Forum forum) {
+        int viewCount = viewRepository.getViewCountByForumId(forum.getId());
+        forum.setViewsCount(viewCount);
+        forumRepository.save(forum);
+    }
+
+    public ViewDto fromView(View view) {
+        var viewDto = new ViewDto();
+        viewDto.id = view.getId();
+        return viewDto;
+    }
+
+    public View toView (ViewInputDto viewInputDto) {
+        var view = new View();
+        view.setId(viewInputDto.getId());
+        return view;
+    }
 }

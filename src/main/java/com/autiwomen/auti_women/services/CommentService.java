@@ -10,6 +10,7 @@ import com.autiwomen.auti_women.repositories.ForumRepository;
 import com.autiwomen.auti_women.security.dtos.user.UserDto;
 import com.autiwomen.auti_women.security.repositories.UserRepository;
 import com.autiwomen.auti_women.security.models.User;
+import com.autiwomen.auti_women.security.utils.SecurityUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,18 +34,6 @@ public class CommentService {
         this.userRepository = userRepository;
     }
 
-    public CommentDto createComment(CommentInputDto commentInputDto, String username) {
-        User user = userRepository.findById(username)
-                .orElseThrow(() -> new RecordNotFoundException("User not found"));
-
-        Comment comment = toComment(commentInputDto);
-        comment.setName(user.getUsername());
-        comment.setAge(user.getDob().toString());
-        comment.setDate(String.valueOf(LocalDate.now()));
-        commentRepository.save(comment);
-        return fromComment(comment);
-    }
-
     public List<CommentDto> getAllComments() {
         List<Comment> comments = commentRepository.findAll();
         return comments.stream()
@@ -52,6 +41,88 @@ public class CommentService {
                 .collect(Collectors.toList());
     }
 
+    public List<CommentDto> getCommentsByForumId(Long forumId) {
+        List<Comment> comments = commentRepository.findByForumId(forumId);
+        if (comments.isEmpty()) {
+            throw new RecordNotFoundException("No comments found for forum ID: " + forumId);
+        }
+        return comments.stream().map(comment -> {
+            User user = comment.getUser();
+            if (user != null) {
+                comment.setName(user.getUsername());
+                comment.setDob(user.getDob());
+            }
+            return toCommentDto(comment);
+        }).collect(Collectors.toList());
+    }
+
+    public List<Comment> getCommentsByUsername(String username) {
+        if (!SecurityUtil.isOwnerOrAdmin(username)) {
+            throw new SecurityException("Forbidden");
+        }
+        Optional<User> optionalUser = userRepository.findById(username);
+        if (optionalUser.isEmpty()) {
+            throw new RecordNotFoundException("User not found");
+        }
+        User user = optionalUser.get();
+        return user.getCommentsList();
+    }
+
+    public int getCommentCountByForumId(Long forumId) {
+        Forum forum = forumRepository.findById(forumId).orElseThrow(() -> new RecordNotFoundException("Forum not found"));
+        List<Comment> comments = forum.getCommentsList();
+        return comments.size();
+    }
+
+    public CommentDto createComment(CommentInputDto commentInputDto, String username) {
+        if (!SecurityUtil.isOwnerOrAdmin(username)) {
+            throw new SecurityException("Forbidden");
+        }
+        User user = userRepository.findById(username)
+                .orElseThrow(() -> new RecordNotFoundException("User not found"));
+
+        Comment comment = toComment(commentInputDto);
+        comment.setName(user.getUsername());
+        comment.setDob(user.getDob());
+        comment.setDate(LocalDate.now());
+        commentRepository.save(comment);
+        return fromComment(comment);
+    }
+
+    public CommentDto updateComment (Long commentId, CommentDto updateComment, String username) {
+        if (!SecurityUtil.isOwnerOrAdmin(username)) {
+            throw new SecurityException("Forbidden");
+        }
+        Optional<Comment> comment = commentRepository.findById(commentId);
+        if (comment.isEmpty()) {
+            throw new RecordNotFoundException("Comment not found");
+        } else {
+            Comment comment1 = comment.get();
+            comment1.setText(updateComment.getText());
+            comment1.setDate(LocalDate.parse(String.valueOf(LocalDate.now())));
+            Comment comment2 = commentRepository.save(comment1);
+
+            return fromComment(comment2);
+        }
+    }
+
+    @Transactional
+    public void deleteComment(Long commentId, String username) {
+        if (!SecurityUtil.isOwnerOrAdmin(username)) {
+            throw new SecurityException("Forbidden");
+        }
+        Optional<Comment> optionalComment = commentRepository.findById(commentId);
+        if (optionalComment.isEmpty()) {
+            throw new RecordNotFoundException("Comment not found");
+        }
+        Comment comment = optionalComment.get();
+        comment.setForum(null);
+        comment.setUser(null);
+        commentRepository.save(comment);
+        commentRepository.delete(comment);
+    }
+
+// Helpers
     public void assignCommentToForum(Long commentId, Long forumId) {
         var optionalComment = commentRepository.findById(commentId);
         var optionalForum = forumRepository.findById(forumId);
@@ -76,61 +147,6 @@ public class CommentService {
             User user = optionalUser.get();
             comment.setUser(user);
             commentRepository.save(comment);
-        }
-    }
-
-    public List<CommentDto> getCommentsByForumId(Long forumId) {
-        List<Comment> comments = commentRepository.findByForumId(forumId);
-        return comments.stream().map(comment -> {
-            User user = comment.getUser();
-            if (user != null) {
-                comment.setName(user.getUsername());
-                comment.setAge(user.getDob().toString());
-            }
-            return toCommentDto(comment);
-        }).collect(Collectors.toList());
-    }
-
-    public List<Comment> getCommentsByUsername(String username) {
-        Optional<User> optionalUser = userRepository.findById(username);
-        if (optionalUser.isEmpty()) {
-            throw new RecordNotFoundException("User not found");
-        }
-        User user = optionalUser.get();
-        return user.getCommentsList();
-    }
-
-    public int getCommentCountByForumId(Long forumId) {
-        Forum forum = forumRepository.findById(forumId).orElseThrow(() -> new RecordNotFoundException("Forum not found"));
-        List<Comment> comments = forum.getCommentsList();
-        int commentCount = comments.size();
-        return commentCount;
-    }
-
-    @Transactional
-    public void deleteComment(Long commentId) {
-        Optional<Comment> optionalComment = commentRepository.findById(commentId);
-        if (optionalComment.isEmpty()) {
-            throw new RecordNotFoundException("Comment not found");
-        }
-        Comment comment = optionalComment.get();
-        comment.setForum(null);
-        comment.setUser(null);
-        commentRepository.save(comment);
-        commentRepository.delete(comment);
-    }
-
-    public CommentDto updateComment (Long commentId, CommentDto updateComment) {
-        Optional<Comment> comment = commentRepository.findById(commentId);
-        if (comment.isEmpty()) {
-            throw new RecordNotFoundException("Comment not found");
-        } else {
-            Comment comment1 = comment.get();
-            comment1.setText(updateComment.getText());
-            comment1.setDate(String.valueOf(LocalDate.now()));
-            Comment comment2 = commentRepository.save(comment1);
-
-            return fromComment(comment2);
         }
     }
 
@@ -159,6 +175,7 @@ public class CommentService {
         comment.setName(commentInputDto.getName());
         comment.setText(commentInputDto.getText());
         comment.setDate(commentInputDto.getDate());
+        comment.setDob(commentInputDto.getDob());
 
         return comment;
     }
@@ -169,7 +186,7 @@ public class CommentService {
         dto.setName(comment.getName());
         dto.setText(comment.getText());
         dto.setDate(comment.getDate());
-        dto.setAge(comment.getAge());
+        dto.setDob(comment.getDob());
 
         if (comment.getUser() != null) {
             User user = comment.getUser();
@@ -182,6 +199,5 @@ public class CommentService {
 
         return dto;
     }
-
 
 }
