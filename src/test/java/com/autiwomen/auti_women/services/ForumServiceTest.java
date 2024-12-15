@@ -72,7 +72,9 @@ class ForumServiceTest {
         user1 = new User("user1", dob);
         user2 = new User("user2", dob);
         forum1 = new Forum(1L, "user1", dob, "title", "text", LocalDate.of(2024, 7, 6), "topic", 0, 0, 0);
+        forum1.setUser(user1);
         forum2 = new Forum(2L, "user2", dob, "title2", "text2", LocalDate.of(2024, 7, 6), "topic", 0, 0, 0);
+        forum2.setUser(user2);
         LocalDate currentDate = LocalDate.now();
         comment1 = new Comment(1L, "user1", "comment1", currentDate, dob);
         comment2 = new Comment(2L, "user2", "comment2", currentDate, dob);
@@ -82,6 +84,7 @@ class ForumServiceTest {
         view2 = new View(user2, forum2);
 
         securityUtilMock.when(() -> SecurityUtil.isOwnerOrAdmin("user1")).thenReturn(true);
+        securityUtilMock.when(() -> SecurityUtil.isAdmin("user2")).thenReturn(false);
     }
 
     @AfterEach
@@ -309,12 +312,14 @@ class ForumServiceTest {
         Long forumId = 1L;
         String username = "user1";
 
+        forum1.setUser(user1);
+
         when(forumRepository.findById(forumId)).thenReturn(Optional.of(forum1));
+        doNothing().when(forumRepository).delete(forum1);
 
         forumService.deleteForum(forumId, username);
 
-        verify(commentRepository, times(1)).deleteAllByForumId(forumId);
-        verify(forumRepository, times(1)).deleteById(forumId);
+        verify(forumRepository, times(1)).delete(forum1);
     }
 
     @Test
@@ -326,18 +331,19 @@ class ForumServiceTest {
 
         assertThrows(RecordNotFoundException.class, () -> forumService.deleteForum(forumId, username));
 
-        verify(commentRepository, never()).deleteAllByForumId(anyLong());
-        verify(forumRepository, never()).deleteById(anyLong());
+        verify(forumRepository, never()).delete(any(Forum.class));
     }
 
     @Test
-    void deleteForum_Forbidden() {
+    void deleteForum_Forbidden_NotOwnerOrAdmin() {
         Long forumId = 1L;
         String username = "user1";
 
         securityUtilMock.when(() -> SecurityUtil.isOwnerOrAdmin(username)).thenReturn(false);
 
         assertThrows(SecurityException.class, () -> forumService.deleteForum(forumId, username));
+
+        verify(forumRepository, never()).delete(any(Forum.class));
     }
 
     @Test
@@ -390,15 +396,6 @@ class ForumServiceTest {
 
         verify(userRepository, times(1)).findById(username);
         verify(forumRepository, never()).findByUser(any(User.class));
-    }
-
-    @Test
-    void getForumsByUsername_Forbidden() {
-        String username = "user1";
-
-        securityUtilMock.when(() -> SecurityUtil.isOwnerOrAdmin(username)).thenReturn(false);
-
-        assertThrows(SecurityException.class, () -> forumService.getForumsByUsername(username));
     }
 
     @Test

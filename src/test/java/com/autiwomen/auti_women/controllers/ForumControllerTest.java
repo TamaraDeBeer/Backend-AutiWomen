@@ -41,7 +41,6 @@ class ForumControllerTest {
     private UserRepository userRepository;
 
     private UserInputDto userInputDto;
-    private ForumInputDto forumInputDto;
 
     @BeforeEach
     void setUp() {

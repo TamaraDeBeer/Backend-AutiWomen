@@ -181,9 +181,8 @@ public class ForumService {
             throw new RecordNotFoundException("Forum not found");
         }
         Forum forum = optionalForum.get();
-        if (!forum.getUser().getUsername().equals(username) && !SecurityUtil.isAdmin(username)) {
-            throw new SecurityException("Forbidden");
-        }
+        forum.setCommentsList(null);
+        forumRepository.save(forum);
         forumRepository.delete(forum);
     }
 

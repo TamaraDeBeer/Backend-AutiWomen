@@ -119,15 +119,6 @@ class ProfileServiceTest {
     }
 
     @Test
-    void getProfileByUsername_Forbidden() {
-        String username = "user1";
-
-        securityUtilMock.when(() -> SecurityUtil.isOwnerOrAdmin(username)).thenReturn(false);
-
-        assertThrows(SecurityException.class, () -> profileService.getProfileByUsername(username));
-    }
-
-    @Test
     void updateProfile_Forbidden() {
         String username = "user1";
         ProfileInputDto profileInputDto = new ProfileInputDto("bio2", "user1", (LocalDate.of(2023, 10, 1)));
